@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Controller firmware problem
+    url: https://github.com/Cheerpipe/Advanced-Shot-Stopper/issues
+    about: Problems with the controller itself, its Web UI, or your scale belong in the firmware repository.

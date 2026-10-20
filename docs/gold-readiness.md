@@ -14,7 +14,7 @@ assignment requires later inclusion in Home Assistant Core and review there.
 | Device and entities | Done: one device, stable unique IDs, entity-name semantics, translations, classes/units/icons, explicit enums, non-optimistic preset/Quick Settings controls, and a configuration-category restart button |
 | Diagnostics | Done: host, callback URL/ID, and correlation data are excluded or redacted |
 | Documentation | Done: installation, removal, entities, data updates, examples, limitations, migration, security, reconfigure, and troubleshooting |
-| Tests and quality tools | CI runs pytest with module coverage ≥95%, Ruff, strict mypy, JSON validation, hassfest, and HACS validation |
+| Tests and quality tools | Done: the Tests workflow runs pytest with module coverage ≥95%, Ruff, and strict mypy; the Validate workflow runs hassfest and HACS validation |
 | Discovery | Done: the firmware's `_http._tcp` service carries an `obbw` identification TXT record and the manifest matches it; `async_step_zeroconf` probes the API, sets the stable device identity, and asks for confirmation before creating an entry |
 | Discovery update info | Done: `_abort_if_unique_id_configured(updates={host})` refreshes the address of an existing entry when the same controller is rediscovered |
 | Dynamic devices | Exempt: one config entry always represents exactly one fixed controller |

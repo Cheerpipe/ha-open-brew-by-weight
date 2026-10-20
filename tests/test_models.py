@@ -23,7 +23,7 @@ from custom_components.open_brew_by_weight.models import (
     WebhookEvent,
 )
 
-FIXTURES = Path(__file__).parents[3] / "src" / "tests" / "fixtures"
+FIXTURES = Path(__file__).parent / "fixtures"
 
 
 def load(name: str) -> dict:
@@ -123,6 +123,7 @@ def test_stop_details_have_sensor_labels(catalog: str) -> None:
     labels = json.loads((source / catalog).read_text())["entity"]["sensor"][
         "last_shot_stop_detail"
     ]["state"]
+    assert list(STOP_DETAILS) == load("wire_contracts_v1.json")["stopDetails"]
     assert set(STOP_DETAILS) == set(labels)
     assert labels["touch_weight_fallback"] == "Touch fallback"
 

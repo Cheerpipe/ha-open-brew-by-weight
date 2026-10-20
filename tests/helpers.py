@@ -16,7 +16,7 @@ from custom_components.open_brew_by_weight.const import (
 from custom_components.open_brew_by_weight.coordinator import CoordinatorData
 from custom_components.open_brew_by_weight.models import DeviceSnapshot, PresetState
 
-FIXTURES = Path(__file__).parents[3] / "src" / "tests" / "fixtures"
+FIXTURES = Path(__file__).parent / "fixtures"
 WEBHOOK_ID = "webhook_id_with_more_than_32_chars_123456"
 
 

@@ -28,6 +28,8 @@ from custom_components.open_brew_by_weight.sensor import (
 from custom_components.open_brew_by_weight.switch import (
     DESCRIPTIONS,
     QuickSettingSwitch,
+)
+from custom_components.open_brew_by_weight.switch import (
     async_setup_entry as async_setup_switches,
 )
 

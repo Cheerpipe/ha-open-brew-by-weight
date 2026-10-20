@@ -17,7 +17,7 @@ from custom_components.open_brew_by_weight.api import (
 )
 from custom_components.open_brew_by_weight.models import ProtocolError
 
-FIXTURES = Path(__file__).parents[3] / "src" / "tests" / "fixtures"
+FIXTURES = Path(__file__).parent / "fixtures"
 
 
 class Response:

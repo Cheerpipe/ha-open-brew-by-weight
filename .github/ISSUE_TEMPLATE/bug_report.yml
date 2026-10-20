@@ -1,0 +1,44 @@
+name: Something isn't working
+description: Report a problem with the Home Assistant integration.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. A few details up front save a lot of back-and-forth.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did you see instead?
+    validations:
+      required: true
+  - type: input
+    id: integration
+    attributes:
+      label: Integration version
+      placeholder: "0.2.0"
+    validations:
+      required: true
+  - type: input
+    id: ha
+    attributes:
+      label: Home Assistant version
+      placeholder: "2026.10.1"
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: Controller firmware version
+      description: Shown on the controller's device page in Home Assistant, or in the Web UI.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and diagnostics
+      description: |
+        Turn on debug logging for the integration, reproduce the problem, and paste the relevant lines.
+        Downloading diagnostics from the device page also helps; secrets are already removed from it.
+      render: text

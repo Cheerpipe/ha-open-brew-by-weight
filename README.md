@@ -1,75 +1,180 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Cheerpipe/ha-open-brew-by-weight/main/custom_components/open_brew_by_weight/brand/logo.png" alt="Open Brew by Weight" width="256">
+</p>
+
 # Open Brew by Weight for Home Assistant
 
-This HACS custom integration connects Home Assistant 2026.9 or newer to one
-Open Brew by Weight controller over the local network. It provides live shot
-state, controller-restored shot measurements, durable preset selection, seven
-Home Quick Settings switches, and a safe restart button. It never starts or
-stops the espresso machine.
+[![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/)
+[![Validate](https://github.com/Cheerpipe/ha-open-brew-by-weight/actions/workflows/validate.yml/badge.svg)](https://github.com/Cheerpipe/ha-open-brew-by-weight/actions/workflows/validate.yml)
+[![Tests](https://github.com/Cheerpipe/ha-open-brew-by-weight/actions/workflows/tests.yml/badge.svg)](https://github.com/Cheerpipe/ha-open-brew-by-weight/actions/workflows/tests.yml)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://github.com/Cheerpipe/ha-open-brew-by-weight/blob/main/LICENSE)
+
+Your espresso machine already knows when it pulled a great shot. This
+integration lets Home Assistant know too.
+
+[Open Brew by Weight](https://github.com/Cheerpipe/Advanced-Shot-Stopper) is a
+small controller that sits inside your espresso machine, listens to a Bluetooth
+scale, and stops the shot when it reaches the weight you asked for. This
+integration brings it into Home Assistant: every shot you pull shows up on your
+dashboard a moment after it ends, you can switch presets from your phone, and
+you can build automations around your coffee routine.
+
+It runs entirely on your local network. No cloud, no account, no polling.
+
+> **It will never start or stop your machine.** Home Assistant can read what
+> happened, choose a preset, and change how shots stop, but pulling a shot is
+> always something you do with your own hands at the machine.
+
+## What you get
+
+- **Your last shot, at a glance.** Time, duration, final and target weight,
+  average flow, time to first drop, the preset you used, how the shot ended,
+  and the star rating you gave it.
+- **A live brewing indicator.** A sensor flips to *Brewing* the moment a shot
+  starts and back to *Idle* when it ends, so you can dim the lights, pause the
+  music, or just watch.
+- **Everything the machine does.** Rinses, backflushes, power-ons, and blocked
+  attempts land in a separate *Last activation* group, so they never muddy your
+  shot numbers.
+- **Your recent form.** Averages over your last ten shots: duration, yield,
+  flow, how close you landed to target, and how many shots you pull per day.
+- **Preset switching.** Pick *Morning double* or *Decaf* from a dropdown, a
+  dashboard button, or an automation.
+- **The same quick toggles as the Web UI header.** Brew by weight, No-scale
+  BBW, scale-loss backup, shorten slow shots, extend fast shots, avoid
+  accidental touch, and cup protection, all in sync with the controller.
+- **A safe restart button** that waits for a shot to finish before it acts.
+
+Updates arrive the instant they happen, pushed by the controller itself.
+
+## Before you start
+
+You'll need:
+
+- **Home Assistant 2026.9 or newer.**
+- **An Open Brew by Weight controller** running firmware recent enough to talk
+  to Home Assistant. If your firmware is too old, setup tells you so; update it
+  from the controller's Web UI.
+- **Both on the same trusted home network.** The controller's local API is open
+  on your LAN, just like its Web UI, so keep it off guest or shared networks.
+- **A Home Assistant address the controller can reach.** In Home Assistant, go
+  to **Settings → System → Network** and make sure *Local network* (the
+  Internal URL) is set to an `http://` address on your LAN, for example
+  `http://192.168.1.20:8123`. The controller sends its updates there.
 
 ## Install
 
-After the dedicated integration repository publishes a release, add that
-repository to HACS as an **Integration**, install **Open Brew by Weight**, and
-restart Home Assistant. During development, copy
-`custom_components/open_brew_by_weight` into Home Assistant's
-`custom_components` directory.
+### With HACS (recommended)
 
-The controller must run firmware with integration API version 1. Set Home
-Assistant's Internal URL to a LAN-reachable `http://` address. Both devices must
-be on the same trusted network.
+[![Open your Home Assistant instance and open this repository inside HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Cheerpipe&repository=ha-open-brew-by-weight&category=integration)
 
-## Configure
+1. Click the button above, or open **HACS**, search for
+   **Open Brew by Weight**, and open it. If it doesn't show up yet, add this
+   repository first: **HACS → ⋮ → Custom repositories**, paste
+   `https://github.com/Cheerpipe/ha-open-brew-by-weight`, and choose
+   **Integration**.
+2. Select **Download**.
+3. Restart Home Assistant.
 
-If the controller is on a network that passes multicast, it appears
-automatically under **Discovered** in **Settings → Devices & services**;
-confirming it is the only step needed. Otherwise add **Open Brew by Weight**
-manually and enter the controller IP address or local host name. Confirm
-webhook takeover only if Home Assistant should replace the existing receiver.
+### By hand
 
-Setup registers and tests the local callback before entities appear. The
-controller API is intentionally open on the trusted LAN, like its Web UI. The
-webhook ID is not included in entities or diagnostics.
+1. Download the latest release from the
+   [releases page](https://github.com/Cheerpipe/ha-open-brew-by-weight/releases).
+2. Copy the `custom_components/open_brew_by_weight` folder into the
+   `custom_components` folder of your Home Assistant configuration directory
+   (create it if it doesn't exist).
+3. Restart Home Assistant.
 
-## What it provides
+## Connect your controller
 
-- One controller device and 17 translated sensors.
-- Last completed and last qualifying-good shot values: duration, final and
-  target weight, average flow, first drop, type, stop detail, and preset name.
-- A non-optimistic **Active preset** select backed by stable preset IDs.
-- Seven non-optimistic Quick Settings switches that mirror the Web UI header
-  panel (temporary changes, reset by a preset change or restart) and a
-  shot-safe **Restart Open Brew by Weight** button.
-- Immediate webhook updates with bounded reconciliation after commands,
-  revision gaps, controller startup, or runtime failure; no periodic polling.
-- Transactional address/webhook reconfiguration, redacted diagnostics, clean
-  unload, and conditional removal cleanup.
+Most of the time there's nothing to type. Your controller announces itself on
+the network, and Home Assistant shows it under **Discovered** in
+**Settings → Devices & services**. Select **Add**, confirm, and you're done.
 
-A “good” shot retains the former YAML example's continuity rule: over 12
-seconds and over 2 grams. It is not a quality rating.
+If it doesn't appear (some routers and guest networks block the announcements
+that make discovery work), add it yourself:
 
-## Limitations and common errors
+[![Open your Home Assistant instance and start setting up Open Brew by Weight.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=open_brew_by_weight)
 
-- The controller supports one HTTP callback and no HTTPS callback.
-- The controller API has no authentication and relies on the trusted LAN.
-- Webhook delivery is best effort; a missed final event may remain stale until
-  the next command, revision gap, controller-start hint, or reload.
-- Preset and Quick Settings changes are rejected while the controller's
-  existing safe-state gate is closed. Restart may be requested during a shot
-  but waits until the controller is idle.
-- A silent power loss cannot be detected before a REST operation fails because
-  the integration deliberately has no polling heartbeat.
-- Automatic discovery needs multicast on the network; guest and hotel Wi-Fi
-  that blocks it falls back to manual IP/host setup.
+1. Go to **Settings → Devices & services → Add integration** and choose
+   **Open Brew by Weight**.
+2. Enter the controller's IP address, or its local name such as
+   `openbrewbyweight.local`.
+3. If the controller is already sending updates somewhere else, for example an
+   older YAML setup or a custom webhook, Home Assistant asks before replacing
+   it. The controller can only send to one place at a time.
 
-Use **Reconfigure** to view or rotate the administrator-only webhook ID, change
-the address, or resend/test the current callback. Deleting the entry clears
-only a callback it still owns.
+Behind the scenes, Home Assistant creates a private webhook, tells the
+controller where to send updates, sends a test message to make sure the path
+works both ways, reads the current state, and only then creates the entities.
+If any of that fails, you'll see why instead of a half-working device.
 
-Full setup, migration, entity, update, and troubleshooting details are in the
-[Home Assistant guide](../../docs/features/home-assistant.md). The wire contract
-is in the [Integration API](../../docs/INTEGRATION_API.md).
+## Using it
+
+Your controller appears as one device with all its entities. The device page
+also has a **Visit** link that opens the controller's Web UI.
+
+A few ideas to get going:
+
+- **Get a shot summary on your phone** when a shot finishes.
+- **Switch to your decaf preset** automatically after 3 p.m.
+- **Turn the kitchen lights warmer** while a shot is brewing.
+- **Track your consistency** over weeks with the average-error and yield
+  sensors in a history graph.
+
+Ready-to-paste examples are in
+[Automation and dashboard ideas](https://github.com/Cheerpipe/ha-open-brew-by-weight/blob/main/docs/automations.md).
+Every entity and what it means is in the
+[entity guide](https://github.com/Cheerpipe/ha-open-brew-by-weight/blob/main/docs/entities.md).
+
+### About the quick toggles
+
+The seven switches mirror the panel in the controller's Web UI header, and they
+behave the same way: a change is **temporary**. It lasts until you pick another
+preset or the controller restarts, and then your saved settings come back.
+Nothing you flip in Home Assistant rewrites a preset. While a shot is running,
+the switches and the preset selector are unavailable, so nothing can change
+under your cup mid-shot.
+
+## Good to know
+
+- **Updates are pushed, not polled.** That keeps your network quiet and the
+  dashboard instant. The trade-off: if the controller loses power without
+  warning, Home Assistant may keep showing the last known values until the next
+  update or action.
+- **One receiver at a time.** The controller sends updates to a single
+  address. If you also use a custom webhook, Home Assistant takes over that
+  slot when you add the integration (it asks first).
+- **Local HTTP only.** The controller can't send to an `https://` address, which
+  is why Home Assistant needs a plain `http://` Internal URL on your LAN.
+- **No credentials to manage.** There's no pairing code or password; trust
+  comes from your home network, the same as the controller's Web UI.
+
+## When something isn't right
+
+Most problems come down to one of two things: the controller can't reach Home
+Assistant's Internal URL, or something else is set as the controller's
+webhook. The
+[troubleshooting guide](https://github.com/Cheerpipe/ha-open-brew-by-weight/blob/main/docs/troubleshooting.md)
+walks through each symptom and how to see exactly what's going on.
+
+To change the controller's address later, or to resend and retest the
+connection, open the integration and choose **Reconfigure**.
+
+## More
+
+- [How it works](https://github.com/Cheerpipe/ha-open-brew-by-weight/blob/main/docs/how-it-works.md):
+  updates, recovery, security, removal, and moving from the old YAML package.
+- [Contributing](https://github.com/Cheerpipe/ha-open-brew-by-weight/blob/main/CONTRIBUTING.md):
+  running the tests and making a release.
+- [Changelog](https://github.com/Cheerpipe/ha-open-brew-by-weight/blob/main/CHANGELOG.md)
+- Problems with the controller itself, its scale connection, or its Web UI
+  belong in the
+  [firmware repository](https://github.com/Cheerpipe/Advanced-Shot-Stopper).
 
 ## License
 
-Copyright 2024–2026 Felipe Urzúa and contributors. This integration is licensed
-under AGPL-3.0-or-later with the rest of Open Brew by Weight.
+Copyright © 2024–2026 Felipe Urzúa and contributors.
+
+Licensed under the [GNU Affero General Public License v3.0 or later](https://github.com/Cheerpipe/ha-open-brew-by-weight/blob/main/LICENSE),
+the same license as the Open Brew by Weight firmware.
