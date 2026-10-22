@@ -40,11 +40,29 @@ entities from a partial picture.
 
 ## Security
 
-The controller's local API has no password, by design: it shares the same
-trust model as its Web UI, which is your home network. Anyone on that network
-can read its state and change presets or quick toggles, just as they could from
-a browser. Nobody can start or stop the machine through it; that capability
-doesn't exist.
+Out of the box, the controller's local API has no password: it shares the
+same trust model as its Web UI, which is your home network. Anyone on that
+network can read its state and change presets or quick toggles, just as they
+could from a browser. Nobody can start or stop the machine through it; that
+capability doesn't exist.
+
+If you turn on the controller's Web UI password, the API closes too. Home
+Assistant then needs its own key, which it gets in one of two ways: you approve
+it in the Web UI after checking that both sides show the same four-digit code,
+or you type the device password in Home Assistant once. The password is sent to
+the controller a single time to get the key and is never stored. The key is
+kept in Home Assistant's configuration, never shown in entities or
+diagnostics, and sent with every request to the controller.
+
+The controller holds one Home Assistant key at a time. Connecting again, from
+a new setup or a reauthentication, replaces it. The key survives restarts and
+password changes; it ends when you tap **Disconnect** in **Admin → Access**,
+turn the password off, or restore the factory password. When the controller
+stops accepting it, Home Assistant marks the entities unavailable and asks you
+to reauthenticate. Nothing is deleted meanwhile.
+
+The connection isn't encrypted, with or without the password. It keeps casual
+visitors out, not someone who can watch traffic on your Wi-Fi.
 
 The webhook secret is the one thing worth protecting. Anyone who knows it can
 send fake updates to Home Assistant. It's never shown in entities, attributes,

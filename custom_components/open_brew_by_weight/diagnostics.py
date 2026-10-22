@@ -1,12 +1,13 @@
 """Redacted diagnostics for Open Brew by Weight."""
 
 from homeassistant.components.diagnostics import async_redact_data
+from homeassistant.const import CONF_TOKEN
 from homeassistant.core import HomeAssistant
 
 from . import OpenBrewByWeightConfigEntry
 from .const import CONF_WEBHOOK_ID
 
-TO_REDACT = {"host", CONF_WEBHOOK_ID, "url", "correlationId", "device_id"}
+TO_REDACT = {"host", CONF_TOKEN, CONF_WEBHOOK_ID, "url", "correlationId", "device_id"}
 
 
 async def async_get_config_entry_diagnostics(

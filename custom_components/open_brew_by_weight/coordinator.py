@@ -10,10 +10,11 @@ from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import CannotConnect, OpenBrewByWeightApi
+from .api import AuthRequired, CannotConnect, OpenBrewByWeightApi
 from .const import DOMAIN, RECOVERY_DELAYS, STORE_KEY_PREFIX, STORE_VERSION
 from .models import (
     DeviceSnapshot,
@@ -96,6 +97,8 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
                 snapshot, presets = await asyncio.gather(
                     self.api.async_snapshot(), self.api.async_presets()
                 )
+            except AuthRequired as err:
+                raise ConfigEntryAuthFailed(str(err)) from err
             except Exception as err:
                 raise UpdateFailed(str(err)) from err
             if snapshot.device_id != self.device_id:
@@ -156,6 +159,11 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
                 await command()
             except (CannotConnect, ProtocolError, TimeoutError) as err:
                 self._transport_failed(err)
+                raise
+            except AuthRequired as err:
+                self.async_set_update_error(UpdateFailed(str(err)))
+                if self.config_entry is not None:
+                    self.config_entry.async_start_reauth(self.hass)
                 raise
             if restarting:
                 self._transport_failed(UpdateFailed("controller is restarting"))

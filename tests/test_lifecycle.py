@@ -5,7 +5,7 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
@@ -14,6 +14,7 @@ from custom_components.open_brew_by_weight import (
     async_setup_entry,
     async_unload_entry,
 )
+from custom_components.open_brew_by_weight.api import AuthRequired
 from custom_components.open_brew_by_weight.button import (
     async_setup_entry as async_setup_button,
 )
@@ -139,6 +140,36 @@ async def test_setup_rolls_back_receiver(hass) -> None:
         await async_setup_entry(hass, entry)
     runtime.async_unregister_webhook.assert_called_once()
     api.async_apply_webhook_config.assert_awaited_once()
+
+
+async def test_setup_with_revoked_token_starts_reauth(hass) -> None:
+    """A 401 at setup asks for access again instead of retrying forever."""
+    entry = config_entry(token="0123456789abcdef0123456789abcdef")
+    api = api_mock()
+    api.async_webhook_config.side_effect = AuthRequired("INTEGRATION_AUTH_REQUIRED", 401)
+    runtime = MagicMock(spec=OpenBrewByWeightRuntimeData)
+    with (
+        patch(
+            "custom_components.open_brew_by_weight.OpenBrewByWeightApi", return_value=api
+        ) as factory,
+        patch(
+            "custom_components.open_brew_by_weight.OpenBrewByWeightCoordinator",
+            return_value=_coordinator_double(),
+        ),
+        patch(
+            "custom_components.open_brew_by_weight.OpenBrewByWeightRuntimeData",
+            return_value=runtime,
+        ),
+        patch(
+            "custom_components.open_brew_by_weight.webhook_url",
+            return_value="http://home/webhook",
+        ),
+        pytest.raises(ConfigEntryAuthFailed),
+    ):
+        await async_setup_entry(hass, entry)
+    assert factory.call_args.args[2] == "0123456789abcdef0123456789abcdef"
+    runtime.async_unregister_webhook.assert_called_once()
+    api.async_apply_webhook_config.assert_not_awaited()
 
 
 async def test_failed_platform_unload_keeps_receiver(hass) -> None:

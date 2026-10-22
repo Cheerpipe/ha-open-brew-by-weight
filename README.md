@@ -55,8 +55,9 @@ You'll need:
 - **An Open Brew by Weight controller** running firmware recent enough to talk
   to Home Assistant. If your firmware is too old, setup tells you so; update it
   from the controller's Web UI.
-- **Both on the same trusted home network.** The controller's local API is open
-  on your LAN, just like its Web UI, so keep it off guest or shared networks.
+- **Both on the same trusted home network.** Like its Web UI, the controller's
+  local API is open on your LAN unless you turn on the controller's Web UI
+  password, so keep it off guest or shared networks.
 - **A Home Assistant address the controller can reach.** In Home Assistant, go
   to **Settings → System → Network** and make sure *Local network* (the
   Internal URL) is set to an `http://` address on your LAN, for example
@@ -104,6 +105,28 @@ that make discovery work), add it yourself:
    older YAML setup or a custom webhook, Home Assistant asks before replacing
    it. The controller can only send to one place at a time.
 
+### If your controller has a Web UI password
+
+When the controller's Web UI password is turned on (**Admin → Access** in its
+Web UI), Home Assistant needs your permission to connect. Setup shows one extra
+screen with two ways to give it; use whichever is handier:
+
+- **Approve it from the Web UI.** Home Assistant shows a four-digit code. Open
+  the controller's Web UI on your phone: it asks whether Home Assistant may
+  connect and shows a code too. If the two codes match, tap **Allow**, then
+  select **Submit** in Home Assistant. The request lasts two minutes.
+- **Type the device password** in Home Assistant. It's used once, right then,
+  and never saved.
+
+Home Assistant then keeps its own key, so it stays connected through restarts
+and password changes. If you later tap **Disconnect** in **Admin → Access**,
+turn the password off and on again, or restore the factory password, Home
+Assistant shows a *reauthentication* notice. Its entities read *unavailable*
+until you answer it the same way; nothing is lost.
+
+Turning the password on? Update this integration first, so Home Assistant
+knows how to ask.
+
 Behind the scenes, Home Assistant creates a private webhook, tells the
 controller where to send updates, sends a test message to make sure the path
 works both ways, reads the current state, and only then creates the entities.
@@ -147,8 +170,10 @@ under your cup mid-shot.
   slot when you add the integration (it asks first).
 - **Local HTTP only.** The controller can't send to an `https://` address, which
   is why Home Assistant needs a plain `http://` Internal URL on your LAN.
-- **No credentials to manage.** There's no pairing code or password; trust
-  comes from your home network, the same as the controller's Web UI.
+- **Nothing to copy or paste.** With the Web UI password off, trust comes from
+  your home network, the same as the controller's Web UI. With it on, you
+  approve Home Assistant once from the Web UI or type the device password once;
+  Home Assistant never stores the password.
 
 ## When something isn't right
 

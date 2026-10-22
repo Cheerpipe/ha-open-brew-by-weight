@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -33,6 +34,14 @@ class RequestRejected(ApiError):
         super().__init__(code)
         self.code = code
         self.status = status
+
+
+class AuthRequired(RequestRejected):
+    """The controller login is on and the stored token is missing or revoked."""
+
+
+TOKEN_PATTERN = re.compile(r"^[0-9a-f]{32}$")
+PAIRING_STATES = frozenset({"pending", "approved", "denied", "expired", "unknown"})
 
 
 def describe_error(err: BaseException) -> str:
@@ -70,9 +79,12 @@ def normalize_host(value: str) -> str:
 class OpenBrewByWeightApi:
     """Bounded, session-injected local REST client."""
 
-    def __init__(self, session: ClientSession, host: str) -> None:
+    def __init__(
+        self, session: ClientSession, host: str, token: str | None = None
+    ) -> None:
         self._session = session
         self.host = normalize_host(host)
+        self.token = token
         self._base = f"http://{self.host}/api/v1/integration"
 
     async def _json(
@@ -83,6 +95,8 @@ class OpenBrewByWeightApi:
         body: dict[str, Any] | None = None,
     ) -> tuple[int, dict[str, Any]]:
         headers = {"Accept": "application/json"}
+        if self.token:
+            headers["Authorization"] = f"Bearer {self.token}"
         try:
             async with self._session.request(
                 method,
@@ -107,15 +121,77 @@ class OpenBrewByWeightApi:
         try:
             payload = await response.json(content_type=None)
         except (ValueError, UnicodeDecodeError) as err:
+            if response.status >= 400:
+                raise RequestRejected("UNKNOWN", response.status) from err
             raise ProtocolError("controller response is not JSON") from err
         if not isinstance(payload, dict):
             raise ProtocolError("controller response must be an object")
         if response.status >= 400:
             code = payload.get("error")
-            raise RequestRejected(
-                code if isinstance(code, str) else "UNKNOWN", response.status
-            )
+            code = code if isinstance(code, str) else "UNKNOWN"
+            if code == "INTEGRATION_AUTH_REQUIRED":
+                raise AuthRequired(code, response.status)
+            raise RequestRejected(code, response.status)
         return response.status, payload
+
+    async def async_auth_required(self) -> bool:
+        """Ask whether the controller wants a token; firmware without /info never does."""
+        try:
+            _, payload = await self._json("GET", "/info")
+        except RequestRejected as err:
+            if err.status == 404:
+                return False
+            raise
+        return payload.get("authRequired") is True
+
+    @staticmethod
+    def _token(payload: dict[str, Any]) -> str:
+        token = payload.get("token")
+        if not isinstance(token, str) or not TOKEN_PATTERN.fullmatch(token):
+            raise ProtocolError("controller returned an invalid token")
+        return token
+
+    async def _access(self, path: str, body: dict[str, Any]) -> dict[str, Any] | None:
+        """POST an access route; None when the login was turned off meanwhile."""
+        try:
+            _, payload = await self._json("POST", path, body=body)
+        except RequestRejected as err:
+            if err.code == "AUTH_NOT_REQUIRED":
+                return None
+            raise
+        return payload
+
+    async def async_exchange_password(self, password: str) -> str | None:
+        """Trade the device password, once, for the integration token."""
+        payload = await self._access("/auth", {"password": password})
+        return None if payload is None else self._token(payload)
+
+    async def async_start_pairing(self) -> tuple[int, str, int] | None:
+        """Open a pairing request; return its id, code, and lifetime in seconds."""
+        payload = await self._access("/pair", {})
+        if payload is None:
+            return None
+        pairing_id, code, expires = (
+            payload.get("id"), payload.get("code"), payload.get("expiresInS")
+        )
+        if (
+            isinstance(pairing_id, bool)
+            or not isinstance(pairing_id, int)
+            or not isinstance(code, str)
+            or not re.fullmatch(r"[0-9]{4}", code)
+            or isinstance(expires, bool)
+            or not isinstance(expires, int)
+        ):
+            raise ProtocolError("pairing response is invalid")
+        return pairing_id, code, expires
+
+    async def async_pairing_state(self, pairing_id: int) -> tuple[str, str | None]:
+        """Read a pairing request; an approved one carries the token exactly once."""
+        _, payload = await self._json("GET", f"/pair?id={pairing_id}")
+        state = payload.get("state")
+        if state not in PAIRING_STATES:
+            raise ProtocolError("pairing state is invalid")
+        return str(state), self._token(payload) if state == "approved" else None
 
     async def async_snapshot(self) -> DeviceSnapshot:
         _, payload = await self._json("GET")

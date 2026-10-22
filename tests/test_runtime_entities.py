@@ -10,11 +10,15 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 from homeassistant.const import EntityCategory
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import ConfigEntryAuthFailed, HomeAssistantError
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import UpdateFailed
 
-from custom_components.open_brew_by_weight.api import CannotConnect, RequestRejected
+from custom_components.open_brew_by_weight.api import (
+    AuthRequired,
+    CannotConnect,
+    RequestRejected,
+)
 from custom_components.open_brew_by_weight.button import RestartButton
 from custom_components.open_brew_by_weight.const import ACTIVATION_TYPES, STOP_DETAILS
 from custom_components.open_brew_by_weight.coordinator import (
@@ -54,8 +58,8 @@ from .helpers import (
 )
 
 
-def _coordinator(hass):
-    entry = config_entry()
+def _coordinator(hass, **entry_data):
+    entry = config_entry(**entry_data)
     api = api_mock()
     coordinator = OpenBrewByWeightCoordinator(hass, entry, entry.data["device_id"], api)
     coordinator.async_set_updated_data(coordinator_data())
@@ -734,15 +738,39 @@ async def test_command_failure_and_bounded_recovery(hass) -> None:
     failed.assert_called_once()
 
 
+async def test_revoked_token_starts_reauth(hass) -> None:
+    """A 401 makes entities unavailable and asks for access; nothing is removed."""
+    coordinator, api, entry = _coordinator(hass)
+    entry.add_to_hass(hass)
+    api.async_snapshot.side_effect = AuthRequired("INTEGRATION_AUTH_REQUIRED", 401)
+    with pytest.raises(ConfigEntryAuthFailed):
+        await coordinator._async_update_data()
+
+    api.async_set_quick_setting.side_effect = AuthRequired("INTEGRATION_AUTH_REQUIRED", 401)
+    with (
+        patch.object(entry, "async_start_reauth") as reauth,
+        pytest.raises(AuthRequired),
+    ):
+        await coordinator.async_confirmed_command(
+            lambda: api.async_set_quick_setting("brewByWeight", False, 19)
+        )
+    reauth.assert_called_once_with(hass)
+    assert not coordinator.last_update_success
+    assert coordinator.data is not None
+
+
 async def test_diagnostics_redact_identifiers(hass) -> None:
     """Diagnostics retain useful state but redact all secrets and addresses."""
-    coordinator, api, entry = _coordinator(hass)
+    coordinator, api, entry = _coordinator(
+        hass, token="0123456789abcdef0123456789abcdef"
+    )
     runtime = OpenBrewByWeightRuntimeData(
         hass, api, coordinator, WEBHOOK_ID, "http://home/webhook"
     )
     entry.runtime_data = runtime
     result = await async_get_config_entry_diagnostics(hass, entry)
     rendered = json.dumps(result)
+    assert "0123456789abcdef0123456789abcdef" not in rendered
     assert WEBHOOK_ID not in rendered
     assert "controller.local" not in rendered
     assert "AA:BB:CC:DD:EE:FF" not in rendered

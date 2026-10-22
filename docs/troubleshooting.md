@@ -47,6 +47,51 @@ controller never arrived. Check that:
 The Home Assistant log names the step that failed and the reason the
 controller gave.
 
+### Home Assistant asks for permission to connect
+
+The controller's Web UI password is on, so Home Assistant needs your OK. Do
+either of these and select **Submit**:
+
+- Open the controller's Web UI. It asks whether Home Assistant may connect and
+  shows a four-digit code. Tap **Allow** only if it matches the code Home
+  Assistant shows.
+- Type the device password into Home Assistant. It's used once and not saved.
+
+If the Web UI shows no request, reload it. A request lasts two minutes; after
+that, select **Submit** in Home Assistant to start a new one.
+
+What the messages mean:
+
+- **That isn't the device password.** Check for typos. The device password is
+  the one you use to sign in to the Web UI and unlock **Admin**.
+- **Too many wrong passwords.** Five wrong tries in a row pause password
+  checks on the controller for 30 seconds, for everyone. Wait, then try again.
+- **Another connection request is still open.** The controller handles one
+  request at a time, and keeps a finished one for 30 seconds more. Wait a
+  minute or two and select **Submit** again, or type the device password
+  instead.
+- **Not approved yet.** Tap **Allow** in the Web UI first, then **Submit**.
+- **The request was denied** or **expired.** Select **Submit** to ask again.
+
+If someone turns the Web UI password off while you're on this screen, setup
+simply carries on without it.
+
+### A reauthentication notice appeared
+
+The controller stopped accepting Home Assistant's key. That happens when
+someone taps **Disconnect** in **Admin → Access**, turns the Web UI password
+off and on again, or restores the factory password. Changing the device
+password does *not* cause it.
+
+Until you answer, the entities read *unavailable*; nothing is deleted and your
+history stays. Open the notice under **Settings → Devices & services**, select
+**Submit**, and approve Home Assistant the same way as during setup.
+
+If the controller seems to forget Home Assistant again and again, check that
+nobody else is connecting a second Home Assistant to it. The controller keeps
+one Home Assistant key at a time, so each new connection replaces the previous
+one.
+
 ### The firmware isn't compatible
 
 The controller is running firmware too old to talk to this integration. Update
@@ -106,7 +151,9 @@ logger:
 ### Ask the controller
 
 Open `http://<controller-address>/api/v1/integration/webhook` in a browser.
-The `delivery` section tells you whether the controller is sending updates,
+(While the Web UI password is on, the browser gets an
+`INTEGRATION_AUTH_REQUIRED` error instead; use the Web UI log below.) The
+`delivery` section tells you whether the controller is sending updates,
 holding them back, or failing, and why. A failed update is retried after 3, 6,
 and 9 seconds.
 
@@ -117,8 +164,8 @@ To keep a record of failures on the controller, open its Web UI, go to
 ### Download diagnostics
 
 On the device page, **Download diagnostics** saves a file with the
-integration's state. Addresses and the webhook secret are removed, so it's
-safe to attach to an issue.
+integration's state. Addresses, the webhook secret, and Home Assistant's key
+for the controller are removed, so it's safe to attach to an issue.
 
 ## Still stuck?
 

@@ -9,6 +9,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 from custom_components.open_brew_by_weight.api import (
+    AuthRequired,
     CannotConnect,
     IncompatibleApi,
     OpenBrewByWeightApi,
@@ -214,3 +215,118 @@ async def test_all_mutation_shapes() -> None:
         await OpenBrewByWeightApi(
             Session(Response(200, {"requestId": True})), "controller"
         ).async_restart()
+
+
+TOKEN = "0123456789abcdef0123456789abcdef"
+
+
+async def test_stored_token_is_sent_as_bearer() -> None:
+    """Every integration request carries the stored token."""
+    session = Session(Response(200, fixture("integration_presets.json")))
+    await OpenBrewByWeightApi(session, "controller", TOKEN).async_presets()
+    assert session.calls[0][1]["headers"] == {
+        "Accept": "application/json",
+        "Authorization": f"Bearer {TOKEN}",
+    }
+
+
+async def test_revoked_token_raises_auth_required() -> None:
+    api = OpenBrewByWeightApi(
+        Session(Response(401, {"error": "INTEGRATION_AUTH_REQUIRED"})), "controller"
+    )
+    with pytest.raises(AuthRequired):
+        await api.async_presets()
+
+
+@pytest.mark.parametrize(
+    ("response", "required"),
+    [
+        (Response(200, {"apiVersion": 1, "authRequired": True}), True),
+        (Response(200, {"apiVersion": 1, "authRequired": False}), False),
+        (Response(404, {"error": "NOT_FOUND"}), False),
+    ],
+)
+async def test_auth_required_reads_info(response: Response, required: bool) -> None:
+    session = Session(response)
+    assert await OpenBrewByWeightApi(session, "controller").async_auth_required() is required
+    assert session.calls[0][0] == ("GET", "http://controller/api/v1/integration/info")
+
+
+async def test_auth_required_handles_old_firmware_and_errors() -> None:
+    """Firmware without /info answers 404, sometimes without JSON."""
+    not_json = Response(404, {})
+    not_json.json.side_effect = ValueError
+    api = OpenBrewByWeightApi(Session(not_json), "controller")
+    assert await api.async_auth_required() is False
+    with pytest.raises(RequestRejected):
+        await OpenBrewByWeightApi(
+            Session(Response(500, {})), "controller"
+        ).async_auth_required()
+
+
+async def test_password_exchange() -> None:
+    session = Session(Response(200, {"apiVersion": 1, "token": TOKEN}))
+    assert await OpenBrewByWeightApi(session, "c").async_exchange_password("pw") == TOKEN
+    assert session.calls[0][0] == ("POST", "http://c/api/v1/integration/auth")
+    assert session.calls[0][1]["json"] == {"password": "pw"}
+    assert "Authorization" not in session.calls[0][1]["headers"]
+    for response, outcome in (
+        (Response(200, {"apiVersion": 1, "token": "SHORT"}), ProtocolError),
+        (Response(401, {"error": "DEVICE_PASSWORD_INVALID"}), RequestRejected),
+        (Response(429, {"error": "AUTH_COOLDOWN"}), RequestRejected),
+    ):
+        with pytest.raises(outcome):
+            await OpenBrewByWeightApi(Session(response), "c").async_exchange_password(
+                "pw"
+            )
+    not_required = Response(409, {"error": "AUTH_NOT_REQUIRED"})
+    assert (
+        await OpenBrewByWeightApi(Session(not_required), "c").async_exchange_password(
+            "pw"
+        )
+        is None
+    )
+
+
+async def test_pairing_start_and_state() -> None:
+    session = Session(
+        Response(200, {"apiVersion": 1, "id": 3735928559, "code": "0421", "expiresInS": 120}),
+        Response(200, {"apiVersion": 1, "state": "pending"}),
+        Response(200, {"apiVersion": 1, "state": "approved", "token": TOKEN}),
+        Response(200, {"apiVersion": 1, "state": "denied"}),
+    )
+    api = OpenBrewByWeightApi(session, "c")
+    assert await api.async_start_pairing() == (3735928559, "0421", 120)
+    assert session.calls[0][1]["json"] == {}
+    assert await api.async_pairing_state(3735928559) == ("pending", None)
+    assert session.calls[1][0] == (
+        "GET",
+        "http://c/api/v1/integration/pair?id=3735928559",
+    )
+    assert await api.async_pairing_state(3735928559) == ("approved", TOKEN)
+    assert await api.async_pairing_state(3735928559) == ("denied", None)
+    for response in (
+        Response(200, {"apiVersion": 1, "id": 1, "code": "12345", "expiresInS": 120}),
+        Response(200, {"apiVersion": 1, "id": True, "code": "1234", "expiresInS": 120}),
+    ):
+        with pytest.raises(ProtocolError):
+            await OpenBrewByWeightApi(Session(response), "c").async_start_pairing()
+    with pytest.raises(ProtocolError):
+        await OpenBrewByWeightApi(
+            Session(Response(200, {"state": "maybe"})), "c"
+        ).async_pairing_state(1)
+    with pytest.raises(ProtocolError):
+        await OpenBrewByWeightApi(
+            Session(Response(200, {"state": "approved"})), "c"
+        ).async_pairing_state(1)
+    with pytest.raises(RequestRejected) as raised:
+        await OpenBrewByWeightApi(
+            Session(Response(429, {"error": "PAIRING_BUSY"})), "c"
+        ).async_start_pairing()
+    assert raised.value.code == "PAIRING_BUSY"
+    assert (
+        await OpenBrewByWeightApi(
+            Session(Response(409, {"error": "AUTH_NOT_REQUIRED"})), "c"
+        ).async_start_pairing()
+        is None
+    )

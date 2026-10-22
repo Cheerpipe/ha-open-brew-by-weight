@@ -20,6 +20,20 @@
           "confirm": "Replace the existing destination"
         }
       },
+      "auth": {
+        "title": "Allow Home Assistant to connect",
+        "description": "This controller has its Web UI password turned on, so Home Assistant needs your permission to connect. Use either way:\n\n**Approve it in the Web UI.** Open the controller's Web UI. It asks whether Home Assistant may connect and shows a code. If it reads **{code}**, tap **Allow**, then select **Submit** here.\n\n**Or type the device password** below and select **Submit**. Home Assistant uses it once and doesn't save it.",
+        "data": {
+          "password": "Device password"
+        },
+        "data_description": {
+          "password": "Leave it empty if you approved the request in the Web UI."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Connect Home Assistant again",
+        "description": "The controller no longer accepts Home Assistant. This happens when someone disconnects Home Assistant in the Web UI (**Admin → Access**) or turns the Web UI password off and on again. Your entities stay unavailable until you continue; nothing is lost.\n\nOn the next screen, approve Home Assistant in the Web UI or type the device password."
+      },
       "reconfigure": {
         "title": "Reconfigure Open Brew by Weight",
         "description": "Current callback: `{webhook_url}`\n\nThe webhook ID is a secret. Anyone who has it can submit events to Home Assistant. Saving always reapplies and tests the callback.",
@@ -30,14 +44,22 @@
       }
     },
     "error": {
+      "auth_cooldown": "Too many wrong passwords. Wait 30 seconds, then try again",
+      "auth_required": "The controller no longer accepts Home Assistant. Answer the reauthentication notice first",
       "cannot_connect": "Cannot connect to the controller",
       "incompatible_api": "The controller firmware is not compatible",
       "invalid_host": "Enter only a valid IP address or host name",
+      "invalid_password": "That isn't the device password",
+      "pairing_busy": "Another connection request is still open on the controller. Wait a minute or two and select Submit again, or type the device password",
+      "pairing_denied": "The request was denied in the Web UI. Select Submit to ask again, or type the device password",
+      "pairing_expired": "The request expired before anyone approved it. Select Submit to ask again, or type the device password",
+      "pairing_pending": "Not approved yet. Tap Allow in the Web UI, or type the device password",
       "invalid_webhook_id": "Use 32–128 letters, numbers, hyphens, or underscores",
       "reconfigure_failed": "The callback could not be applied and verified"
     },
     "abort": {
       "already_configured": "This controller is already configured",
+      "reauth_successful": "Home Assistant is connected again",
       "reconfigure_successful": "The controller callback was verified",
       "takeover_rejected": "The existing webhook was left unchanged",
       "unique_id_mismatch": "This is not the previously configured controller"

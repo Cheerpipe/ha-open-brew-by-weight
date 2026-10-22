@@ -5,13 +5,13 @@ from __future__ import annotations
 import contextlib
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST
+from homeassistant.const import CONF_HOST, CONF_TOKEN
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .api import ApiError, OpenBrewByWeightApi, describe_error
+from .api import ApiError, AuthRequired, OpenBrewByWeightApi, describe_error
 from .const import (
     CONF_DEVICE_ID,
     CONF_WEBHOOK_ID,
@@ -28,7 +28,9 @@ type OpenBrewByWeightConfigEntry = ConfigEntry[OpenBrewByWeightRuntimeData]
 
 async def async_setup_entry(hass: HomeAssistant, entry: OpenBrewByWeightConfigEntry) -> bool:
     """Register the receiver before configuring the controller."""
-    api = OpenBrewByWeightApi(async_get_clientsession(hass), entry.data[CONF_HOST])
+    api = OpenBrewByWeightApi(
+        async_get_clientsession(hass), entry.data[CONF_HOST], entry.data.get(CONF_TOKEN)
+    )
     coordinator = OpenBrewByWeightCoordinator(hass, entry, entry.data[CONF_DEVICE_ID], api)
     await coordinator.async_load_store()
     webhook_id = entry.data[CONF_WEBHOOK_ID]
@@ -48,6 +50,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpenBrewByWeightConfigEn
         if previous is not None:
             with contextlib.suppress(ApiError):
                 await api.async_apply_webhook_config(previous)
+        if isinstance(err, (AuthRequired, ConfigEntryAuthFailed)):
+            raise ConfigEntryAuthFailed(f"Failed {step}: {describe_error(err)}") from err
         raise ConfigEntryNotReady(f"Failed {step}: {describe_error(err)}") from err
 
     entry.runtime_data = runtime
@@ -83,7 +87,9 @@ async def async_remove_entry(
     hass: HomeAssistant, entry: OpenBrewByWeightConfigEntry
 ) -> None:
     """Best-effort conditional callback cleanup."""
-    api = OpenBrewByWeightApi(async_get_clientsession(hass), entry.data[CONF_HOST])
+    api = OpenBrewByWeightApi(
+        async_get_clientsession(hass), entry.data[CONF_HOST], entry.data.get(CONF_TOKEN)
+    )
     owned_url = webhook_url(hass, entry.data[CONF_WEBHOOK_ID])
     current: dict[str, object] | None = None
     with contextlib.suppress(ApiError):
