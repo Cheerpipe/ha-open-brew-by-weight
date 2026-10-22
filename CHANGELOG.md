@@ -1,6 +1,11 @@
 # Changelog
 
-## Unreleased
+## 0.3.0
+
+Adds support for the controller's optional Web UI password. To use it, the
+controller needs Open Brew by Weight firmware that includes that password.
+With older firmware, or with the password turned off, the integration works
+exactly as before and setup asks for nothing new.
 
 - Works with the controller's optional Web UI password. While it is on, setup
   asks for permission once: approve a four-digit code from the Web UI, or type
@@ -9,8 +14,6 @@
   **Disconnect** in its **Admin → Access**), Home Assistant shows a
   reauthentication notice instead of retrying forever. Entities stay
   unavailable until you answer it; nothing is removed.
-- Controllers with the password off, and older firmware, work exactly as
-  before.
 
 ## 0.2.0
 
