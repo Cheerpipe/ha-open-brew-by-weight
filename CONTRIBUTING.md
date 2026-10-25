@@ -53,7 +53,16 @@ npm run build
 ```
 
 `npm run dev` opens a page with every card in light and dark themes against
-the test fixtures. The chart math is ported from the controller's Web UI;
+the test fixtures. To try them in a real Home Assistant without a machine,
+`scripts/fake_controller.py` stands in for a controller: it serves the
+integration API with realistic presets and a realistic last shot, answers the
+webhook test, and `POST /demo/shot` pretends a new shot just ended.
+
+The screenshots in `docs/images/cards/` come from such a Home Assistant: a
+dashboard holding the examples in `docs/cards.md`, in order (preset cards,
+then last shot cards, then details cards, then the styling examples), with
+UIX installed and a login that needs no password. Retake them with
+`node scripts/screenshots.mjs <Home Assistant URL> <dashboard path>`. The chart math is ported from the controller's Web UI;
 `test/fixtures/preset-golden.json` pins it to the firmware's own output. After
 the firmware changes its charts, regenerate it with
 `node scripts/golden-from-firmware.mjs <path to the firmware repository>` and

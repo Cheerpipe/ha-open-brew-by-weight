@@ -1,6 +1,6 @@
 // Open Brew by Weight dashboard cards. The integration serves this module to
 // every dashboard, so each element is defined only once.
-import { localizer } from "./localize";
+import { nameCards } from "./registry";
 import { OpenBrewByWeightPresetCard } from "./preset-card";
 import { OpenBrewByWeightPresetCardEditor } from "./preset-card-editor";
 import { OpenBrewByWeightShotCard } from "./shot-card";
@@ -16,22 +16,24 @@ const elements: [string, CustomElementConstructor][] = [
   ["open-brew-by-weight-shot-card", OpenBrewByWeightShotCard],
   ["open-brew-by-weight-shot-card-editor", OpenBrewByWeightShotCardEditor],
 ];
-for (const [name, element] of elements) if (!customElements.get(name)) customElements.define(name, element);
+const define = () => {
+  for (const [name, element] of elements)
+    if (!customElements.get(name))
+      try {
+        customElements.define(name, element);
+      } catch {
+        // Defined meanwhile under the same name: nothing to do.
+      }
+};
+define();
+// The integration loads this module early. Home Assistant may then swap in a
+// scoped custom element registry (a polyfill where browsers lack it), which
+// no longer knows the cards: define them again there while the page settles.
+let checks = 0;
+const settle = setInterval(() => {
+  define();
+  if (++checks >= 60) clearInterval(settle);
+}, 500);
 
-// Home Assistant sets the page's language to its own; the browser's may differ.
-const t = localizer(document.documentElement.lang || navigator.language);
-const registry = ((window as unknown as { customCards?: { type: string }[] }).customCards ??= []);
-const docs = "https://github.com/Cheerpipe/ha-open-brew-by-weight/blob/main/docs/cards.md";
-for (const [type, card] of [
-  ["open-brew-by-weight-preset-card", "preset"],
-  ["open-brew-by-weight-shot-chart-card", "shot"],
-  ["open-brew-by-weight-shot-card", "details"],
-] as const)
-  if (!registry.some((entry) => entry.type === type))
-    registry.push({
-      type,
-      name: t(`card.${card}.name`),
-      description: t(`card.${card}.description`),
-      preview: true,
-      documentationURL: docs,
-    } as { type: string });
+// Home Assistant sets the page's language to its own; until it does, the browser's.
+nameCards(document.documentElement.lang || navigator.language);

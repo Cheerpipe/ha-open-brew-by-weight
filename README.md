@@ -50,6 +50,12 @@ It runs entirely on your local network. No cloud, no account, no polling.
   controller's Web UI. Every color in them can be restyled. See
   [Dashboard cards](docs/cards.md).
 
+<p>
+  <img src="https://raw.githubusercontent.com/Cheerpipe/ha-open-brew-by-weight/main/docs/images/cards/preset.png" alt="Preset card" width="270">
+  <img src="https://raw.githubusercontent.com/Cheerpipe/ha-open-brew-by-weight/main/docs/images/cards/shot-chart-preset.png" alt="Last shot card" width="270">
+  <img src="https://raw.githubusercontent.com/Cheerpipe/ha-open-brew-by-weight/main/docs/images/cards/shot-details.png" alt="Shot details card" width="270">
+</p>
+
 Updates arrive the instant they happen, pushed by the controller itself.
 
 ## Before you start

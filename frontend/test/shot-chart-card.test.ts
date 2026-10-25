@@ -67,7 +67,7 @@ describe("last shot card", () => {
     expect(root.querySelectorAll(".shot-line.drip").length).toBeGreaterThan(0);
     expect(root.querySelector(".band.on-recipe")).not.toBeNull();
     expect(root.querySelector(".band.fast-full")).toBeNull();
-    expect(readout(root)).toBe("31.0 s · 36.3 g · cut line 36.0 g");
+    expect(readout(root)).toBe("29.4 s · 33.9 g · cut line 36.0 g");
     expect([...root.querySelectorAll(".legend span")].map((s) => s.textContent)).toEqual([
       "Stop at",
       "On-recipe window",
@@ -88,7 +88,7 @@ describe("last shot card", () => {
     views()[2].click();
     await settle(card);
     expect(root.querySelector(".series.flow")).toBeNull();
-    expect(readout(root)).toBe("31.0 s · 36.3 g");
+    expect(readout(root)).toBe("29.4 s · 33.9 g");
     views()[3].click();
     await settle(card);
     expect(root.querySelector(".series.bbw")).toBeNull();
@@ -105,7 +105,7 @@ describe("last shot card", () => {
     root.querySelector(".chart")!.dispatchEvent(new KeyboardEvent("keydown", { key: "PageDown" }));
     root.querySelector(".chart")!.dispatchEvent(new KeyboardEvent("keydown", { key: "PageDown" }));
     await settle(card);
-    expect(readout(root)).toMatch(/^21\.0 s · \d+\.\d g · \d+\.\d g\/s$/);
+    expect(readout(root)).toMatch(/^19\.4 s · \d+\.\d g · \d+\.\d g\/s$/);
     expect(() => card.setConfig({ type: "x", chart: "pie" })).toThrow("Unknown chart");
   });
 
@@ -133,6 +133,6 @@ describe("last shot card", () => {
     const { root } = await mount({}, payload(), "es");
     expect(root.querySelector(".title")?.textContent).toBe("Último shot");
     expect(root.querySelector(".chip")?.textContent).toBe("En receta");
-    expect(readout(root)).toBe("31.0 s · 36.3 g · línea de corte 36.0 g");
+    expect(readout(root)).toBe("29.4 s · 33.9 g · línea de corte 36.0 g");
   });
 });

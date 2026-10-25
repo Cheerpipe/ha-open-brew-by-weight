@@ -60,7 +60,7 @@ export class OpenBrewByWeightShotCard extends OpenBrewByWeightCard<ShotCardConfi
   }
 
   getGridOptions() {
-    return { columns: 6, min_columns: 3 };
+    return { columns: 12, min_columns: 6 };
   }
 
   protected render() {
@@ -159,6 +159,9 @@ export class OpenBrewByWeightShotCard extends OpenBrewByWeightCard<ShotCardConfi
       }
       :where(.value.low) {
         color: var(--obbw-error-low-color, var(--_ok));
+      }
+      :where(.stars) {
+        white-space: nowrap;
       }
       :where(.stars .on) {
         color: var(--obbw-star-color, #e8a317);

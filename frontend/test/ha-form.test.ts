@@ -32,6 +32,15 @@ describe("card picker names", () => {
     await import("../src/index");
     const names = (window as unknown as { customCards: { name: string }[] }).customCards.map((c) => c.name);
     expect(names).toContain("Preset de Open Brew by Weight");
+    // Once a card knows Home Assistant's own language, the names follow it.
+    const { nameCards } = await import("../src/registry");
+    nameCards("en");
+    const renamed = (window as unknown as { customCards: { name: string }[] }).customCards.map((c) => c.name);
+    expect(renamed).toEqual([
+      "Open Brew by Weight preset",
+      "Open Brew by Weight last shot",
+      "Open Brew by Weight shot details",
+    ]);
     document.documentElement.lang = "";
   });
 });

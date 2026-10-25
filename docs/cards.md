@@ -19,6 +19,11 @@ example shot. The line under the chart tells you when that shot would reach
 the target, whether the preset calls it fast, on recipe, or slow, and at what
 weight it would stop.
 
+<p>
+  <img src="images/cards/preset.png" alt="Preset card: the stop line, on-recipe window, extend and shorten bands, recent shots, and a draggable example shot" width="414">
+  <img src="images/cards/preset-dark.png" alt="The same preset card in dark mode" width="414">
+</p>
+
 ### Add it
 
 Edit a dashboard, choose **Add card**, and search for **Open Brew by Weight
@@ -53,11 +58,13 @@ A pinned, minimal card for a wall tablet:
 type: custom:open-brew-by-weight-preset-card
 device_id: 0123456789abcdef0123456789abcdef
 preset: 2
-title: Morning double
+title: Morning single
 show_selector: false
 show_legend: false
 show_note: false
 ```
+
+<img src="images/cards/preset-pinned.png" alt="A pinned preset card without selector, legend, or note" width="414">
 
 ## Last shot card
 
@@ -82,6 +89,11 @@ stop line at that time.
 
 Viewers can switch charts with the buttons above it; the pick is remembered
 in that browser. Turn the buttons off to always show the configured chart.
+
+<p>
+  <img src="images/cards/shot-chart-preset.png" alt="Last shot card, Preset + weight: the shot over the preset it ran with" width="414">
+  <img src="images/cards/shot-chart-weight-flow.png" alt="Last shot card, Weight + flow: weight on the left axis, flow on the right" width="414">
+</p>
 
 ### Add it
 
@@ -115,11 +127,15 @@ mode_switch: false
 show_legend: false
 ```
 
+<img src="images/cards/shot-chart-flow.png" alt="A flow-only last shot card without chart buttons or legend" width="414">
+
 ## Shot details card
 
 Every number of your last shot, like a shot card on the controller's Stats
 page: duration and yield in large type, then the rest in a grid that fits the
 card's width.
+
+<img src="images/cards/shot-details.png" alt="Shot details card: duration and yield in large type, then every field of the shot" width="414">
 
 | Field | What it is |
 | --- | --- |
@@ -171,6 +187,8 @@ fields: [goal, error, first_drop, ended, rating]
 columns: 3
 ```
 
+<img src="images/cards/shot-details-compact.png" alt="A compact shot details card: yield, then five fields in three columns" width="414">
+
 ## Styling the cards
 
 Every color and line in the cards can be changed with
@@ -194,6 +212,8 @@ uix:
     }
 ```
 
+<img src="images/cards/styling-colors.png" alt="A preset card restyled with UIX: purple extend bands, orange shorten bands, a teal window, and a thick black stop line" width="414">
+
 The cards' own rules are written so a plain selector in your style wins without
 `!important`. To hide the legend and enlarge the title:
 
@@ -203,6 +223,45 @@ uix:
     .legend { display: none; }
     .title { font-size: 20px; }
 ```
+
+<img src="images/cards/styling-no-legend.png" alt="A preset card restyled with UIX: no legend and a larger title" width="414">
+
+Brand colors for weight and flow, with a lighter flow fill and thicker lines:
+
+```yaml
+type: custom:open-brew-by-weight-shot-chart-card
+device_id: 0123456789abcdef0123456789abcdef
+chart: weight_flow
+uix:
+  style: |
+    ha-card {
+      --obbw-weight-color: #6d4c41;
+      --obbw-flow-color: #ef6c00;
+      --obbw-flow-fill-opacity: 0.25;
+      --obbw-series-line-width: 2.4;
+    }
+```
+
+<img src="images/cards/styling-brand-colors.png" alt="A last shot card restyled with UIX: brown weight and orange flow lines" width="414">
+
+Warmer tiles, larger numbers, and matching stars on the details card:
+
+```yaml
+type: custom:open-brew-by-weight-shot-card
+device_id: 0123456789abcdef0123456789abcdef
+hero: [duration, yield, ratio]
+fields: [goal, error, first_drop, rating]
+columns: 4
+uix:
+  style: |
+    ha-card {
+      --obbw-tile-background: #efebe9;
+      --obbw-hero-font-size: 32px;
+      --obbw-star-color: #6d4c41;
+    }
+```
+
+<img src="images/cards/styling-tiles.png" alt="A shot details card restyled with UIX: warm tiles, larger numbers, and brown stars" width="414">
 
 In a theme, the same variables apply to every card:
 

@@ -84,7 +84,9 @@ export class OpenBrewByWeightPresetCardEditor extends LitElement {
       .hass=${this.hass}
       .data=${data}
       .schema=${schema}
-      .computeLabel=${(s: { name: string }) => t(`editor.${s.name === "device_id" ? "device" : s.name}` as never)}
+      .computeLabel=${(s: { name: string }) =>
+        // ha-form also asks for the grid's label, which has no name.
+        s.name ? t(`editor.${s.name === "device_id" ? "device" : s.name}` as never) : ""}
       @value-changed=${this._changed}
     ></ha-form>`;
   }

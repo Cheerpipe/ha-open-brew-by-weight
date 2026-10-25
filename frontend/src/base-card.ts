@@ -2,6 +2,7 @@ import { LitElement, type PropertyValues } from "lit";
 import { followCardData, type CardDataState } from "./data";
 import type { HomeAssistant } from "./ha";
 import { localizer, type Localize } from "./localize";
+import { nameCards } from "./registry";
 
 /**
  * What every card shares: it follows one device's card data, measures the
@@ -58,13 +59,16 @@ export abstract class OpenBrewByWeightCard<C extends { device_id?: string }> ext
   }
 
   protected updated(changed: PropertyValues) {
-    if (changed.has("hass")) this.toggleAttribute("dark", !!this.hass?.themes?.darkMode);
+    if (changed.has("hass")) {
+      this.toggleAttribute("dark", !!this.hass?.themes?.darkMode);
+      nameCards(this.hass?.locale?.language ?? this.hass?.language);
+    }
     this._follow();
     const body = this.renderRoot.querySelector<HTMLElement>(".body");
     if (body && !this._resize) {
-      this._resize = new ResizeObserver(() => (this._width = body.clientWidth));
+      // The content box: clientWidth would include the padding and draw past it.
+      this._resize = new ResizeObserver(([entry]) => (this._width = Math.floor(entry.contentRect.width)));
       this._resize.observe(body);
-      this._width = body.clientWidth;
     }
   }
 

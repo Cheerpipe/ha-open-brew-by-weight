@@ -133,7 +133,10 @@ export class OpenBrewByWeightShotChartCard extends OpenBrewByWeightCard<ShotChar
     if (!shot) return html`${config.show_header ? this._header(t, row) : nothing}<p class="message">${t("shot.no_curve")}</p>`;
     // Without the rule it ran with, the shot can't sit over its preset.
     const view = this._view === "preset_weight" && !shot.rule ? "weight_flow" : this._view!;
-    this._cursor ??= shot.weight.at(-1)!.t;
+    // The cursor starts at the stop, where both weight and flow read; else at the last reading.
+    this._cursor ??= Number.isFinite(Number(shot.row.endS))
+      ? Math.min(Number(shot.row.endS), shot.weight.at(-1)!.t)
+      : shot.weight.at(-1)!.t;
     return html`
       ${config.show_header ? this._header(t, shot.row) : nothing}
       ${state.data.available ? nothing : html`<p class="message" part="status">${t("state.unavailable")}</p>`}

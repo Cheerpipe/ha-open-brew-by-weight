@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.6.3
+
+- **Card settings show up for real.** The settings of every card could open
+  with an empty *Config* tab. Now the device, the chart, the chart buttons,
+  the fields, and every other option show up in the visual editor.
+- **Charts fit their card.** At a section's usual width, the preset and last
+  shot charts no longer run past the card's right edge.
+- **Cards load in every browser.** In browsers where Home Assistant adds its
+  own support for scoped elements, the cards could show *Configuration
+  error*. They now load there too.
+- The last shot card's cursor starts where the shot stopped, so it reads both
+  weight and flow; the details card spans the section's width by default and
+  keeps the rating stars on one line.
+- Card names in the card picker follow Home Assistant's language even when it
+  differs from the browser's.
+- Ready for Home Assistant 2027.10, which drops an older way of finding a
+  device's integration.
+- Screenshots of every card and styling example in
+  [Dashboard cards](docs/cards.md) and the README.
+
 ## 0.6.2
 
 - **Card settings show up.** Opening a card's settings could show an empty

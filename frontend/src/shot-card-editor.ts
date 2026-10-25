@@ -43,8 +43,11 @@ export class OpenBrewByWeightShotCardEditor extends LitElement {
         },
       ],
       data = { show_header: true, show_empty: true, hero: DEFAULT_HERO, fields: DEFAULT_FIELDS, ...this._config },
+      // ha-form also asks for the grid's label, which has no name.
       label = (name: string) =>
-        name === "device_id"
+        !name
+          ? ""
+          : name === "device_id"
           ? t("editor.device")
           : name === "show_empty"
             ? t("editor.show_empty")

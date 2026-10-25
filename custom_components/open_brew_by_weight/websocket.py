@@ -57,16 +57,15 @@ def ws_subscribe(
 ) -> None:
     """Send the card data now and after every change, until unsubscribed."""
     device = dr.async_get(hass).async_get(msg["device_id"])
-    entry = next(
-        (
-            entry
-            for entry_id in (device.config_entries if device else ())
-            if (entry := hass.config_entries.async_get_entry(entry_id))
-            and entry.domain == DOMAIN
-            and entry.state is ConfigEntryState.LOADED
-        ),
-        None,
+    entry = (
+        hass.config_entries.async_get_entry(device.config_entry_id)
+        if device and device.config_entry_id
+        else None
     )
+    if entry is not None and (
+        entry.domain != DOMAIN or entry.state is not ConfigEntryState.LOADED
+    ):
+        entry = None
     if entry is None:
         connection.send_error(
             msg["id"], ERR_NOT_FOUND, "Open Brew by Weight device not found"

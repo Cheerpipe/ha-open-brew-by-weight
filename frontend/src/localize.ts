@@ -245,5 +245,6 @@ export type Localize = (key: Key, ...values: (string | number)[]) => string;
 export function localizer(language: string | undefined): Localize {
   const table = tables[(language ?? "en").split("-")[0]] ?? en;
   return (key, ...values) =>
-    (table[key] ?? en[key]).replace(/\{(\d+)\}/g, (_, i: string) => String(values[Number(i)]));
+    // A missing text shows its key rather than breaking whoever renders it.
+    (table[key] ?? en[key] ?? String(key)).replace(/\{(\d+)\}/g, (_, i: string) => String(values[Number(i)]));
 }
