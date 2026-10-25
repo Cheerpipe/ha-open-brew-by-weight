@@ -115,6 +115,10 @@ A few things worth knowing about the controls:
   flip a switch, Home Assistant waits for the controller to accept it before
   showing the new value. If the controller says no, the old value stays and you
   get an error explaining why.
+- **Several switches at once are one change.** A scene or an automation that
+  flips several switches together sends them to the controller in a single
+  update, so they take effect at the same moment and the controller sends one
+  update back.
 
 ## Diagnostic entities
 

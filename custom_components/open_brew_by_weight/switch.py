@@ -22,7 +22,9 @@ from .entity import OpenBrewByWeightEntity
 from .models import ProtocolError, QuickSettings
 from .runtime import OpenBrewByWeightRuntimeData
 
-PARALLEL_UPDATES = 1
+# Concurrent switch changes coalesce into one patch; the coordinator's command
+# lock still serializes every controller command.
+PARALLEL_UPDATES = 0
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -166,12 +168,9 @@ class QuickSettingSwitch(OpenBrewByWeightEntity, SwitchEntity):
         await self._async_set(value)
 
     async def _async_set(self, value: bool | str) -> None:
-        revision = self._settings.revision
         try:
-            await self.coordinator.async_confirmed_command(
-                lambda: self.coordinator.api.async_set_quick_setting(
-                    self.entity_description.api_field, value, revision
-                )
+            await self.coordinator.async_set_quick_setting(
+                self.entity_description.api_field, value
             )
         except (ApiError, ProtocolError, TimeoutError) as err:
             raise HomeAssistantError(

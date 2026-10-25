@@ -161,7 +161,7 @@ async def test_failures_are_logged_with_their_code(caplog) -> None:
         Session(Response(409, {"error": "STALE_REVISION"})), "controller"
     )
     with pytest.raises(RequestRejected):
-        await api.async_set_quick_setting("cupProtectionEnabled", False, 3)
+        await api.async_set_quick_settings({"cupProtectionEnabled": False}, 3)
     assert "PUT /quick-settings: STALE_REVISION (HTTP 409)" in caplog.text
 
     session = Session(Response(200, {"requestId": 6, "state": "PERSISTED"}))
@@ -194,7 +194,9 @@ async def test_all_mutation_shapes() -> None:
     await api.async_configure_webhook("http://home/webhook")
     await api.async_test_webhook("proof")
     await api.async_select_preset(2)
-    await api.async_set_quick_setting("brewByWeight", False, 19)
+    await api.async_set_quick_settings(
+        {"brewByWeight": False, "cupProtectionEnabled": True}, 19
+    )
     await api.async_restart()
     assert session.calls[0][0][:2] == (
         "PUT",
@@ -204,6 +206,7 @@ async def test_all_mutation_shapes() -> None:
     assert session.calls[5][1]["json"] == {
         "baseRevision": 19,
         "brewByWeight": False,
+        "cupProtectionEnabled": True,
     }
     assert session.calls[7][1]["json"] == {}
 

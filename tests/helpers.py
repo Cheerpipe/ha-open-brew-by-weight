@@ -59,7 +59,7 @@ def api_mock() -> MagicMock:
         "async_configure_webhook",
         "async_test_webhook",
         "async_select_preset",
-        "async_set_quick_setting",
+        "async_set_quick_settings",
         "async_restart",
         "async_apply_webhook_config",
         "async_shots_page",

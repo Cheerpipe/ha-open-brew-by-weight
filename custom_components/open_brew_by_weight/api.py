@@ -287,12 +287,12 @@ class OpenBrewByWeightApi:
     async def async_select_preset(self, preset_id: int) -> None:
         await self._mutation("PUT", "/presets/active", {"id": preset_id})
 
-    async def async_set_quick_setting(
-        self, field: str, value: bool | str, base_revision: int
+    async def async_set_quick_settings(
+        self, changes: dict[str, bool | str], base_revision: int
     ) -> None:
-        """Persist one Home Quick Setting and wait for controller confirmation."""
+        """Apply Home Quick Settings as one patch and wait for confirmation."""
         await self._mutation(
-            "PUT", "/quick-settings", {"baseRevision": base_revision, field: value}
+            "PUT", "/quick-settings", {"baseRevision": base_revision, **changes}
         )
 
     async def async_restart(self) -> None:

@@ -15,7 +15,13 @@ from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import AuthRequired, CannotConnect, OpenBrewByWeightApi
-from .const import DOMAIN, RECOVERY_DELAYS, STORE_KEY_PREFIX, STORE_VERSION
+from .const import (
+    DOMAIN,
+    QUICK_SETTINGS_COALESCE_S,
+    RECOVERY_DELAYS,
+    STORE_KEY_PREFIX,
+    STORE_VERSION,
+)
 from .models import (
     DeviceSnapshot,
     LastActivation,
@@ -58,6 +64,8 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
         self.api = api
         self.device_id = device_id
         self.command_lock = asyncio.Lock()
+        self._quick_changes: dict[str, bool | str] = {}
+        self._quick_batch: asyncio.Task[None] | None = None
         self._store = Store[dict[str, Any]](
             hass, STORE_VERSION, f"{STORE_KEY_PREFIX}.{entry.entry_id}"
         )
@@ -174,6 +182,29 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
                 self._start_recovery()
                 raise error
             self._cancel_recovery()
+
+    async def async_set_quick_setting(self, field: str, value: bool | str) -> None:
+        """Join the pending Quick Settings patch and await its confirmation.
+
+        Changes requested together (a scene, or one action on several switches)
+        travel as one patch: one request, one confirmation, one refresh.
+        """
+        self._quick_changes[field] = value
+        if self._quick_batch is None:
+            self._quick_batch = self.hass.async_create_task(
+                self._async_send_quick_settings(), f"{DOMAIN} quick settings"
+            )
+        await asyncio.shield(self._quick_batch)
+
+    async def _async_send_quick_settings(self) -> None:
+        await asyncio.sleep(QUICK_SETTINGS_COALESCE_S)
+        changes, self._quick_changes, self._quick_batch = self._quick_changes, {}, None
+        # The revision is read under the command lock, after earlier commands.
+        await self.async_confirmed_command(
+            lambda: self.api.async_set_quick_settings(
+                changes, self.data.snapshot.quick_settings.revision
+            )
+        )
 
     def _transport_failed(self, error: Exception) -> None:
         self.async_set_update_error(UpdateFailed(str(error)))

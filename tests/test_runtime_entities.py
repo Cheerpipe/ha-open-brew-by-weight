@@ -631,20 +631,33 @@ async def test_switches_and_restart_button(hass) -> None:
     await no_scale.async_turn_off()
     command = coordinator.async_confirmed_command.await_args.args[0]
     await command()
-    api.async_set_quick_setting.assert_awaited_with("noScaleBbwMode", "off", 19)
-    api.async_set_quick_setting.reset_mock()
+    api.async_set_quick_settings.assert_awaited_with({"noScaleBbwMode": "off"}, 19)
+    api.async_set_quick_settings.reset_mock()
     await no_scale.async_turn_on()
     command = coordinator.async_confirmed_command.await_args.args[0]
     await command()
-    api.async_set_quick_setting.assert_awaited_with(
-        "noScaleBbwMode", "warn_once", 19
+    api.async_set_quick_settings.assert_awaited_with(
+        {"noScaleBbwMode": "warn_once"}, 19
     )
 
     brew = switches[0]
     await brew.async_turn_off()
     command = coordinator.async_confirmed_command.await_args.args[0]
     await command()
-    api.async_set_quick_setting.assert_awaited_with("brewByWeight", False, 19)
+    api.async_set_quick_settings.assert_awaited_with({"brewByWeight": False}, 19)
+
+    # Changes requested together travel as one patch; the last value wins.
+    coordinator.async_confirmed_command.reset_mock()
+    cup, touch = switches[-1], switches[-2]
+    await asyncio.gather(
+        cup.async_turn_off(), touch.async_turn_off(), cup.async_turn_on()
+    )
+    coordinator.async_confirmed_command.assert_awaited_once()
+    command = coordinator.async_confirmed_command.await_args.args[0]
+    await command()
+    api.async_set_quick_settings.assert_awaited_with(
+        {"cupProtectionEnabled": True, "avoidAccidentalTouchEnabled": False}, 19
+    )
 
     button = RestartButton(coordinator)
     assert button.unique_id.endswith("_restart")
@@ -704,13 +717,13 @@ async def test_real_coordinator_shutdown_stops_future_refreshes(hass) -> None:
 async def test_command_failure_and_bounded_recovery(hass) -> None:
     """Transport loss starts one finite recovery sequence and retains data."""
     coordinator, api, _entry = _coordinator(hass)
-    api.async_set_quick_setting.side_effect = CannotConnect()
+    api.async_set_quick_settings.side_effect = CannotConnect()
     with (
         patch.object(coordinator, "_start_recovery") as recover,
         pytest.raises(CannotConnect),
     ):
         await coordinator.async_confirmed_command(
-            lambda: api.async_set_quick_setting("brewByWeight", False, 19)
+            lambda: api.async_set_quick_settings({"brewByWeight": False}, 19)
         )
     assert not coordinator.last_update_success
     recover.assert_called_once()
@@ -746,13 +759,13 @@ async def test_revoked_token_starts_reauth(hass) -> None:
     with pytest.raises(ConfigEntryAuthFailed):
         await coordinator._async_update_data()
 
-    api.async_set_quick_setting.side_effect = AuthRequired("INTEGRATION_AUTH_REQUIRED", 401)
+    api.async_set_quick_settings.side_effect = AuthRequired("INTEGRATION_AUTH_REQUIRED", 401)
     with (
         patch.object(entry, "async_start_reauth") as reauth,
         pytest.raises(AuthRequired),
     ):
         await coordinator.async_confirmed_command(
-            lambda: api.async_set_quick_setting("brewByWeight", False, 19)
+            lambda: api.async_set_quick_settings({"brewByWeight": False}, 19)
         )
     reauth.assert_called_once_with(hass)
     assert not coordinator.last_update_success
