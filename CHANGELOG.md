@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.2
+
+- **Card settings show up.** Opening a card's settings could show an empty
+  *Config* tab when no built-in card had been edited first in that session.
+  Every option is there now: the device, which chart to show, the chart
+  buttons, the fields, and the rest.
+- Card names in the card picker follow Home Assistant's language instead of
+  the browser's.
+
 ## 0.6.1
 
 - **Shot details card:** *Cut at* and *Drip* are right on a shot whose
