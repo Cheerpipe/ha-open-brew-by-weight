@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.1
+
+- **Shot details card:** *Cut at* and *Drip* are right on a shot whose
+  curve has no reading after the stop when its last reading and an event,
+  such as the first drop, fall at the same moment. The controller's Web UI
+  gets the same fix in its next firmware.
+
 ## 0.6.0
 
 Two more dashboard cards for your last shot, joining the preset card. Like
