@@ -1574,7 +1574,7 @@ function He(e) {
 	return n == null || r == null || i == null || !(r - i > .5) || !(n > 0) ? null : n / (r - i);
 }
 function Ue(e, t, n) {
-	let r = t?.pts.reduce((e, t) => t.t >= e.t ? t : e, t.pts[0]), i = t && e.endS != null && (t.dripSegs[0]?.pts[0] ?? r), a = i ? i.cg / 100 : null;
+	let r = t?.pts.reduce((e, t) => t.t > e.t ? t : e), i = t && e.endS != null && (t.dripSegs[0]?.pts[0] ?? r), a = i ? i.cg / 100 : null;
 	return i ? {
 		s: Number(e.endS),
 		g: a,

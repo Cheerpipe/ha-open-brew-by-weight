@@ -16,16 +16,9 @@ describe("shot fields", () => {
       expect(displayFlowGS(input)).toBe(fields.flow);
       const m = buildShotSparkModel(input);
       const cut = shotCut(input, m, actual);
-      if (m?.dripSegs.length || !fields.cut.s) {
-        // Same reading wherever the Web UI reads the curve itself.
-        expect(cut.s).toBe(fields.cut.s ?? null);
-        expect(cut.g).toBe(fields.cut.g ?? null);
-        expect(cut.drip).toBe(fields.cut.drip ?? null);
-      } else {
-        // Without a drip tail the Web UI reads an event annotation; the card reads the last weight.
-        const latest = m!.pts.reduce((a, b) => (b.t >= a.t ? b : a));
-        expect(cut.g).toBe(latest.cg / 100);
-      }
+      expect(cut.s).toBe(fields.cut.s ?? null);
+      expect(cut.g).toBe(fields.cut.g ?? null);
+      expect(cut.drip).toBe(fields.cut.drip ?? null);
       // The Web UI says "Cup"; the card spells out "Cup removed".
       expect(shotEnded(t, input.stopDetail, input.verdict)).toBe(fields.ended === "Cup" ? "Cup removed" : fields.ended);
     });

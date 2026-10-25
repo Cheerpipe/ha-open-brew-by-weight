@@ -52,12 +52,11 @@ export function displayFlowGS(r: Row): number | null {
 
 /**
  * The stop: its time, the reading there, and, against a post-drip yield, the
- * drip. The reading is the drip tail's first point, else the curve's latest
- * weight. (The Web UI takes the model's last point, which can be an event
- * annotation such as the first drop; this reads the curve itself.)
+ * drip. The reading is the drip tail's first point, else the latest reading
+ * (the model's points end with event annotations such as the first drop).
  */
 export function shotCut(r: Row, m: ShotModel | null, actual: number | null) {
-  const latest = m?.pts.reduce((a, b) => (b.t >= a.t ? b : a), m.pts[0]),
+  const latest = m?.pts.reduce((a, b) => (b.t > a.t ? b : a)),
     p = m && r.endS != null && (m.dripSegs[0]?.pts[0] ?? latest),
     g = p ? p.cg / 100 : null;
   return p
