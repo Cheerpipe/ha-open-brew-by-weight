@@ -8,8 +8,11 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_TOKEN
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.dispatcher import async_dispatcher_send
+from homeassistant.helpers.typing import ConfigType
 
 from .api import ApiError, AuthRequired, OpenBrewByWeightApi, describe_error
 from .const import (
@@ -22,8 +25,18 @@ from .coordinator import OpenBrewByWeightCoordinator
 from .entity import _configuration_url, _connections
 from .models import DEFAULT_MANUFACTURER, DEFAULT_MODEL
 from .runtime import OpenBrewByWeightRuntimeData, webhook_url
+from .websocket import SIGNAL_UNLOADED
+from .websocket import async_register as async_register_websocket
 
 type OpenBrewByWeightConfigEntry = ConfigEntry[OpenBrewByWeightRuntimeData]
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Register the card data commands."""
+    async_register_websocket(hass)
+    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: OpenBrewByWeightConfigEntry) -> bool:
@@ -80,6 +93,7 @@ async def async_unload_entry(
         return False
     await entry.runtime_data.coordinator.async_shutdown()
     entry.runtime_data.async_unregister_webhook()
+    async_dispatcher_send(hass, SIGNAL_UNLOADED.format(entry.entry_id))
     return True
 
 

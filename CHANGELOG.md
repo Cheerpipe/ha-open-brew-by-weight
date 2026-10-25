@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+Home Assistant now keeps the data the controller draws its preset and shot
+charts from, ready for dashboard cards. This needs Open Brew by Weight
+firmware that shares it; with older firmware nothing changes.
+
+- Each preset's settings (target, on-recipe window, fast and slow shot limits)
+  and its recent shot arrival times, refreshed when a preset changes.
+- The last shot's full record and weight curve, read once per shot and kept
+  across Home Assistant restarts.
+
 ## 0.4.0
 
 Switches changed together now reach the controller as one change. This needs

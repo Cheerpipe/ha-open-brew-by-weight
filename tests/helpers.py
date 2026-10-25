@@ -63,6 +63,7 @@ def api_mock() -> MagicMock:
         "async_restart",
         "async_apply_webhook_config",
         "async_shots_page",
+        "async_last_shot",
         "async_auth_required",
         "async_exchange_password",
         "async_start_pairing",
@@ -72,6 +73,7 @@ def api_mock() -> MagicMock:
     api.async_auth_required.return_value = False
     api.async_snapshot.return_value = coordinator_data().snapshot
     api.async_presets.return_value = coordinator_data().presets
+    api.async_last_shot.return_value = None
     api.async_webhook_config.return_value = {
         "enabled": False,
         "url": "",

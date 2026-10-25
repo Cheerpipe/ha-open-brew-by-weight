@@ -16,6 +16,11 @@ gives it to the controller. From then on:
 - after a shot ends, Home Assistant reads the full record from the controller,
   so the *Last shot*, *Last activation*, and *Stats* sensors always match what
   the controller saved;
+- with controller firmware that offers them, Home Assistant also keeps each
+  preset's settings and the last shot's weight curve, the data behind the
+  controller's preset and shot charts. It reads the curve once per new shot
+  (again only if you rate that shot), remembers it across restarts, and
+  re-reads the preset settings when a preset changes;
 - every message carries a revision number. If Home Assistant notices it missed
   one, it re-reads everything once to catch up.
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import math
 import re
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from typing import Any, Self
 
 from .const import (
@@ -114,6 +114,31 @@ def _boolean(value: Any, field: str) -> bool:
     return value
 
 
+# Preset rule fields the cards need; the rest of the Web UI preset render
+# (dose, first drop, recent arrivals, grind hint) passes through unchanged.
+RULE_NUMBERS = (
+    "goalWeightG",
+    "fastBeforeS",
+    "slowAfterS",
+    "fastMarginG",
+    "slowMarginG",
+    "operationalWallMs",
+    "bbwProtectionMs",
+)
+RULE_FLAGS = ("brewByWeight", "fastExtractionGuardEnabled", "slowExtractionGuardEnabled")
+
+
+def _preset_rule(item: dict[str, Any]) -> dict[str, Any] | None:
+    """Return the preset_rules_v1 fields beyond the original contract."""
+    if "goalWeightG" not in item:
+        return None
+    for key in RULE_NUMBERS:
+        _number(item.get(key), f"preset.{key}")
+    for key in RULE_FLAGS:
+        _boolean(item.get(key), f"preset.{key}")
+    return {k: v for k, v in item.items() if k not in ("id", "name", "isFactory")}
+
+
 @dataclass(frozen=True, slots=True)
 class Preset:
     """A named controller preset."""
@@ -121,6 +146,7 @@ class Preset:
     id: int
     name: str
     is_factory: bool
+    rule: dict[str, Any] | None = field(default=None, hash=False)
 
 
 @dataclass(frozen=True, slots=True)
@@ -130,6 +156,7 @@ class PresetState:
     active_id: int
     revision: int
     items: tuple[Preset, ...]
+    cut_ramp_s: float | None = None
 
     @classmethod
     def from_dict(cls, value: Any) -> Self:
@@ -151,11 +178,17 @@ class PresetState:
                 raise ProtocolError("preset inventory is ambiguous")
             ids.add(preset_id)
             names.add(name)
-            items.append(Preset(preset_id, name, factory))
+            items.append(Preset(preset_id, name, factory, _preset_rule(item)))
         active_id = _integer(data.get("activeId"), "activeId", 1)
         if active_id not in ids:
             raise ProtocolError("activeId is missing from items")
-        return cls(active_id, _integer(data.get("revision"), "revision"), tuple(items))
+        ramp = data.get("cutRampS")
+        return cls(
+            active_id,
+            _integer(data.get("revision"), "revision"),
+            tuple(items),
+            None if ramp is None else _number(ramp, "cutRampS"),
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -175,6 +208,7 @@ class Shot:
     average_flow_gps: float | None = None
     rating: int | None = None
     ended_at_unix_sec: int | None = None
+    shot_id: int | None = None
 
     @classmethod
     def from_dict(cls, value: Any) -> Self:
@@ -192,6 +226,7 @@ class Shot:
         optional_flow = data.get("averageFlowGps")
         optional_rating = data.get("rating")
         optional_ended_at = data.get("endedAtUnixSec")
+        optional_shot_id = data.get("shotId")
         return cls(
             cycle_id=_integer(data.get("cycleId"), "cycleId"),
             uptime_ms=_integer(data.get("uptimeMs"), "uptimeMs"),
@@ -216,6 +251,9 @@ class Shot:
             ended_at_unix_sec=None
             if optional_ended_at is None
             else _integer(optional_ended_at, "endedAtUnixSec"),
+            shot_id=None
+            if optional_shot_id is None
+            else _integer(optional_shot_id, "shotId"),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -237,7 +275,43 @@ class Shot:
         }
         if data["ended_at_unix_sec"] is not None:
             result["endedAtUnixSec"] = data["ended_at_unix_sec"]
+        if data["shot_id"] is not None:
+            result["shotId"] = data["shot_id"]
         return result
+
+
+@dataclass(frozen=True, slots=True)
+class ShotDetail:
+    """The newest shot as one Web UI Stats row, its curve under "curve"."""
+
+    shot_id: int
+    values: dict[str, Any] = field(hash=False)
+
+    @classmethod
+    def from_dict(cls, value: Any) -> Self | None:
+        """Parse a last_shot_curve_v1 response; None before the first shot."""
+        data = _mapping(value)
+        if data.get("apiVersion") != API_VERSION:
+            raise ProtocolError("unsupported last shot API version")
+        row, cols = data.get("shot"), data.get("cols")
+        if row is None:
+            return None
+        if not isinstance(cols, str) or not isinstance(row, list):
+            raise ProtocolError("last shot is invalid")
+        names = cols.split(",")
+        if len(row) != len(names) + 1 or not isinstance(row[-1], dict):
+            raise ProtocolError("last shot row does not match its columns")
+        values = {**dict(zip(names, row, strict=False)), "curve": row[-1]}
+        return cls(_integer(values.get("id"), "shot.id"), values)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Return the response form, for storage."""
+        names = [name for name in self.values if name != "curve"]
+        return {
+            "apiVersion": API_VERSION,
+            "cols": ",".join(names),
+            "shot": [self.values[name] for name in names] + [self.values["curve"]],
+        }
 
 
 @dataclass(frozen=True, slots=True)

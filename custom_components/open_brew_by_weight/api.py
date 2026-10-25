@@ -10,7 +10,7 @@ from urllib.parse import urlsplit
 
 from aiohttp import ClientError, ClientResponse, ClientSession, ClientTimeout
 
-from .models import DeviceSnapshot, PresetState, ProtocolError
+from .models import DeviceSnapshot, PresetState, ProtocolError, ShotDetail
 
 _LOGGER = logging.getLogger(__package__)
 
@@ -205,6 +205,11 @@ class OpenBrewByWeightApi:
     async def async_presets(self) -> PresetState:
         _, payload = await self._json("GET", "/presets")
         return PresetState.from_dict(payload)
+
+    async def async_last_shot(self) -> ShotDetail | None:
+        """Read the newest shot as one Stats row with its curve."""
+        _, payload = await self._json("GET", "/shots/last")
+        return ShotDetail.from_dict(payload)
 
     async def async_shots_page(self) -> dict[str, Any]:
         """Read one bounded shots page carrying the firmware stats aggregate."""

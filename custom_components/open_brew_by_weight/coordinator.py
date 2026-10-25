@@ -29,6 +29,7 @@ from .models import (
     ProtocolError,
     QuickSettings,
     Shot,
+    ShotDetail,
     ShotStats,
     WebhookEvent,
 )
@@ -43,6 +44,7 @@ class CoordinatorData:
     last_shot: Shot | None
     last_activation: LastActivation | None = None
     stats: ShotStats | None = None
+    shot_detail: ShotDetail | None = None
 
 
 class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
@@ -71,6 +73,8 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
         )
         self._stored_last: Shot | None = None
         self._stored_activation: LastActivation | None = None
+        self._stored_detail: ShotDetail | None = None
+        self._presets_task: asyncio.Task[None] | None = None
         self._seen_order: deque[tuple[str, int, int, str, int]] = deque(maxlen=256)
         self._seen: set[tuple[str, int, int, str, int]] = set()
         self._last_uptime_by_boot: dict[int, int] = {}
@@ -96,8 +100,10 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
                 if stored.get("last_activation") is None
                 else LastActivation.from_dict(stored["last_activation"])
             )
+            if stored.get("shot_detail") is not None:
+                self._stored_detail = ShotDetail.from_dict(stored["shot_detail"])
         except KeyError, TypeError, ValueError:
-            self._stored_last = self._stored_activation = None
+            self._stored_last = self._stored_activation = self._stored_detail = None
 
     async def _async_update_data(self) -> CoordinatorData:
         for attempt in range(2):
@@ -121,15 +127,38 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
         last = snapshot.last_shot
         activation = snapshot.last_activation
         stats = await self._async_fetch_stats(snapshot)
+        detail = await self._async_fetch_detail(snapshot, last)
         if (
             last != self._stored_last
             or activation != self._stored_activation
+            or detail != self._stored_detail
             or stats != getattr(self.data, "stats", None)
         ):
             self._stored_last = last
             self._stored_activation = activation
+            self._stored_detail = detail
             self._store.async_delay_save(self._storage_data, 1)
-        return CoordinatorData(snapshot, presets, last, activation, stats)
+        return CoordinatorData(snapshot, presets, last, activation, stats, detail)
+
+    async def _async_fetch_detail(
+        self, snapshot: DeviceSnapshot, last: Shot | None
+    ) -> ShotDetail | None:
+        """Read the last shot's row and curve once per shot (or new rating)."""
+        if (
+            "last_shot_curve_v1" not in snapshot.capabilities
+            or last is None
+            or last.shot_id is None
+        ):
+            return None
+        held = self._stored_detail
+        if held is not None and held.shot_id != last.shot_id:
+            held = None
+        if held is not None and held.values.get("rating") == (last.rating or 0):
+            return held
+        try:
+            return await self.api.async_last_shot()
+        except Exception:
+            return held
 
     async def _async_fetch_stats(self, snapshot: DeviceSnapshot) -> ShotStats | None:
         """Prefer the snapshot aggregate; fall back to one bounded page read."""
@@ -254,6 +283,22 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
             if not self._refresh_pending:
                 return
 
+    def _schedule_presets_refresh(self) -> None:
+        if self._presets_task is None or self._presets_task.done():
+            self._presets_task = self.hass.async_create_task(
+                self._async_refresh_presets(), f"{DOMAIN} preset rules"
+            )
+
+    async def _async_refresh_presets(self) -> None:
+        """Read the preset rules a presets_changed webhook does not carry."""
+        try:
+            presets = await self.api.async_presets()
+        except Exception:
+            return  # the next full refresh brings them
+        data = self.data
+        if self.last_update_success and presets.revision >= data.presets.revision:
+            self.async_set_updated_data(replace(data, presets=presets))
+
     def _reconciliation_succeeded(self) -> bool:
         return bool(
             self.last_update_success
@@ -274,13 +319,15 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
 
     async def async_shutdown(self) -> None:
         """Cancel entry-owned finite recovery work."""
-        for task in (self._recovery_task, self._refresh_task):
-            if task is not None and not task.done():
+        tasks = [
+            task
+            for task in (self._recovery_task, self._refresh_task, self._presets_task)
+            if task is not None
+        ]
+        for task in tasks:
+            if not task.done():
                 task.cancel()
-        await asyncio.gather(
-            *(task for task in (self._recovery_task, self._refresh_task) if task),
-            return_exceptions=True,
-        )
+        await asyncio.gather(*tasks, return_exceptions=True)
         await super().async_shutdown()
 
     async def async_process_webhook(self, event: WebhookEvent) -> None:
@@ -352,6 +399,15 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
             self._accept_event(key, event)
             if presets.revision > data.presets.revision + 1:
                 self._schedule_explicit_refresh(f"{DOMAIN} preset reconciliation")
+            elif "preset_rules_v1" in data.snapshot.capabilities:
+                self._schedule_presets_refresh()
+            # The webhook carries no rules: keep the known ones until the read.
+            rules = {item.id: item.rule for item in data.presets.items}
+            presets = replace(
+                presets,
+                items=tuple(replace(p, rule=rules.get(p.id)) for p in presets.items),
+                cut_ramp_s=data.presets.cut_ramp_s,
+            )
             snapshot = replace(
                 data.snapshot,
                 active_preset_id=presets.active_id,
@@ -442,4 +498,7 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
             "last_activation": None
             if self._stored_activation is None
             else self._stored_activation.to_dict(),
+            "shot_detail": None
+            if self._stored_detail is None
+            else self._stored_detail.to_dict(),
         }
