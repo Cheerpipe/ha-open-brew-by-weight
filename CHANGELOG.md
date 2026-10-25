@@ -1,19 +1,36 @@
 # Changelog
 
-## Unreleased
+## 0.5.0
 
-Home Assistant now keeps the data the controller draws its preset and shot
-charts from, and the first dashboard card uses it. This needs Open Brew by Weight
-firmware that shares it; with older firmware nothing changes.
+Your first dashboard card: the **preset card** draws how a preset decides when
+to stop a shot, the same chart as the controller's Web UI. It comes with the
+integration, so there's no dashboard resource to add: install, reload your
+browser once, and look for **Open Brew by Weight preset** when adding a card.
 
-- Each preset's settings (target, on-recipe window, fast and slow shot limits)
-  and its recent shot arrival times, refreshed when a preset changes.
-- The last shot's full record and weight curve, read once per shot and kept
-  across Home Assistant restarts.
-- A **preset card**: draws how a preset stops a shot, with the example shot
-  you can drag, like the controller's Web UI. It comes with the integration,
-  needs no dashboard resource, and every color can be changed with UIX or a
-  theme. See [Dashboard cards](docs/cards.md).
+The card needs Open Brew by Weight firmware that shares preset settings and
+shot curves with Home Assistant; update the controller together with this
+release. With older firmware the integration works as before and the card asks
+you to update.
+
+- **See the whole preset.** The *Stop at* line, the on-recipe window, how far
+  a fast shot is extended and a slow one shortened, the stretch before weight
+  cuts start, and dots for when your recent shots reached the target.
+- **Try a shot.** Drag the example shot along the chart, or use the arrow
+  keys: the card tells you when it would reach the target, whether that's
+  fast, on recipe, or slow, and at what weight it would stop.
+- **Switch presets from the card.** An optional dropdown changes the active
+  preset; it stays locked while a shot runs.
+- **Follow the active preset or pin one**, and hide the header, legend, note,
+  example shot, or recent shots to fit your dashboard.
+- **Make it yours.** Every color, line, and band can be changed with UIX,
+  card-mod, or a Home Assistant theme: fast, slow, and on-recipe colors, each
+  band on its own, the stop line's color and width, the background, and more.
+  See [Dashboard cards](docs/cards.md).
+- Follows Home Assistant's dark mode and language (English and Spanish).
+- Home Assistant now keeps each preset's settings and the last shot's weight
+  curve, the data behind the controller's charts. It reads the curve once per
+  shot and remembers it across restarts, so open dashboards never add traffic
+  to the controller.
 
 ## 0.4.0
 
