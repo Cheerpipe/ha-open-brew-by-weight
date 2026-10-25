@@ -1,14 +1,27 @@
 # Changelog
 
-## Unreleased
+## 0.6.0
 
-- A **shot details card**: every number of your last shot, like a shot card
-  on the controller's Stats page. Choose and order the fields, pick which
-  ones show as large numbers, and set the columns.
-- A **last shot card**: your last shot over its preset, weight and flow
-  together, or either alone, the same charts as the controller's Web UI.
-  Buttons switch the chart, the cursor reads the shot at any moment, and every
-  color can be changed with UIX or a theme. See [Dashboard cards](docs/cards.md).
+Two more dashboard cards for your last shot, joining the preset card. Like
+it, they come with the integration: update, reload your browser once, and look
+for them when adding a card. They need the same controller firmware as 0.5.0.
+
+- **Last shot card.** Your last shot four ways, the same charts as the
+  controller's Web UI: over the preset it ran with, weight and flow together,
+  or either alone. Buttons above the chart switch between them and each
+  browser remembers the pick. Hover, drag, or use the arrow keys to read the
+  shot at any moment: time, weight, flow, and the stop line there. The weight
+  line changes color where a guard stepped in, and a dashed tail shows the
+  drips after the stop.
+- **Shot details card.** Every number of your last shot, like a shot card on
+  the controller's Stats page: duration and yield in large type, then goal,
+  error, drip, flow, first drop, dose, ratio, how it ended, the scale, your
+  rating, and more. Choose and order the fields, pick which show as large
+  numbers, and set the columns.
+- Both show when the shot ended, its preset, and how it ended at the top,
+  follow dark mode and your language (English and Spanish), and can be
+  restyled with UIX, card-mod, or a theme. See
+  [Dashboard cards](docs/cards.md).
 
 ## 0.5.0
 
