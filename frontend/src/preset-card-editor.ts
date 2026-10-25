@@ -1,5 +1,6 @@
 import { LitElement, html, nothing, type PropertyValues } from "lit";
 import { followCardData, type CardDataState } from "./data";
+import { loadHaForm } from "./ha-form";
 import { DOMAIN, type HomeAssistant } from "./ha";
 import { localizer } from "./localize";
 import type { PresetCardConfig } from "./preset-card";
@@ -27,6 +28,11 @@ export class OpenBrewByWeightPresetCardEditor extends LitElement {
   declare _state?: CardDataState;
   private _following?: string;
   private _stop?: () => void;
+
+  connectedCallback() {
+    super.connectedCallback();
+    void loadHaForm().then(() => this.requestUpdate());
+  }
 
   setConfig(config: PresetCardConfig) {
     this._config = config;

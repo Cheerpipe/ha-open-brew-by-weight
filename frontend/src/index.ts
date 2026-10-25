@@ -18,7 +18,8 @@ const elements: [string, CustomElementConstructor][] = [
 ];
 for (const [name, element] of elements) if (!customElements.get(name)) customElements.define(name, element);
 
-const t = localizer(navigator.language);
+// Home Assistant sets the page's language to its own; the browser's may differ.
+const t = localizer(document.documentElement.lang || navigator.language);
 const registry = ((window as unknown as { customCards?: { type: string }[] }).customCards ??= []);
 const docs = "https://github.com/Cheerpipe/ha-open-brew-by-weight/blob/main/docs/cards.md";
 for (const [type, card] of [

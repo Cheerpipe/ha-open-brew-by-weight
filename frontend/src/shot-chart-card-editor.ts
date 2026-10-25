@@ -1,4 +1,5 @@
 import { LitElement, html, nothing } from "lit";
+import { loadHaForm } from "./ha-form";
 import { DOMAIN, type HomeAssistant } from "./ha";
 import { localizer } from "./localize";
 import { CHART_VIEWS, type ShotChartCardConfig } from "./shot-chart-card";
@@ -11,6 +12,11 @@ export class OpenBrewByWeightShotChartCardEditor extends LitElement {
 
   declare hass?: HomeAssistant;
   declare _config?: ShotChartCardConfig;
+
+  connectedCallback() {
+    super.connectedCallback();
+    void loadHaForm().then(() => this.requestUpdate());
+  }
 
   setConfig(config: ShotChartCardConfig) {
     this._config = config;

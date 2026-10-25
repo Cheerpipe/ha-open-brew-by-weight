@@ -1,4 +1,5 @@
 import { LitElement, html, nothing } from "lit";
+import { loadHaForm } from "./ha-form";
 import { DOMAIN, type HomeAssistant } from "./ha";
 import { localizer } from "./localize";
 import { DEFAULT_FIELDS, DEFAULT_HERO, type ShotCardConfig } from "./shot-card";
@@ -10,6 +11,11 @@ export class OpenBrewByWeightShotCardEditor extends LitElement {
 
   declare hass?: HomeAssistant;
   declare _config?: ShotCardConfig;
+
+  connectedCallback() {
+    super.connectedCallback();
+    void loadHaForm().then(() => this.requestUpdate());
+  }
 
   setConfig(config: ShotCardConfig) {
     this._config = config;
