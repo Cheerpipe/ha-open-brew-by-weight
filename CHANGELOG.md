@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- A **last shot card**: your last shot over its preset, weight and flow
+  together, or either alone, the same charts as the controller's Web UI.
+  Buttons switch the chart, the cursor reads the shot at any moment, and every
+  color can be changed with UIX or a theme. See [Dashboard cards](docs/cards.md).
+
 ## 0.5.0
 
 Your first dashboard card: the **preset card** draws how a preset decides when

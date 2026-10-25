@@ -163,6 +163,7 @@ export interface PresetGeometry {
   windowEdges: string;
   hatch: { x: number; y: number; width: number; height: number } | null;
   arrivals: { x: number; y: number }[];
+  /** Seconds to x and grams to y, for a shot drawn over the preset. */
   /** Pace curve from the first drop through (tArr at the target), ending at `end`. */
   pace: (tArr: number, end: number) => string;
   noCutLabel: boolean;
@@ -172,14 +173,15 @@ export interface PresetGeometry {
 /**
  * The preset graph laid out in pixels for a host `width` wide: the firmware's
  * presetGraph, minus markup. `compact` drops the no-cut hatch and the scrubber
- * room, like the Stats card.
+ * room, like the Stats card; `tens` ticks every 10 s; `maxG` and `maxT` grow
+ * the axes to fit a shot drawn over the preset.
  */
 export function presetGeometry(
   m: RuleModel,
   width: number,
-  options: { arrivals?: number[]; compact?: boolean } = {},
+  options: { arrivals?: number[]; compact?: boolean; tens?: boolean; maxG?: number; maxT?: number } = {},
 ): PresetGeometry {
-  const { arrivals = [], compact = false } = options,
+  const { arrivals = [], compact = false, tens = false, maxG = 0, maxT = 0 } = options,
     W = width,
     H = Math.round(
       compact ? Math.min(180, Math.max(140, W * 0.48)) : Math.min(220, Math.max(180, W * 0.56)),
@@ -188,9 +190,9 @@ export function presetGeometry(
     R = W - 10,
     T = 14,
     B = H - 18,
-    top = Math.ceil(m.ceil + 2),
+    top = Math.ceil(Math.max(m.ceil, maxG) + 2),
     step = top > 30 ? 10 : 5,
-    tMax = m.wall,
+    tMax = Math.max(m.wall, maxT),
     X = (t: number) => L + ((R - L) * t) / tMax,
     Y = (g: number) => B - ((B - T) * g) / top,
     n = (v: number) => +(+v).toFixed(1),
@@ -235,13 +237,17 @@ export function presetGeometry(
   // Every tick carries its unit; one that would spill past the edge ends there,
   // one that would overlap the previous is dropped (never the last).
   let lastR = -99;
-  [0, m.prot, m.t1, m.t2, m.wall].forEach((t, i, ts) => {
+  (tens
+    ? Array.from({ length: Math.floor(tMax / 10) + 1 }, (_, i) => i * 10)
+    : [0, m.prot, m.t1, m.t2, m.wall]
+  ).forEach((t, i, ts) => {
     const s = n(t) + " s",
       w = s.length * 6.5,
       edge = X(t) + w / 2 > W - 1,
       x0 = edge ? W - 1 - w : i ? X(t) - w / 2 : X(t);
     if (x0 < lastR + 4 && i < ts.length - 1) return;
     lastR = x0 + w;
+    if (tens) grid.push(`M${X(t).toFixed(1)} ${T}V${B}`);
     xLabels.push({ x: edge ? W - 1 : X(t), y: B + 13, text: s, anchor: edge ? "end" : i ? "middle" : "start" });
   });
   return {

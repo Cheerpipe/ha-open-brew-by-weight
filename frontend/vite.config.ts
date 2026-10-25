@@ -10,7 +10,7 @@ export default defineConfig({
     },
     outDir: "../custom_components/open_brew_by_weight/frontend",
     emptyOutDir: true,
-    target: "es2022",
+    target: "es2023",
     minify: true,
     sourcemap: false,
   },

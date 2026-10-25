@@ -16,6 +16,8 @@ export const themeStyles = css`
     --_d-band-full: 0.14;
     --_d-band-part: 0.07;
     --_d-band-win: 0.26;
+    --_d-shot: #0e7490;
+    --_d-flow: #7a7a7a;
   }
   :host([dark]) {
     --_d-fast: #ff6b4a;
@@ -25,6 +27,8 @@ export const themeStyles = css`
     --_d-band-full: 0.22;
     --_d-band-part: 0.11;
     --_d-band-win: 0.32;
+    --_d-shot: #38bdf8;
+    --_d-flow: #b8b8b8;
   }
   /* Resolved where UIX and card-mod styles (on ha-card) already apply. */
   :where(.body) {
@@ -43,6 +47,9 @@ export const themeStyles = css`
     --_slow-part: var(--obbw-corridor-slow-partial-color, var(--_slow));
     --_slow-full: var(--obbw-corridor-slow-full-color, var(--_slow));
     --_cut: var(--obbw-cut-line-color, var(--_d-cut));
+    --_shot: var(--obbw-shot-line-color, var(--_d-shot));
+    --_flow: var(--obbw-flow-color, var(--_d-flow));
+    --_weight: var(--obbw-weight-color, var(--_ok));
     font-family: var(--obbw-font-family, inherit);
   }
 
@@ -265,5 +272,48 @@ export const themeStyles = css`
     margin: 0;
     padding: 8px 0;
     color: var(--_muted);
+  }
+`;
+
+// Card chrome shared by every card: padding, header, status messages.
+export const cardStyles = css`
+  :where(ha-card) {
+    height: 100%;
+    box-sizing: border-box;
+  }
+  :where(.body) {
+    padding: var(--obbw-card-padding, 16px);
+  }
+  :where(.header) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  :where(.titles) {
+    flex: 1;
+    min-width: 0;
+  }
+  :where(.title) {
+    font-size: var(--obbw-title-font-size, 16px);
+    font-weight: 500;
+    color: var(--obbw-title-color, var(--_fg));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :where(.subtitle) {
+    font-size: 12px;
+    color: var(--obbw-subtitle-color, var(--_muted));
+  }
+  :where(.selector) {
+    max-width: 50%;
+    padding: 4px 8px;
+    border: 1px solid var(--obbw-selector-border-color, var(--divider-color, #dadada));
+    border-radius: var(--obbw-selector-radius, 8px);
+    background: var(--obbw-selector-background, var(--_surface));
+    color: var(--_fg);
+    font: inherit;
+    font-size: 13px;
   }
 `;

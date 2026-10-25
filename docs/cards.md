@@ -59,6 +59,62 @@ show_legend: false
 show_note: false
 ```
 
+## Last shot card
+
+Charts your last shot the moment the controller saves it. Four charts, the
+same ones the controller's Web UI draws:
+
+- **Preset + weight**: the shot's weight over the preset it ran with, so you
+  see where it crossed the stop line and whether it landed on recipe. Only
+  the band the shot ended in is shaded.
+- **Weight + flow**: weight and flow rate on one grid, weight on the left
+  axis and flow on the right. Each 10 g line is also a flow line.
+- **Weight** or **Flow** alone.
+
+In the weight charts the line changes color where a guard stepped in: green
+on recipe, red once a fast shot was extended, blue once a slow one was
+shortened, gray while the scale was lost. A dashed tail shows the drips after
+the stop, and faint dots mark touches the controller ignored.
+
+Hover over the chart, drag along it, or use the arrow keys once it has focus
+to read the shot at any moment. In *Preset + weight* the reading includes the
+stop line at that time.
+
+Viewers can switch charts with the buttons above it; the pick is remembered
+in that browser. Turn the buttons off to always show the configured chart.
+
+### Add it
+
+Search for **Open Brew by Weight last shot** when adding a card. In YAML:
+
+```yaml
+type: custom:open-brew-by-weight-shot-chart-card
+device_id: 0123456789abcdef0123456789abcdef
+chart: weight_flow
+```
+
+### Options
+
+| Option | Default | What it does |
+| --- | --- | --- |
+| `device_id` | | The controller to show. |
+| `chart` | `preset_weight` | The chart shown first: `preset_weight`, `weight_flow`, `weight`, or `flow`. A shot without its preset settings shows `weight_flow` instead of `preset_weight`. |
+| `mode_switch` | `true` | Buttons that switch the chart. |
+| `title` | Last shot | Replaces the title. |
+| `show_header` | `true` | The title, when the shot ended, its preset, and how it ended. |
+| `show_readout` | `true` | The line under the chart that reads the shot at the cursor. |
+| `show_legend` | `true` | The legend. |
+
+A flow chart for a small tile, with nothing to switch:
+
+```yaml
+type: custom:open-brew-by-weight-shot-chart-card
+device_id: 0123456789abcdef0123456789abcdef
+chart: flow
+mode_switch: false
+show_legend: false
+```
+
 ## Styling the cards
 
 Every color and line in the cards can be changed with
@@ -127,6 +183,13 @@ my_theme:
 | `--obbw-readout-color`, `--obbw-legend-color`, `--obbw-note-color` | Text under the chart. |
 | `--obbw-selector-background`, `--obbw-selector-border-color`, `--obbw-selector-radius` | The preset dropdown. |
 | `--obbw-pill-border-color` | The bubble shown while dragging. |
+| `--obbw-shot-line-color` | The last shot over its preset, its stop and final-weight dots. |
+| `--obbw-weight-color` | Weight while on recipe (defaults to the on-recipe color). |
+| `--obbw-flow-color` | The flow rate line and its fill. |
+| `--obbw-weight-fill-opacity`, `--obbw-flow-fill-opacity` | How strong the fill under each line is at the top. |
+| `--obbw-flow-label-color` | Flow axis labels in *Weight + flow*. |
+| `--obbw-cursor-color` | The cursor's dot on the weight line. |
+| `--obbw-switch-background`, `--obbw-switch-active-background` | The chart buttons and the selected one. |
 
 ### Sizes and type
 
@@ -135,6 +198,8 @@ my_theme:
 | `--obbw-cut-line-width` | `2.5` |
 | `--obbw-pace-line-width` | `0.8` |
 | `--obbw-example-shot-width` | `1.5` |
+| `--obbw-shot-line-width` | `1.8` |
+| `--obbw-series-line-width` | `1.6` (weight and flow lines) |
 | `--obbw-card-padding` | `16px` |
 | `--obbw-font-family` | Home Assistant's font |
 | `--obbw-title-font-size` | `16px` |
@@ -151,6 +216,11 @@ my_theme:
 | `.recent-shot`, `.no-cut`, `.grid-line`, `.axis-label` | Marks and axes. |
 | `.scrub`, `.example-shot`, `.scrub-handle` | The example shot. |
 | `.readout`, `.legend`, `.note`, `.message` | Text under the chart, and status messages. |
+| `.chip`, `.chip.on_recipe`, `.chip.fast`, `.chip.slow`, `.chip.manual` | How the last shot ended. |
+| `.views`, `.view`, `.view[aria-pressed="true"]` | The chart buttons. |
+| `.shot-line`, `.shot-line.drip`, `.stop-point`, `.final-point`, `.held` | The last shot over its preset. |
+| `.series.bbw`, `.series.fast`, `.series.slow`, `.series.atm`, `.series.flow`, `.series-fill` | Weight by phase, flow, and their fills. |
+| `.cursor`, `.cursor-guide`, `.cursor-dot` | The cursor. |
 
 The same names are exposed as CSS `part`s. Variable and part names are kept
 stable between releases; a rename is announced in the changelog.

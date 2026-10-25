@@ -1,7 +1,8 @@
-import { LitElement, css, html, nothing, svg, type PropertyValues } from "lit";
-import { followCardData, type CardData, type CardDataState } from "./data";
+import { html, nothing, svg } from "lit";
+import { OpenBrewByWeightCard } from "./base-card";
+import type { CardData } from "./data";
 import { firstDevice, presetSelectEntity, type HomeAssistant } from "./ha";
-import { localizer, type Localize } from "./localize";
+import type { Localize } from "./localize";
 import {
   buildRuleChartModel,
   defaultScrub,
@@ -11,7 +12,7 @@ import {
   type PresetRender,
   type RuleModel,
 } from "./preset-chart";
-import { themeStyles } from "./theme";
+import { cardStyles, themeStyles } from "./theme";
 
 export interface PresetCardConfig {
   type: string;
@@ -46,36 +47,24 @@ const DEFAULT_CUT_RAMP_S = 3;
 const n = (v: number) => +(+v).toFixed(1);
 let uid = 0;
 
-export class OpenBrewByWeightPresetCard extends LitElement {
+export class OpenBrewByWeightPresetCard extends OpenBrewByWeightCard<Resolved> {
   static properties = {
-    hass: { attribute: false },
-    _config: { state: true },
-    _state: { state: true },
-    _width: { state: true },
+    ...OpenBrewByWeightCard.properties,
     _scrub: { state: true },
     _held: { state: true },
   };
 
-  declare hass?: HomeAssistant;
-  declare _config?: Resolved;
-  declare _state: CardDataState;
-  declare _width: number;
   declare _scrub?: number;
   declare _held: boolean;
 
+  protected readonly defaults = DEFAULTS;
   private _id = `obbw${++uid}`;
-  // The device being followed; null until the first follow, "" for none.
-  private _following: string | null = null;
-  private _stop?: () => void;
-  private _resize?: ResizeObserver;
   private _scrubKey?: string;
   private _geometry?: PresetGeometry;
   private _model?: RuleModel;
 
   constructor() {
     super();
-    this._state = { status: "loading" };
-    this._width = 0;
     this._held = false;
   }
 
@@ -87,12 +76,6 @@ export class OpenBrewByWeightPresetCard extends LitElement {
     return { device_id: firstDevice(hass), preset: "active" };
   }
 
-  setConfig(config: PresetCardConfig) {
-    if (!config || typeof config !== "object") throw new Error("Invalid configuration");
-    // Unknown keys (uix, card_mod, view layout) are kept and ignored.
-    this._config = { ...DEFAULTS, ...config };
-  }
-
   getCardSize() {
     return 6;
   }
@@ -101,47 +84,9 @@ export class OpenBrewByWeightPresetCard extends LitElement {
     return { columns: 12, min_columns: 6 };
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this._following = null;
-    this.requestUpdate();
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this._stop?.();
-    this._stop = undefined;
-    this._resize?.disconnect();
-    this._resize = undefined;
-  }
-
-  protected updated(changed: PropertyValues) {
-    if (changed.has("hass")) this.toggleAttribute("dark", !!this.hass?.themes?.darkMode);
-    this._follow();
-    const body = this.renderRoot.querySelector<HTMLElement>(".body");
-    if (body && !this._resize) {
-      this._resize = new ResizeObserver(() => (this._width = body.clientWidth));
-      this._resize.observe(body);
-      this._width = body.clientWidth;
-    }
-  }
-
-  private _follow() {
-    const device = this._config?.device_id ?? "";
-    if (!this.hass || !this.isConnected || device === this._following) return;
-    this._stop?.();
-    this._following = device;
-    if (!device) {
-      this._state = { status: "not_found" };
-      return;
-    }
-    this._state = { status: "loading" };
-    this._stop = followCardData(this.hass, device, (state) => (this._state = state));
-  }
-
   protected render() {
     if (!this._config) return nothing;
-    const t = localizer(this.hass?.locale?.language ?? this.hass?.language);
+    const t = this.t;
     return html`<ha-card>
       <div class="body" part="body">${this._content(t)}</div>
     </ha-card>`;
@@ -346,48 +291,5 @@ export class OpenBrewByWeightPresetCard extends LitElement {
     this._seek(this._scrub + step);
   };
 
-  static styles = [
-    themeStyles,
-    css`
-      :where(ha-card) {
-        height: 100%;
-        box-sizing: border-box;
-      }
-      :where(.body) {
-        padding: var(--obbw-card-padding, 16px);
-      }
-      :where(.header) {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 8px;
-      }
-      :where(.titles) {
-        flex: 1;
-        min-width: 0;
-      }
-      :where(.title) {
-        font-size: var(--obbw-title-font-size, 16px);
-        font-weight: 500;
-        color: var(--obbw-title-color, var(--_fg));
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      :where(.subtitle) {
-        font-size: 12px;
-        color: var(--obbw-subtitle-color, var(--_muted));
-      }
-      :where(.selector) {
-        max-width: 50%;
-        padding: 4px 8px;
-        border: 1px solid var(--obbw-selector-border-color, var(--divider-color, #dadada));
-        border-radius: var(--obbw-selector-radius, 8px);
-        background: var(--obbw-selector-background, var(--_surface));
-        color: var(--_fg);
-        font: inherit;
-        font-size: 13px;
-      }
-    `,
-  ];
+  static styles = [themeStyles, cardStyles];
 }

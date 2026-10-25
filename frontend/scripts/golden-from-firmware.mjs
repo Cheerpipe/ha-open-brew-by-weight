@@ -27,6 +27,7 @@ const context = vm.createContext({
   __WEBUI_TEXT__: (key) => english[key] ?? key,
   sub: (text, values) => text.replace(/\{(\d+)\}/g, (_, i) => values[i]),
   presetState: { cutRampS: 3 },
+  atob,
 });
 vm.runInContext(
   [
@@ -39,11 +40,15 @@ vm.runInContext(
     block("function fadeFill("),
     block("function escHtml("),
     block("function presetGraph("),
-    "this.api = { buildRuleChartModel, cutLine, presetGraph };",
+    block("function decodeCurveDeltas("),
+    block("function buildShotSparkModel("),
+    block("function shotRuleModel("),
+    "this.api = { buildRuleChartModel, cutLine, presetGraph, decodeCurveDeltas, buildShotSparkModel, shotRuleModel };",
   ].join("\n"),
   context,
 );
-const { buildRuleChartModel, cutLine, presetGraph } = context.api;
+const { buildRuleChartModel, cutLine, presetGraph, decodeCurveDeltas, buildShotSparkModel, shotRuleModel } =
+  context.api;
 
 const presets = JSON.parse(
   fs.readFileSync(path.join(firmware, "src/tests/fixtures/integration_presets.json"), "utf8"),
@@ -74,6 +79,41 @@ for (const [name, preset] of Object.entries(cases)) {
     presetGraph(host, model, { arrivals: preset.arrivalsS || [], compact });
     out.graphs[`${name}-${width}${compact ? "-compact" : ""}`] = host.innerHTML;
   }
+}
+// The last shot: the integration fixture as a row with its curve, plus
+// variants that exercise drips, guards, touches, scale loss, and truncation.
+const last = JSON.parse(
+  fs.readFileSync(path.join(firmware, "src/tests/fixtures/integration_last_shot.json"), "utf8"),
+);
+const row = Object.fromEntries(last.cols.split(",").map((c, i) => [c, last.shot[i]]));
+const { wD, wRef, ...scalars } = last.shot.at(-1);
+const shot = { ...row, ...scalars, ...decodeCurveDeltas(wD, wRef) };
+const shots = {
+  base: shot,
+  drip: { ...shot, endS: 29.4 },
+  fast: { ...shot, endS: 29.4, verdict: "fast", extractionExtended: true, extendedS: 20, extCg: 1800 },
+  held: { ...shot, wHeld: [120, 121, 122], wBreakBefore: [200] },
+  scaleLoss: { ...shot, atmS: 15, atmCg: 900, atmClearedS: 18 },
+  truncated: { ...shot, wTruncated: true, durationS: 25, endS: null },
+  timerOnly: { ...shot, shotType: "timer_only" },
+};
+out.shots = {};
+for (const [name, value] of Object.entries(shots)) {
+  const model = JSON.parse(JSON.stringify(buildShotSparkModel(value)));
+  if (!model) throw new Error(`The firmware drew no model for ${name}`);
+  const rule = JSON.parse(JSON.stringify(shotRuleModel(value)));
+  const host = { clientWidth: 600, id: "g", innerHTML: "" };
+  if (rule.mode !== "empty")
+    presetGraph(host, rule, {
+      compact: true,
+      tens: true,
+      last: model.segs.map((s) => s.pts.map((q) => [q.t, q.cg / 100])),
+      drip: model.dripSegs.map((s) => s.pts.map((q) => [q.t, q.cg / 100])),
+      held: model.held.map((q) => [q.t, q.cg / 100]),
+      maxG: model.rawMaxW,
+      maxT: Math.max(rule.wall, model.dur),
+    });
+  out.shots[name] = { input: value, model, rule, graph: host.innerHTML };
 }
 const target = path.join(import.meta.dirname, "..", "test", "fixtures", "preset-golden.json");
 fs.mkdirSync(path.dirname(target), { recursive: true });
