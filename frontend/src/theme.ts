@@ -316,4 +316,23 @@ export const cardStyles = css`
     font: inherit;
     font-size: 13px;
   }
+  :where(.chip) {
+    flex: none;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    --_c: var(--_ok);
+    color: color-mix(in srgb, var(--_c) 70%, var(--_fg));
+    background: color-mix(in srgb, var(--_c) 18%, var(--_surface));
+  }
+  :where(.chip.fast) {
+    --_c: var(--_fast);
+  }
+  :where(.chip.slow) {
+    --_c: var(--_slow);
+  }
+  :where(.chip.manual) {
+    --_c: var(--_muted);
+  }
 `;

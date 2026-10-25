@@ -13,6 +13,7 @@ import {
   type ShotModel,
   type ShotRow,
 } from "./shot-model";
+import { shotHeader } from "./shot-header";
 import { cardStyles, themeStyles } from "./theme";
 
 export type ChartView = "preset_weight" | SparkView;
@@ -142,30 +143,7 @@ export class OpenBrewByWeightShotChartCard extends OpenBrewByWeightCard<ShotChar
   }
 
   private _header(t: Localize, row: Record<string, unknown> | null) {
-    const config = this._config!,
-      type = String(row?.shotType ?? ""),
-      verdict = ["fast", "slow"].includes(String(row?.verdict)) ? String(row!.verdict) : "on_recipe",
-      chip = !row
-        ? null
-        : type === "manual"
-          ? { cls: "manual", text: t("shot.manual") }
-          : type === "timer_only"
-            ? { cls: "manual", text: t("shot.timer_only") }
-            : { cls: verdict, text: t(`verdict.${verdict}` as "verdict.fast") },
-      ended = row && row.hasWallTime && typeof row.endedAtUnixSec === "number"
-        ? new Intl.DateTimeFormat(this.hass?.locale?.language ?? this.hass?.language, {
-            dateStyle: "medium",
-            timeStyle: "short",
-          }).format(new Date(row.endedAtUnixSec * 1000))
-        : null,
-      details = [ended, row?.presetName].filter(Boolean).join(" · ");
-    return html`<div class="header" part="header">
-      <div class="titles">
-        <div class="title" part="title">${config.title || t("shot.title")}</div>
-        ${details ? html`<div class="subtitle" part="subtitle">${details}</div>` : nothing}
-      </div>
-      ${chip ? html`<span class="chip ${chip.cls}" part="chip">${chip.text}</span>` : nothing}
-    </div>`;
+    return shotHeader(t, row, this._config!.title, this.hass?.locale?.language ?? this.hass?.language);
   }
 
   private _switch(t: Localize, view: ChartView, hasRule: boolean) {
@@ -392,25 +370,6 @@ export class OpenBrewByWeightShotChartCard extends OpenBrewByWeightCard<ShotChar
     themeStyles,
     cardStyles,
     css`
-      :where(.chip) {
-        flex: none;
-        padding: 3px 10px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 500;
-        --_c: var(--_ok);
-        color: color-mix(in srgb, var(--_c) 70%, var(--_fg));
-        background: color-mix(in srgb, var(--_c) 18%, var(--_surface));
-      }
-      :where(.chip.fast) {
-        --_c: var(--_fast);
-      }
-      :where(.chip.slow) {
-        --_c: var(--_slow);
-      }
-      :where(.chip.manual) {
-        --_c: var(--_muted);
-      }
       :where(.views) {
         display: inline-flex;
         flex-wrap: wrap;

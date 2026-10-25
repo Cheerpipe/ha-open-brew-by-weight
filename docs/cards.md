@@ -115,6 +115,62 @@ mode_switch: false
 show_legend: false
 ```
 
+## Shot details card
+
+Every number of your last shot, like a shot card on the controller's Stats
+page: duration and yield in large type, then the rest in a grid that fits the
+card's width.
+
+| Field | What it is |
+| --- | --- |
+| `duration`, `yield` | How long the shot ran and what ended up in the cup. A shot the scale lost shows its estimate, such as *~35 g est.* |
+| `goal` | The target weight. |
+| `error` | How far the yield landed from where the shot was meant to stop: the stop line at that moment, or the target. Shown in the accent color when over, green when under. |
+| `drip` | What dripped in after the stop, when the yield was weighed after the drips. |
+| `avg_flow`, `max_flow` | Average flow since the first drop, and the highest flow on the curve. |
+| `first_drop` | When the first drop reached the cup. |
+| `dose`, `ratio` | The preset's dose and the brew ratio. |
+| `target_temp` | The machine's target temperature, when it reports one. Left out otherwise. |
+| `cut_at` | The weight and time the controller stopped the shot. |
+| `drip_delay` | How long the controller waited for the last drips before saving the final weight. |
+| `late_cup` | When during the shot a cup placed late was tared, or *None*. |
+| `ended` | Why the shot ended: on recipe, fast, slow, manual, max time, cup removed, and so on. |
+| `shot_type` | Automatic, timer only, or manual. |
+| `preset`, `scale` | The preset and the scale used. |
+| `rating` | The stars you gave the shot in the Web UI. |
+
+### Add it
+
+Search for **Open Brew by Weight shot details** when adding a card. In YAML:
+
+```yaml
+type: custom:open-brew-by-weight-shot-card
+device_id: 0123456789abcdef0123456789abcdef
+```
+
+### Options
+
+| Option | Default | What it does |
+| --- | --- | --- |
+| `device_id` | | The controller to show. |
+| `title` | Last shot | Replaces the title. |
+| `show_header` | `true` | The title, when the shot ended, its preset, and how it ended. |
+| `hero` | `[duration, yield]` | Fields shown as large numbers, in order. `[]` shows none. |
+| `fields` | every other field | Fields in the grid, in order. |
+| `columns` | fits the width | Grid columns, 1 to 6. |
+| `show_empty` | `true` | Show fields the shot has no value for, as *—*. |
+
+In the visual editor, drag fields to reorder them. A small tile with what
+matters most each morning:
+
+```yaml
+type: custom:open-brew-by-weight-shot-card
+device_id: 0123456789abcdef0123456789abcdef
+hero: [yield]
+fields: [goal, error, first_drop, ended, rating]
+columns: 3
+```
+
 ## Styling the cards
 
 Every color and line in the cards can be changed with
@@ -190,6 +246,10 @@ my_theme:
 | `--obbw-flow-label-color` | Flow axis labels in *Weight + flow*. |
 | `--obbw-cursor-color` | The cursor's dot on the weight line. |
 | `--obbw-switch-background`, `--obbw-switch-active-background` | The chart buttons and the selected one. |
+| `--obbw-tile-background` | Behind each large number. |
+| `--obbw-label-color`, `--obbw-value-color` | Field names and values. |
+| `--obbw-error-high-color`, `--obbw-error-low-color` | An error over or under where the shot was meant to stop. |
+| `--obbw-star-color`, `--obbw-star-off-color` | Rating stars, given and not. |
 
 ### Sizes and type
 
@@ -200,6 +260,11 @@ my_theme:
 | `--obbw-example-shot-width` | `1.5` |
 | `--obbw-shot-line-width` | `1.8` |
 | `--obbw-series-line-width` | `1.6` (weight and flow lines) |
+| `--obbw-hero-font-size` | `28px` |
+| `--obbw-label-font-size`, `--obbw-value-font-size` | `11px`, `14px` |
+| `--obbw-field-min-width` | `104px` (narrowest grid column) |
+| `--obbw-field-gap` | `10px` |
+| `--obbw-tile-radius` | `10px` |
 | `--obbw-card-padding` | `16px` |
 | `--obbw-font-family` | Home Assistant's font |
 | `--obbw-title-font-size` | `16px` |
@@ -221,6 +286,8 @@ my_theme:
 | `.shot-line`, `.shot-line.drip`, `.stop-point`, `.final-point`, `.held` | The last shot over its preset. |
 | `.series.bbw`, `.series.fast`, `.series.slow`, `.series.atm`, `.series.flow`, `.series-fill` | Weight by phase, flow, and their fills. |
 | `.cursor`, `.cursor-guide`, `.cursor-dot` | The cursor. |
+| `.hero`, `.hero-field`, `.fields`, `.field`, `.label`, `.value` | The details card. Each field carries its name, so `.field[data-field="scale"]` targets one. |
+| `.value.high`, `.value.low`, `.stars` | The error's tone and the rating. |
 
 The same names are exposed as CSS `part`s. Variable and part names are kept
 stable between releases; a rename is announced in the changelog.

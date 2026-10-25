@@ -35,6 +35,8 @@ const hass = (dark: boolean) => ({
 });
 
 const configs: Record<string, unknown>[] = [
+  { type: "custom:open-brew-by-weight-shot-card", device_id: "dev" },
+  { type: "custom:open-brew-by-weight-shot-card", device_id: "dev", title: "Compact", hero: ["yield"], fields: ["goal", "error", "first_drop", "ended", "rating"], columns: 3 },
   { type: "custom:open-brew-by-weight-shot-chart-card", device_id: "dev" },
   { type: "custom:open-brew-by-weight-shot-chart-card", device_id: "dev", chart: "weight_flow", mode_switch: false },
   { device_id: "dev" },

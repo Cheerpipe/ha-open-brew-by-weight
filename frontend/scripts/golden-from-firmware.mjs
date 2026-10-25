@@ -8,15 +8,16 @@ import vm from "node:vm";
 const firmware = process.argv[2];
 if (!firmware) throw new Error("Pass the firmware repository path");
 const runtime = fs.readFileSync(path.join(firmware, "src/web/js/runtime.js"), "utf8");
-const block = (head) => {
-  const start = runtime.indexOf(head);
+const stats = fs.readFileSync(path.join(firmware, "src/web/js/stats.js"), "utf8");
+const block = (head, source = runtime) => {
+  const start = source.indexOf(head);
   if (start < 0) throw new Error(`Missing ${head}`);
   let depth = 0;
   // The body opens at ") {", after any default-object parameters.
-  const body = start + runtime.slice(start).search(/\)\s*\{/);
-  for (let i = runtime.indexOf("{", body); i < runtime.length; i++) {
-    if (runtime[i] === "{") depth++;
-    else if (runtime[i] === "}" && --depth === 0) return runtime.slice(start, i + 1);
+  const body = start + source.slice(start).search(/\)\s*\{/);
+  for (let i = source.indexOf("{", body); i < source.length; i++) {
+    if (source[i] === "{") depth++;
+    else if (source[i] === "}" && --depth === 0) return source.slice(start, i + 1);
   }
   throw new Error(`Unbalanced ${head}`);
 };
@@ -43,12 +44,28 @@ vm.runInContext(
     block("function decodeCurveDeltas("),
     block("function buildShotSparkModel("),
     block("function shotRuleModel("),
-    "this.api = { buildRuleChartModel, cutLine, presetGraph, decodeCurveDeltas, buildShotSparkModel, shotRuleModel };",
+    block("function verdictLabel("),
+    block("function formatShotEnded("),
+    block("function lastCurveWeightG(", stats),
+    block("function shotDisplayActualG(", stats),
+    block("function shotDisplayFlowGS(", stats),
+    block("function shotCut(", stats),
+    "this.api = { buildRuleChartModel, cutLine, presetGraph, decodeCurveDeltas, buildShotSparkModel, shotRuleModel, formatShotEnded, shotDisplayActualG, shotDisplayFlowGS, shotCut };",
   ].join("\n"),
   context,
 );
-const { buildRuleChartModel, cutLine, presetGraph, decodeCurveDeltas, buildShotSparkModel, shotRuleModel } =
-  context.api;
+const {
+  buildRuleChartModel,
+  cutLine,
+  presetGraph,
+  decodeCurveDeltas,
+  buildShotSparkModel,
+  shotRuleModel,
+  formatShotEnded,
+  shotDisplayActualG,
+  shotDisplayFlowGS,
+  shotCut,
+} = context.api;
 
 const presets = JSON.parse(
   fs.readFileSync(path.join(firmware, "src/tests/fixtures/integration_presets.json"), "utf8"),
@@ -96,6 +113,8 @@ const shots = {
   scaleLoss: { ...shot, atmS: 15, atmCg: 900, atmClearedS: 18 },
   truncated: { ...shot, wTruncated: true, durationS: 25, endS: null },
   timerOnly: { ...shot, shotType: "timer_only" },
+  scaleLossEnd: { ...shot, actualG: null, estimatedG: 35.4, stopDetail: "auto_to_manual", avgFlowGS: null },
+  cupRemoved: { ...shot, stopDetail: "cup_removed", actualWeightSource: "last_known", endS: 29.4 },
 };
 out.shots = {};
 for (const [name, value] of Object.entries(shots)) {
@@ -113,7 +132,15 @@ for (const [name, value] of Object.entries(shots)) {
       maxG: model.rawMaxW,
       maxT: Math.max(rule.wall, model.dur),
     });
-  out.shots[name] = { input: value, model, rule, graph: host.innerHTML };
+  // The Stats card's field helpers, on the same shot.
+  const actual = shotDisplayActualG(value.actualG, value.wCg);
+  const fields = {
+    actual,
+    flow: shotDisplayFlowGS(value),
+    cut: shotCut(value, buildShotSparkModel(value), actual),
+    ended: formatShotEnded(value.stopDetail, value.verdict),
+  };
+  out.shots[name] = { input: value, model, rule, graph: host.innerHTML, fields };
 }
 const target = path.join(import.meta.dirname, "..", "test", "fixtures", "preset-golden.json");
 fs.mkdirSync(path.dirname(target), { recursive: true });

@@ -1,5 +1,43 @@
 // src/localize.ts
 var e = {
+	"card.details.name": "Open Brew by Weight shot details",
+	"card.details.description": "Every number of your last shot, like a shot card in the controller's Web UI.",
+	"shot.auto": "Automatic",
+	"ended.scale_loss": "Scale-loss backup",
+	"ended.cup": "Cup removed",
+	"ended.web": "Web stop",
+	"ended.heartbeat": "Web connection lost",
+	"ended.hard_limit": "Hard limit",
+	"ended.relay": "Relay safety",
+	"ended.anomaly": "Weight anomaly",
+	"ended.touch": "Touch fallback",
+	"field.yield_estimated": "~{0} g est.",
+	"field.recorded": " (recorded)",
+	"field.none": "None",
+	"field.unrated": "Unrated",
+	"field.duration": "Duration",
+	"field.yield": "Yield",
+	"field.goal": "Goal",
+	"field.error": "Error",
+	"field.drip": "Drip",
+	"field.avg_flow": "Avg flow",
+	"field.max_flow": "Max flow",
+	"field.first_drop": "First drop",
+	"field.dose": "Dose",
+	"field.ratio": "Ratio",
+	"field.target_temp": "Target temp",
+	"field.cut_at": "Cut at",
+	"field.drip_delay": "Drip delay",
+	"field.late_cup": "Late cup",
+	"field.ended": "Ended",
+	"field.shot_type": "Shot",
+	"field.preset": "Preset",
+	"field.scale": "Scale",
+	"field.rating": "Rating",
+	"editor.hero": "Large numbers",
+	"editor.fields": "Fields",
+	"editor.columns": "Columns (empty fits the width)",
+	"editor.show_empty": "Show fields without a value",
 	"card.shot.name": "Open Brew by Weight last shot",
 	"card.shot.description": "Charts your last shot: over its preset, weight and flow together, or one at a time.",
 	"shot.title": "Last shot",
@@ -77,6 +115,44 @@ var e = {
 }, t = {
 	en: e,
 	es: {
+		"card.details.name": "Detalles del shot de Open Brew by Weight",
+		"card.details.description": "Todos los números de tu último shot, como una tarjeta de shot en la web del controlador.",
+		"shot.auto": "Automático",
+		"ended.scale_loss": "Respaldo por pérdida de báscula",
+		"ended.cup": "Taza retirada",
+		"ended.web": "Detenido desde la web",
+		"ended.heartbeat": "Conexión web perdida",
+		"ended.hard_limit": "Límite absoluto",
+		"ended.relay": "Seguridad del relé",
+		"ended.anomaly": "Anomalía de peso",
+		"ended.touch": "Respaldo por toque",
+		"field.yield_estimated": "~{0} g est.",
+		"field.recorded": " (registrado)",
+		"field.none": "Ninguno",
+		"field.unrated": "Sin valorar",
+		"field.duration": "Duración",
+		"field.yield": "Rendimiento",
+		"field.goal": "Meta",
+		"field.error": "Error",
+		"field.drip": "Goteo",
+		"field.avg_flow": "Flujo medio",
+		"field.max_flow": "Flujo máx.",
+		"field.first_drop": "Primera gota",
+		"field.dose": "Dosis",
+		"field.ratio": "Ratio",
+		"field.target_temp": "Temp. objetivo",
+		"field.cut_at": "Corte en",
+		"field.drip_delay": "Retardo de goteo",
+		"field.late_cup": "Taza tardía",
+		"field.ended": "Terminó",
+		"field.shot_type": "Shot",
+		"field.preset": "Preset",
+		"field.scale": "Báscula",
+		"field.rating": "Valoración",
+		"editor.hero": "Números grandes",
+		"editor.fields": "Campos",
+		"editor.columns": "Columnas (vacío se ajusta al ancho)",
+		"editor.show_empty": "Mostrar campos sin valor",
 		"card.shot.name": "Último shot de Open Brew by Weight",
 		"card.shot.description": "Grafica tu último shot: sobre su preset, peso y flujo juntos, o cada uno por separado.",
 		"shot.title": "Último shot",
@@ -448,7 +524,7 @@ var ce = (e, t) => {
 						index: a,
 						name: r[2],
 						strings: n,
-						ctor: r[1] === "." ? fe : r[1] === "?" ? pe : r[1] === "@" ? me : Y
+						ctor: r[1] === "." ? pe : r[1] === "?" ? me : r[1] === "@" ? he : fe
 					}), i.removeAttribute(e);
 				} else e.startsWith(M) && (c.push({
 					type: 6,
@@ -508,7 +584,7 @@ var ue = class {
 		for (; s !== void 0;) {
 			if (a === s.index) {
 				let t;
-				s.type === 2 ? t = new de(i, i.nextSibling, this, e) : s.type === 1 ? t = new s.ctor(i, s.name, s.strings, this, e) : s.type === 6 && (t = new he(i, this, e)), this._$AV.push(t), s = n[++o];
+				s.type === 2 ? t = new de(i, i.nextSibling, this, e) : s.type === 1 ? t = new s.ctor(i, s.name, s.strings, this, e) : s.type === 6 && (t = new ge(i, this, e)), this._$AV.push(t), s = n[++o];
 			}
 			a !== s?.index && (i = q.nextNode(), a++);
 		}
@@ -574,7 +650,7 @@ var ue = class {
 	setConnected(e) {
 		this._$AM === void 0 && (this._$Cv = e, this._$AP?.(e));
 	}
-}, Y = class {
+}, fe = class {
 	get tagName() {
 		return this.element.tagName;
 	}
@@ -596,21 +672,21 @@ var ue = class {
 	j(e) {
 		e === K ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
 	}
-}, fe = class extends Y {
+}, pe = class extends fe {
 	constructor() {
 		super(...arguments), this.type = 3;
 	}
 	j(e) {
 		this.element[this.name] = e === K ? void 0 : e;
 	}
-}, pe = class extends Y {
+}, me = class extends fe {
 	constructor() {
 		super(...arguments), this.type = 4;
 	}
 	j(e) {
 		this.element.toggleAttribute(this.name, !!e && e !== K);
 	}
-}, me = class extends Y {
+}, he = class extends fe {
 	constructor(e, t, n, r, i) {
 		super(e, t, n, r, i), this.type = 5;
 	}
@@ -622,7 +698,7 @@ var ue = class {
 	handleEvent(e) {
 		typeof this._$AH == "function" ? this._$AH.call(this.options?.host ?? this.element, e) : this._$AH.handleEvent(e);
 	}
-}, he = class {
+}, ge = class {
 	constructor(e, t, n) {
 		this.element = e, this.type = 6, this._$AN = void 0, this._$AM = t, this.options = n;
 	}
@@ -632,16 +708,16 @@ var ue = class {
 	_$AI(e) {
 		J(this, e);
 	}
-}, ge = D.litHtmlPolyfillSupport;
-ge?.(le, de), (D.litHtmlVersions ??= []).push("3.3.3");
-var _e = (e, t, n) => {
+}, _e = D.litHtmlPolyfillSupport;
+_e?.(le, de), (D.litHtmlVersions ??= []).push("3.3.3");
+var ve = (e, t, n) => {
 	let r = n?.renderBefore ?? t, i = r._$litPart$;
 	if (i === void 0) {
 		let e = n?.renderBefore ?? null;
 		r._$litPart$ = i = new de(t.insertBefore(I(), e), e, void 0, n ?? {});
 	}
 	return i._$AI(e), i;
-}, ve = globalThis, X = class extends E {
+}, ye = globalThis, Y = class extends E {
 	constructor() {
 		super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
 	}
@@ -651,7 +727,7 @@ var _e = (e, t, n) => {
 	}
 	update(e) {
 		let t = this.render();
-		this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = _e(t, this.renderRoot, this.renderOptions);
+		this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = ve(t, this.renderRoot, this.renderOptions);
 	}
 	connectedCallback() {
 		super.connectedCallback(), this._$Do?.setConnected(!0);
@@ -663,25 +739,25 @@ var _e = (e, t, n) => {
 		return G;
 	}
 };
-X._$litElement$ = !0, X.finalized = !0, ve.litElementHydrateSupport?.({ LitElement: X });
-var ye = ve.litElementPolyfillSupport;
-ye?.({ LitElement: X }), (ve.litElementVersions ??= []).push("4.2.2");
+Y._$litElement$ = !0, Y.finalized = !0, ye.litElementHydrateSupport?.({ LitElement: Y });
+var be = ye.litElementPolyfillSupport;
+be?.({ LitElement: Y }), (ye.litElementVersions ??= []).push("4.2.2");
 // src/ha.ts
-var be = "open_brew_by_weight", xe = (e, t) => Object.values(e.entities).find((e) => e.device_id === t && e.platform === "open_brew_by_weight" && e.entity_id.startsWith("select."))?.entity_id, Se = (e) => Object.values(e.entities).find((e) => e.platform === "open_brew_by_weight" && e.device_id)?.device_id ?? void 0, Ce = 2e3;
-function we(e, t, n) {
+var xe = "open_brew_by_weight", Se = (e, t) => Object.values(e.entities).find((e) => e.device_id === t && e.platform === "open_brew_by_weight" && e.entity_id.startsWith("select."))?.entity_id, Ce = (e) => Object.values(e.entities).find((e) => e.platform === "open_brew_by_weight" && e.device_id)?.device_id ?? void 0, we = 2e3;
+function Te(e, t, n) {
 	let r = !1, i, a, o = () => {
 		a = void 0, e.connection.subscribeMessage((e) => {
-			"unloaded" in e ? (i?.(), i = void 0, n({ status: "loading" }), r || (a = setTimeout(o, Ce))) : n({
+			"unloaded" in e ? (i?.(), i = void 0, n({ status: "loading" }), r || (a = setTimeout(o, we))) : n({
 				status: "ready",
 				data: e
 			});
 		}, {
-			type: `${be}/subscribe`,
+			type: `${xe}/subscribe`,
 			device_id: t
 		}).then((e) => {
 			r ? e() : i = e;
 		}, () => {
-			n({ status: "not_found" }), r || (a = setTimeout(o, Ce * 5));
+			n({ status: "not_found" }), r || (a = setTimeout(o, we * 5));
 		});
 	};
 	return o(), () => {
@@ -689,7 +765,7 @@ function we(e, t, n) {
 	};
 }
 // src/base-card.ts
-var Z = class extends X {
+var X = class extends Y {
 	static {
 		this.properties = {
 			hass: { attribute: !1 },
@@ -724,10 +800,10 @@ var Z = class extends X {
 	}
 	_follow() {
 		let e = this._config?.device_id ?? "";
-		this.hass && this.isConnected && e !== this._following && (this._stop?.(), this._following = e, e ? (this._state = { status: "loading" }, this._stop = we(this.hass, e, (e) => this._state = e)) : this._state = { status: "not_found" });
+		this.hass && this.isConnected && e !== this._following && (this._stop?.(), this._following = e, e ? (this._state = { status: "loading" }, this._stop = Te(this.hass, e, (e) => this._state = e)) : this._state = { status: "not_found" });
 	}
-}, Q = .18;
-function Te(e, t) {
+}, Z = .18;
+function Ee(e, t) {
 	let n = (e) => Number.isFinite(Number(e)) ? Number(e) : NaN, r = n(e.goalWeightG), i = n(e.fastBeforeS), a = n(e.slowAfterS), o = n(e.bbwProtectionMs) / 1e3, s = n(e.operationalWallMs) / 1e3, c = n(t), l = !!e.fastExtractionGuardEnabled, u = !!e.slowExtractionGuardEnabled, d = n(e.fastMarginG), f = n(e.slowMarginG), p = l ? r + d : r, m = u ? r - f : r, h = Math.max(0, Math.min(n(e.firstDropS) || 0, i - .5));
 	return ![
 		r,
@@ -757,7 +833,7 @@ function Te(e, t) {
 		scrubMin: Math.max(o, h + .5)
 	};
 }
-function Ee(e, t) {
+function De(e, t) {
 	let n = (e) => Math.round(e * 1e3), r = (e) => Math.round(e * 10), i = n(Math.max(t.prot, Math.min(t.wall, e))), a = r(t.goal), o = n(Math.max(t.prot, t.t1 - t.d)), s = n(t.t1), c = n(t.t2), l = n(Math.min(t.wall, t.t2 + t.d));
 	if (i < s) {
 		let e = t.fast ? r(t.fastMargin) : 0, n = Math.max(0, i - o), c = s - o;
@@ -769,12 +845,12 @@ function Ee(e, t) {
 	}
 	return a / 10;
 }
-function De(e, t, n, r = 0) {
+function Oe(e, t, n, r = 0) {
 	let i = Math.max(0, e - r) / (n - r);
-	return t * (2 * Q * i + (1 - 2 * Q) * i * i);
+	return t * (2 * Z * i + (1 - 2 * Z) * i * i);
 }
-function Oe(e, t) {
-	let n = Ee(e, t), r = Q, i = (Math.sqrt(4 * r * r + 4 * (1 - 2 * r) * n / t.goal) - 2 * r) / (2 * (1 - 2 * r)), a = t.firstDrop + (e - t.firstDrop) / i;
+function ke(e, t) {
+	let n = De(e, t), r = Z, i = (Math.sqrt(4 * r * r + 4 * (1 - 2 * r) * n / t.goal) - 2 * r) / (2 * (1 - 2 * r)), a = t.firstDrop + (e - t.firstDrop) / i;
 	return {
 		stop: e,
 		weight: n,
@@ -783,12 +859,12 @@ function Oe(e, t) {
 		atTarget: Math.abs(n - t.goal) < .05
 	};
 }
-var ke = (e) => Math.max(e.scrubMin, Math.round((e.t1 + e.t2) * 5) / 10);
-function Ae(e, t, n = {}) {
+var Ae = (e) => Math.max(e.scrubMin, Math.round((e.t1 + e.t2) * 5) / 10);
+function je(e, t, n = {}) {
 	let { arrivals: r = [], compact: i = !1, tens: a = !1, maxG: o = 0, maxT: s = 0 } = n, c = t, l = Math.round(i ? Math.min(180, Math.max(140, c * .48)) : Math.min(220, Math.max(180, c * .56))), u = c - 10, d = l - 18, f = Math.ceil(Math.max(e.ceil, o) + 2), p = f > 30 ? 10 : 5, m = Math.max(e.wall, s), h = (e) => 34 + (u - 34) * e / m, g = (e) => d - (d - 14) * e / f, _ = (e) => +(+e).toFixed(1), v = (e, t) => h(e).toFixed(2) + " " + g(t).toFixed(2), y = (e, t, n, r) => `C${v(e + (n - e) / 3, t)} ${v(e + 2 * (n - e) / 3, r)} ${v(n, r)}`, b = Math.max(e.prot, e.t1 - e.d), x = Math.min(e.wall, e.t2 + e.d), S = `L${v(b, e.ceil)}` + y(b, e.ceil, e.t1, e.goal), C = `L${v(e.t2, e.goal)}`, w = y(e.t2, e.goal, x, e.floor) + `L${v(e.wall, e.floor)}`, T = e.firstDrop, E = (t) => {
-		let n = Q, r = (f + 1) / e.goal;
+		let n = Z, r = (f + 1) / e.goal;
 		return Math.min(m, T + (t - T) * (Math.sqrt(4 * n * n + 4 * (1 - 2 * n) * r) - 2 * n) / (2 * (1 - 2 * n)));
-	}, D = (t, n) => v(T + (n - T) / 2, e.goal * Q * (n - T) / (t - T)), O = (t, n = E(t)) => v(n, De(n, e.goal, t, T)), k = (e, t = E(e)) => `Q${D(e, t)} ${O(e, t)}`, A = (e, t = E(e)) => `Q${D(e, t)} ${v(T, 0)}`, j = `M${v(0, 0)}L${v(T, 0)}`, M = `M${v(T, 0)}`, N = `L${v(m, f + 1)}`, P = Math.max(T + .5, e.t1 - e.d), F = e.t2 + e.d, I = [], L = [], R = [];
+	}, D = (t, n) => v(T + (n - T) / 2, e.goal * Z * (n - T) / (t - T)), O = (t, n = E(t)) => v(n, Oe(n, e.goal, t, T)), k = (e, t = E(e)) => `Q${D(e, t)} ${O(e, t)}`, A = (e, t = E(e)) => `Q${D(e, t)} ${v(T, 0)}`, j = `M${v(0, 0)}L${v(T, 0)}`, M = `M${v(T, 0)}`, N = `L${v(m, f + 1)}`, P = Math.max(T + .5, e.t1 - e.d), F = e.t2 + e.d, I = [], L = [], R = [];
 	for (let e = 0; e <= f; e += p) I.push(`M34 ${g(e).toFixed(1)}H${u}`), L.push({
 		x: 30,
 		y: g(e) + 3,
@@ -857,7 +933,7 @@ function Ae(e, t, n = {}) {
 	};
 }
 // src/theme.ts
-var je = l`
+var Me = l`
   /* Defaults live in private variables, so a theme, the card, or ha-card can
      set any --obbw-* variable and win. */
   :host {
@@ -1125,7 +1201,7 @@ var je = l`
     padding: 8px 0;
     color: var(--_muted);
   }
-`, Me = l`
+`, Ne = l`
   :where(ha-card) {
     height: 100%;
     box-sizing: border-box;
@@ -1165,7 +1241,26 @@ var je = l`
     font: inherit;
     font-size: 13px;
   }
-`, Ne = {
+  :where(.chip) {
+    flex: none;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    --_c: var(--_ok);
+    color: color-mix(in srgb, var(--_c) 70%, var(--_fg));
+    background: color-mix(in srgb, var(--_c) 18%, var(--_surface));
+  }
+  :where(.chip.fast) {
+    --_c: var(--_fast);
+  }
+  :where(.chip.slow) {
+    --_c: var(--_slow);
+  }
+  :where(.chip.manual) {
+    --_c: var(--_muted);
+  }
+`, Pe = {
 	preset: "active",
 	show_header: !0,
 	show_selector: !0,
@@ -1174,16 +1269,16 @@ var je = l`
 	show_arrivals: !0,
 	show_legend: !0,
 	show_note: !0
-}, Pe = 3, $ = (e) => +(+e).toFixed(1), Fe = 0, Ie = class extends Z {
+}, Fe = 3, Q = (e) => +(+e).toFixed(1), Ie = 0, Le = class extends X {
 	static {
 		this.properties = {
-			...Z.properties,
+			...X.properties,
 			_scrub: { state: !0 },
 			_held: { state: !0 }
 		};
 	}
 	constructor() {
-		super(), this.defaults = Ne, this._id = `obbw${++Fe}`, this._down = (e) => {
+		super(), this.defaults = Pe, this._id = `obbw${++Ie}`, this._down = (e) => {
 			e.currentTarget.setPointerCapture(e.pointerId), this.renderRoot.querySelector(".scrub")?.focus({ preventScroll: !0 }), this._held = !0, this._at(e);
 		}, this._move = (e) => {
 			e.currentTarget.hasPointerCapture(e.pointerId) && this._at(e);
@@ -1204,7 +1299,7 @@ var je = l`
 	}
 	static getStubConfig(e) {
 		return {
-			device_id: Se(e),
+			device_id: Ce(e),
 			preset: "active"
 		};
 	}
@@ -1231,7 +1326,7 @@ var je = l`
 		let { data: n } = t, r = this._config, i = r.preset === "active" || r.preset == null, a = n.presets.find((e) => e.id === (i ? n.activePresetId : Number(r.preset)));
 		if (!a) return U`<p class="message">${e("state.missing_preset")}</p>`;
 		if (a.goalWeightG == null) return U`<p class="message">${e("state.no_rules")}</p>`;
-		let o = Te(a, n.cutRampS ?? Pe);
+		let o = Ee(a, n.cutRampS ?? Fe);
 		return U`
       ${r.show_header ? this._header(e, n, a, i) : K}
       ${n.available ? K : U`<p class="message" part="status">${e("state.unavailable")}</p>`}
@@ -1239,10 +1334,10 @@ var je = l`
     `;
 	}
 	_header(e, t, n, r) {
-		let i = this._config, a = r && i.show_selector && this.hass ? xe(this.hass, i.device_id) : void 0, o = [
+		let i = this._config, a = r && i.show_selector && this.hass ? Se(this.hass, i.device_id) : void 0, o = [
 			e(r ? "header.active" : "header.preset"),
-			e("header.target", $(n.goalWeightG)),
-			...n.doseG ? [e("header.dose", $(n.doseG))] : []
+			e("header.target", Q(n.goalWeightG)),
+			...n.doseG ? [e("header.dose", Q(n.doseG))] : []
 		].join(" · ");
 		return U`<div class="header" part="header">
       <div class="titles">
@@ -1270,15 +1365,15 @@ var je = l`
 	}
 	_chart(e, t, n) {
 		if (!this._width) return U`<div class="chart"></div>`;
-		let r = this._config, i = Ae(t, this._width, { arrivals: r.show_arrivals ? n.arrivalsS : [] }), a = `${n.id}:${t.t1}:${t.t2}:${t.wall}`, o = this._id;
-		this._geometry = i, this._model = t, this._scrubKey === a && this._scrub >= t.scrubMin && this._scrub <= t.wall || (this._scrub = ke(t), this._scrubKey = a);
-		let s = Oe(this._scrub, t), c = [
-			$(t.goal),
+		let r = this._config, i = je(t, this._width, { arrivals: r.show_arrivals ? n.arrivalsS : [] }), a = `${n.id}:${t.t1}:${t.t2}:${t.wall}`, o = this._id;
+		this._geometry = i, this._model = t, this._scrubKey === a && this._scrub >= t.scrubMin && this._scrub <= t.wall || (this._scrub = Ae(t), this._scrubKey = a);
+		let s = ke(this._scrub, t), c = [
+			Q(t.goal),
 			s.arrival.toFixed(1),
 			e(`verdict.${s.verdict}`),
 			s.weight.toFixed(1),
 			s.stop.toFixed(1)
-		], l = e(s.atTarget ? "graph.readout_target" : "graph.readout", ...c), u = Math.max(t.prot, t.t1 - t.d), d = Math.min(t.wall, t.t2 + t.d), f = e("graph.summary", $(t.prot), $(t.ceil), $(u), $(t.goal), $(t.t1), $(t.t2), $(t.floor), $(d), $(t.wall)), p = (e, t, n) => W`<path class=${n ? `band ${e}` : "band-off"} part=${`band ${e}`} d=${t} fill=${`url(#${o}${e})`}/>`, m = (e, t) => W`<linearGradient id=${o + e} x1="0" y1="0" x2="0" y2="1"><stop class=${t}/><stop class=${`${t} stop-fade`} offset="1"/></linearGradient>`, h = (e, t, n, r = "", i = "middle") => W`<text class=${`axis-label ${r}`} x=${e.toFixed(1)} y=${t.toFixed(1)} text-anchor=${i}>${n}</text>`, g = i.X(s.stop), _ = i.Y(s.weight), v = e("graph.pill", ...c), y = v.length * 6.5 + 16;
+		], l = e(s.atTarget ? "graph.readout_target" : "graph.readout", ...c), u = Math.max(t.prot, t.t1 - t.d), d = Math.min(t.wall, t.t2 + t.d), f = e("graph.summary", Q(t.prot), Q(t.ceil), Q(u), Q(t.goal), Q(t.t1), Q(t.t2), Q(t.floor), Q(d), Q(t.wall)), p = (e, t, n) => W`<path class=${n ? `band ${e}` : "band-off"} part=${`band ${e}`} d=${t} fill=${`url(#${o}${e})`}/>`, m = (e, t) => W`<linearGradient id=${o + e} x1="0" y1="0" x2="0" y2="1"><stop class=${t}/><stop class=${`${t} stop-fade`} offset="1"/></linearGradient>`, h = (e, t, n, r = "", i = "middle") => W`<text class=${`axis-label ${r}`} x=${e.toFixed(1)} y=${t.toFixed(1)} text-anchor=${i}>${n}</text>`, g = i.X(s.stop), _ = i.Y(s.weight), v = e("graph.pill", ...c), y = v.length * 6.5 + 16;
 		return U`
       <div
         class="chart ${this._held ? "held" : ""}"
@@ -1313,8 +1408,8 @@ var je = l`
             <path class="cut-line ${t.mode === "timerOnly" ? "off" : ""}" part="cut-line" d=${i.cut} />
             ${i.arrivals.map((e) => W`<circle class="recent-shot" part="recent-shot" cx=${e.x.toFixed(1)} cy=${e.y.toFixed(1)} r="3"/>`)}
             ${i.noCutLabel ? h((i.L + i.hatch.x + i.hatch.width) / 2, (i.T + i.B) / 2, e("graph.no_cut"), "halo") : K}
-            ${h(i.R - 2, i.target + (i.targetAbove ? -4 : 13), e("graph.target", $(t.goal)), "halo strong", "end")}
-            ${h(i.maxX, i.T - 4, e("graph.max", $(t.wall)), "", "end")}
+            ${h(i.R - 2, i.target + (i.targetAbove ? -4 : 13), e("graph.target", Q(t.goal)), "halo strong", "end")}
+            ${h(i.maxX, i.T - 4, e("graph.max", Q(t.wall)), "", "end")}
           </g>
           ${r.show_example ? W`<g class="scrub" part="scrub" role="slider" tabindex="0" aria-label=${e("graph.scrub")}
                 aria-valuemin=${t.scrubMin} aria-valuemax=${t.wall} aria-valuenow=${s.stop.toFixed(1)}
@@ -1362,9 +1457,9 @@ var je = l`
 		this._seek(this._geometry.tAt((e.clientX - n.left) * this._geometry.width / n.width));
 	}
 	static {
-		this.styles = [je, Me];
+		this.styles = [Me, Ne];
 	}
-}, Le = [
+}, Re = [
 	"show_header",
 	"show_selector",
 	"show_example",
@@ -1372,7 +1467,7 @@ var je = l`
 	"show_arrivals",
 	"show_legend",
 	"show_note"
-], Re = class extends X {
+], ze = class extends Y {
 	static {
 		this.properties = {
 			hass: { attribute: !1 },
@@ -1388,14 +1483,14 @@ var je = l`
 	}
 	updated(e) {
 		let t = this._config?.device_id;
-		this.hass && t !== this._following && (this._stop?.(), this._following = t, this._state = void 0, t && (this._stop = we(this.hass, t, (e) => this._state = e)));
+		this.hass && t !== this._following && (this._stop?.(), this._following = t, this._state = void 0, t && (this._stop = Te(this.hass, t, (e) => this._state = e)));
 	}
 	render() {
 		if (!this.hass || !this._config) return K;
 		let e = n(this.hass.locale?.language ?? this.hass.language), t = this._state?.status === "ready" ? this._state.data.presets : [], r = [
 			{
 				name: "device_id",
-				selector: { device: { integration: be } }
+				selector: { device: { integration: xe } }
 			},
 			{
 				name: "preset",
@@ -1417,14 +1512,14 @@ var je = l`
 			{
 				name: "",
 				type: "grid",
-				schema: Le.map((e) => ({
+				schema: Re.map((e) => ({
 					name: e,
 					selector: { boolean: {} }
 				}))
 			}
 		], i = {
 			preset: "active",
-			...Object.fromEntries(Le.map((e) => [e, !0])),
+			...Object.fromEntries(Re.map((e) => [e, !0])),
 			...this._config,
 			...typeof this._config.preset == "number" ? { preset: String(this._config.preset) } : {}
 		};
@@ -1444,93 +1539,127 @@ var je = l`
 			composed: !0
 		}));
 	}
-};
-// src/shot-chart.ts
-function ze(e, t, n, r) {
-	return e.filter((e) => e.t <= r).map((e, r) => (r ? "L" : "M") + t(e.t).toFixed(2) + " " + n(e.cg / 100).toFixed(2)).join("");
-}
-function Be(e, t, n, r = e.timeMax) {
-	let i = n !== "flow", a = n !== "weight", o = e.maxW / 10, s = [
-		.25,
-		.5,
-		1,
-		2,
-		5
-	].find((t) => t * o >= e.flowMax) ?? Math.ceil(e.flowMax / o), c = t, l = Math.round(Math.min(220, Math.max(160, c * .42))), u = a && !i ? 48 : 38, d = c - (i && a ? 52 : 10), f = l - 18, p = (e) => u + (d - u) * Math.min(1, e / r), m = (e) => Math.max(0, Math.min(1, e)), h = (t) => f - (f - 14) * m(t / e.maxW), g = (e) => f - (f - 14) * m(e / (s * o)), _ = (e) => e.toFixed(2), v = (e, t) => e.map((e, n) => (n ? "L" : "M") + _(p(e.t)) + " " + _(t(e.cg / 100))).join("") + (e.length === 1 ? "h0" : ""), y = (t, n, r, i) => {
-		let a = [], o = (e, t, n) => {
-			let i = v(e, r);
-			a.push({
-				kind: t,
-				d: i,
-				drip: n,
-				area: !n && e.length > 1 && e.some((e) => e.cg > 0) ? `${i}V${f}H${_(p(e[0].t))}Z` : null
-			});
-		};
-		e.firstDropS && o([
-			{
-				t: 0,
-				cg: 0
-			},
-			{
-				t: e.firstDropS,
-				cg: 0
-			},
-			...i
-		], "bbw", !1);
-		for (let e of t) o(e.pts, e.kind, !1);
-		for (let e of n) o(e.pts, e.kind, !0);
-		return a;
-	}, b = [], x = [], S = [], C = [];
-	for (let e = 0; e <= o; e++) {
-		let t = f - (f - 14) * e / o;
-		b.push(`M${u} ${t.toFixed(1)}H${d}`), i && S.push({
-			x: u - 4,
-			y: t + 3,
-			text: `${e * 10} g`,
-			anchor: "end"
-		}), a && C.push({
-			x: i ? d + 4 : u - 4,
-			y: t + 3,
-			text: `${+(e * s).toFixed(2)} g/s`,
-			anchor: i ? "start" : "end"
-		});
+}, Be = [
+	"duration",
+	"yield",
+	"goal",
+	"error",
+	"drip",
+	"avg_flow",
+	"max_flow",
+	"first_drop",
+	"dose",
+	"ratio",
+	"target_temp",
+	"cut_at",
+	"drip_delay",
+	"late_cup",
+	"ended",
+	"shot_type",
+	"preset",
+	"scale",
+	"rating"
+], $ = (e) => typeof e == "number" && Number.isFinite(e) ? e : null;
+function Ve(e, t) {
+	if (typeof e == "number" && e !== 0) return e;
+	if (Array.isArray(t)) {
+		for (let e = t.length - 1; e >= 0; e--) if (typeof t[e] == "number" && t[e] !== 0) return t[e] / 100;
 	}
-	for (let e = 0; e <= r; e += 10) b.push(`M${p(e).toFixed(1)} 14V${f}`), x.push({
-		x: p(e),
-		y: f + 13,
-		text: `${e} s`,
-		anchor: e === 0 ? "start" : e + 10 > r ? "end" : "middle"
-	});
-	return {
-		width: c,
-		height: l,
-		L: u,
-		R: d,
-		T: 14,
-		B: f,
-		timeMax: r,
-		X: p,
-		Yw: h,
-		Yf: g,
-		grid: b,
-		xLabels: x,
-		weightLabels: S,
-		flowLabels: C,
-		weight: i ? y(e.segs, e.dripSegs, h, []) : [],
-		flow: a ? y(e.flowSegs, e.dripFlowSegs, g, e.flowStart ? [e.flowStart] : []) : [],
-		held: i ? e.held.map((e) => ({
-			x: p(e.t),
-			y: h(e.cg / 100)
-		})) : [],
-		finalPoint: i && e.finalPoint ? {
-			x: p(e.finalPoint.t),
-			y: h(e.finalPoint.cg / 100)
-		} : null,
-		tAt: (e) => (e - u) * r / (d - u)
+	return typeof e == "number" ? e : null;
+}
+function He(e) {
+	let t = $(e.avgFlowGS);
+	if (t !== null) return t;
+	let n = Ve(e.actualG, e.wCg), r = $(e.durationS), i = $(e.firstDropS) ?? $(e.dropS);
+	return n == null || r == null || i == null || !(r - i > .5) || !(n > 0) ? null : n / (r - i);
+}
+function Ue(e, t, n) {
+	let r = t?.pts.reduce((e, t) => t.t >= e.t ? t : e, t.pts[0]), i = t && e.endS != null && (t.dripSegs[0]?.pts[0] ?? r), a = i ? i.cg / 100 : null;
+	return i ? {
+		s: Number(e.endS),
+		g: a,
+		drip: n !== null && e.actualWeightSource === "post_drip" ? n - a : null
+	} : {
+		s: null,
+		g: null,
+		drip: null
 	};
 }
+function We(e, t, n) {
+	let r = String(t || "").toLowerCase().replace(/_(failure|timeout)$/, ""), i = (t) => e(t === "fast" ? "verdict.fast" : t === "slow" ? "verdict.slow" : "verdict.on_recipe");
+	return /^(ext|fast_|slow_)/.test(r) ? i(r[0] === "s" ? "slow" : "fast") : {
+		paddle: () => e("shot.manual"),
+		activator: () => e("shot.manual"),
+		physical_override: () => e("shot.manual"),
+		normal_target: () => i(n),
+		scale_threshold: () => i(n),
+		auto_to_manual: () => e("ended.scale_loss"),
+		cup_removed: () => e("ended.cup"),
+		web_stop: () => e("ended.web"),
+		web_heartbeat: () => e("ended.heartbeat"),
+		hard_limit: () => e("ended.hard_limit"),
+		global_limit: () => e("ended.hard_limit"),
+		wall_limit: () => e("verdict.max_time"),
+		configured_wall_limit: () => e("verdict.max_time"),
+		relay_safety: () => e("ended.relay"),
+		weight_anomaly: () => e("ended.anomaly"),
+		touch_weight_fallback: () => e("ended.touch")
+	}[r]?.() ?? "—";
+}
+function Ge(e, t, n) {
+	let r = t.actualG == null && t.estimatedG != null, i = r ? null : Ve(t.actualG, t.wCg), a = $(t.goalG), o = $(t.cutLineG) > 0 ? $(t.cutLineG) : a, s = i === null || !o ? null : (i - o) / o * 100, c = He(t), l = Ue(t, n, i), u = $(t.targetTempDeciC) > 0 ? $(t.targetTempDeciC) / 10 : null, d = (e, t, n) => e === null ? "—" : e.toFixed(t) + n, f = String(t.shotType ?? ""), p = Math.max(0, Math.min(5, $(t.rating) ?? 0)), m = {
+		duration: { value: d($(t.durationS), 1, " s") },
+		yield: { value: r ? e("field.yield_estimated", Math.round(Number(t.estimatedG))) : d(i, 1, " g") },
+		goal: { value: d(a, 1, " g") },
+		error: {
+			value: s === null ? "—" : s.toFixed(1) + "%",
+			tone: s > 0 ? "high" : s < 0 ? "low" : void 0
+		},
+		drip: { value: l.drip === null ? "—" : (l.drip < 0 ? "" : "+") + l.drip.toFixed(1) + " g" },
+		avg_flow: { value: d(c, 2, " g/s") },
+		max_flow: { value: n?.maxFlow == null ? "—" : n.maxFlow.toFixed(2) + " g/s" + (t.wTruncated ? e("field.recorded") : "") },
+		first_drop: { value: d($(t.firstDropS), 1, " s") },
+		dose: { value: $(t.doseG) > 0 ? Number(t.doseG).toFixed(1) + " g" : "—" },
+		ratio: { value: $(t.ratio) > 0 ? "1:" + Number(t.ratio).toFixed(1) : "—" },
+		cut_at: { value: l.g == null ? "—" : l.g.toFixed(1) + " g · " + l.s.toFixed(1) + " s" },
+		drip_delay: { value: d($(t.dripDelayS), 1, " s") },
+		late_cup: { value: $(t.tareS) == null ? e("field.none") : Number(t.tareS).toFixed(1) + " s" },
+		ended: { value: We(e, t.stopDetail, t.verdict) },
+		shot_type: { value: e(f === "manual" ? "shot.manual" : f === "timer_only" ? "shot.timer_only" : "shot.auto") },
+		preset: { value: String(t.presetName || "—") },
+		scale: { value: String(t.scaleName || e("field.none")) },
+		rating: {
+			value: p ? `${p}/5` : e("field.unrated"),
+			stars: p
+		}
+	};
+	return u !== null && (m.target_temp = { value: u.toFixed(1) + " °C" }), m;
+}
+// src/shot-header.ts
+function Ke(e, t, n, r) {
+	let i = String(t?.shotType ?? ""), a = ["fast", "slow"].includes(String(t?.verdict)) ? String(t.verdict) : "on_recipe", o = t ? i === "manual" ? {
+		cls: "manual",
+		text: e("shot.manual")
+	} : i === "timer_only" ? {
+		cls: "manual",
+		text: e("shot.timer_only")
+	} : {
+		cls: a,
+		text: e(`verdict.${a}`)
+	} : null, s = [t && t.hasWallTime && typeof t.endedAtUnixSec == "number" ? new Intl.DateTimeFormat(r, {
+		dateStyle: "medium",
+		timeStyle: "short"
+	}).format(/* @__PURE__ */ new Date(t.endedAtUnixSec * 1e3)) : null, t?.presetName].filter(Boolean).join(" · ");
+	return U`<div class="header" part="header">
+    <div class="titles">
+      <div class="title" part="title">${n || e("shot.title")}</div>
+      ${s ? U`<div class="subtitle" part="subtitle">${s}</div>` : K}
+    </div>
+    ${o ? U`<span class="chip ${o.cls}" part="chip">${o.text}</span>` : K}
+  </div>`;
+}
 // src/shot-model.ts
-function Ve(e, t) {
+function qe(e, t) {
 	let n;
 	try {
 		n = atob(String(e));
@@ -1547,15 +1676,15 @@ function Ve(e, t) {
 		wCg: i
 	} : null;
 }
-function He(e) {
-	let { wD: t, wRef: n, ...r } = e.curve ?? {}, i = Ve(t, n);
+function Je(e) {
+	let { wD: t, wRef: n, ...r } = e.curve ?? {}, i = qe(t, n);
 	return i ? {
 		...e,
 		...r,
 		...i
 	} : null;
 }
-function Ue(e) {
+function Ye(e) {
 	if (!e) return null;
 	let t = Array.isArray(e.wCg) ? e.wCg : [], n = e.wAtMs, r = e.wBreakBefore ?? [], i = e.wHeld ?? [], a = (e) => !Array.isArray(e) || e.some((n, r) => !Number.isInteger(n) || n < 0 || n >= t.length || r && n <= e[r - 1]);
 	if (!Array.isArray(n) || n.length !== t.length || t.length > 1201 || a(r) || a(i) || n.some((e, t) => !Number.isInteger(e) || e < 0 || e > 6e4 || t && e < n[t - 1])) return null;
@@ -1686,9 +1815,9 @@ function Ue(e) {
 		flowMax: Math.max(.5, Math.ceil(A / .5) * .5)
 	};
 }
-function We(e) {
+function Xe(e) {
 	let t = String(e.shotType || "").toLowerCase() === "timer_only";
-	return Te({
+	return Ee({
 		id: 0,
 		name: "",
 		goalWeightG: e.goalG,
@@ -1704,31 +1833,322 @@ function We(e) {
 		brewByWeight: !t
 	}, e.cutRampS);
 }
-function Ge(e, t) {
+function Ze(e, t) {
 	let n = 0;
 	for (; n < e.length - 2 && e[n + 1].t < t;) n++;
 	let r = e[n], i = e[n + 1] ?? r, a = i.t > r.t ? Math.min(1, Math.max(0, (t - r.t) / (i.t - r.t))) : 0;
 	return (r.cg + (i.cg - r.cg) * a) / 100;
 }
+// src/shot-card.ts
+var Qe = ["duration", "yield"], $e = Be.filter((e) => !Qe.includes(e)), et = {
+	show_header: !0,
+	hero: Qe,
+	fields: $e,
+	show_empty: !0
+}, tt = class extends X {
+	constructor(...e) {
+		super(...e), this.defaults = et;
+	}
+	static getConfigElement() {
+		return document.createElement("open-brew-by-weight-shot-card-editor");
+	}
+	static getStubConfig(e) {
+		return { device_id: Ce(e) };
+	}
+	setConfig(e) {
+		for (let t of ["hero", "fields"]) {
+			let n = e?.[t];
+			if (n !== void 0 && (!Array.isArray(n) || n.some((e) => !Be.includes(e)))) throw Error(`${t} must list fields from: ${Be.join(", ")}`);
+		}
+		super.setConfig(e);
+	}
+	getCardSize() {
+		return 4;
+	}
+	getGridOptions() {
+		return {
+			columns: 6,
+			min_columns: 3
+		};
+	}
+	render() {
+		return this._config ? U`<ha-card><div class="body" part="body">${this._content(this.t)}</div></ha-card>` : K;
+	}
+	_content(e) {
+		let t = this._state;
+		if (t.status === "loading") return U`<p class="message">${e("state.loading")}</p>`;
+		if (t.status === "not_found") return U`<p class="message">${e("state.not_found")}</p>`;
+		let n = this._config, r = t.data.lastShot, i = (t) => n.show_header ? Ke(e, t, n.title, this.hass?.locale?.language ?? this.hass?.language) : K;
+		if (!r) return U`${i(null)}<p class="message">${e("shot.none")}</p>`;
+		if (r !== this._shotKey) {
+			this._shotKey = r;
+			let e = Je(r);
+			this._shot = {
+				row: e ?? r,
+				model: e && Ye(e)
+			};
+		}
+		let { row: a, model: o } = this._shot, s = Ge(e, a, o), c = (e = []) => e.filter((e) => s[e] && (n.show_empty || s[e].value !== "—"));
+		return U`
+      ${i(a)}
+      ${t.data.available ? K : U`<p class="message" part="status">${e("state.unavailable")}</p>`}
+      ${c(n.hero).length ? U`<div class="hero" part="hero">
+            ${c(n.hero).map((t) => this._field(e, t, s[t], "hero-field"))}
+          </div>` : K}
+      <div
+        class="fields"
+        part="fields"
+        style=${n.columns ? `--_columns: repeat(${n.columns}, minmax(0, 1fr))` : ""}
+      >
+        ${c(n.fields).map((t) => this._field(e, t, s[t], "field"))}
+      </div>
+    `;
+	}
+	_field(e, t, n, r) {
+		return U`<div class=${r} part=${r} data-field=${t}>
+      <div class="label" part="label">${e(`field.${t}`)}</div>
+      ${n.stars === void 0 ? U`<div class=${`value ${n.tone ?? ""}`} part="value">${n.value}</div>` : U`<div class="value stars" part="value" role="img" aria-label=${n.value}>
+            ${Array.from({ length: 5 }, (e, t) => U`<span class=${t < n.stars ? "on" : "off"}>★</span>`)}
+          </div>`}
+    </div>`;
+	}
+	static {
+		this.styles = [
+			Me,
+			Ne,
+			l`
+      :where(.hero) {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        gap: var(--obbw-field-gap, 10px);
+        margin: 4px 0 14px;
+      }
+      :where(.hero-field) {
+        padding: 10px 12px;
+        border-radius: var(--obbw-tile-radius, 10px);
+        background: var(--obbw-tile-background, color-mix(in srgb, var(--_fg) 5%, var(--_surface)));
+      }
+      :where(.hero-field .value) {
+        font-size: var(--obbw-hero-font-size, 28px);
+        font-weight: 500;
+        line-height: 1.2;
+      }
+      :where(.fields) {
+        display: grid;
+        /* The columns option sets --_columns; a style rule still wins over it. */
+        grid-template-columns: var(--_columns, repeat(auto-fill, minmax(var(--obbw-field-min-width, 104px), 1fr)));
+        gap: var(--obbw-field-gap, 10px) 12px;
+      }
+      :where(.label) {
+        font-size: var(--obbw-label-font-size, 11px);
+        color: var(--obbw-label-color, var(--_muted));
+      }
+      :where(.value) {
+        font-size: var(--obbw-value-font-size, 14px);
+        color: var(--obbw-value-color, var(--_fg));
+        font-variant-numeric: tabular-nums;
+        overflow-wrap: anywhere;
+      }
+      :where(.value.high) {
+        color: var(--obbw-error-high-color, var(--primary-color, #a83b21));
+      }
+      :where(.value.low) {
+        color: var(--obbw-error-low-color, var(--_ok));
+      }
+      :where(.stars .on) {
+        color: var(--obbw-star-color, #e8a317);
+      }
+      :where(.stars .off) {
+        color: var(--obbw-star-off-color, color-mix(in srgb, var(--_fg) 25%, var(--_surface)));
+      }
+    `
+		];
+	}
+}, nt = class extends Y {
+	static {
+		this.properties = {
+			hass: { attribute: !1 },
+			_config: { state: !0 }
+		};
+	}
+	setConfig(e) {
+		this._config = e;
+	}
+	render() {
+		if (!this.hass || !this._config) return K;
+		let e = n(this.hass.locale?.language ?? this.hass.language), t = { select: {
+			multiple: !0,
+			reorder: !0,
+			mode: "list",
+			options: Be.map((t) => ({
+				value: t,
+				label: e(`field.${t}`)
+			}))
+		} }, r = [
+			{
+				name: "device_id",
+				selector: { device: { integration: xe } }
+			},
+			{
+				name: "title",
+				selector: { text: {} }
+			},
+			{
+				name: "hero",
+				selector: t
+			},
+			{
+				name: "fields",
+				selector: t
+			},
+			{
+				name: "",
+				type: "grid",
+				schema: [
+					{
+						name: "columns",
+						selector: { number: {
+							min: 1,
+							max: 6,
+							mode: "box"
+						} }
+					},
+					{
+						name: "show_header",
+						selector: { boolean: {} }
+					},
+					{
+						name: "show_empty",
+						selector: { boolean: {} }
+					}
+				]
+			}
+		], i = {
+			show_header: !0,
+			show_empty: !0,
+			hero: Qe,
+			fields: $e,
+			...this._config
+		}, a = (t) => e(t === "device_id" ? "editor.device" : t === "show_empty" ? "editor.show_empty" : `editor.${t}`);
+		return U`<ha-form
+      .hass=${this.hass}
+      .data=${i}
+      .schema=${r}
+      .computeLabel=${(e) => a(e.name)}
+      @value-changed=${(e) => {
+			let t = { ...e.detail.value };
+			t.title || delete t.title, t.columns || delete t.columns, this.dispatchEvent(new CustomEvent("config-changed", {
+				detail: { config: t },
+				bubbles: !0,
+				composed: !0
+			}));
+		}}
+    ></ha-form>`;
+	}
+};
+// src/shot-chart.ts
+function rt(e, t, n, r) {
+	return e.filter((e) => e.t <= r).map((e, r) => (r ? "L" : "M") + t(e.t).toFixed(2) + " " + n(e.cg / 100).toFixed(2)).join("");
+}
+function it(e, t, n, r = e.timeMax) {
+	let i = n !== "flow", a = n !== "weight", o = e.maxW / 10, s = [
+		.25,
+		.5,
+		1,
+		2,
+		5
+	].find((t) => t * o >= e.flowMax) ?? Math.ceil(e.flowMax / o), c = t, l = Math.round(Math.min(220, Math.max(160, c * .42))), u = a && !i ? 48 : 38, d = c - (i && a ? 52 : 10), f = l - 18, p = (e) => u + (d - u) * Math.min(1, e / r), m = (e) => Math.max(0, Math.min(1, e)), h = (t) => f - (f - 14) * m(t / e.maxW), g = (e) => f - (f - 14) * m(e / (s * o)), _ = (e) => e.toFixed(2), v = (e, t) => e.map((e, n) => (n ? "L" : "M") + _(p(e.t)) + " " + _(t(e.cg / 100))).join("") + (e.length === 1 ? "h0" : ""), y = (t, n, r, i) => {
+		let a = [], o = (e, t, n) => {
+			let i = v(e, r);
+			a.push({
+				kind: t,
+				d: i,
+				drip: n,
+				area: !n && e.length > 1 && e.some((e) => e.cg > 0) ? `${i}V${f}H${_(p(e[0].t))}Z` : null
+			});
+		};
+		e.firstDropS && o([
+			{
+				t: 0,
+				cg: 0
+			},
+			{
+				t: e.firstDropS,
+				cg: 0
+			},
+			...i
+		], "bbw", !1);
+		for (let e of t) o(e.pts, e.kind, !1);
+		for (let e of n) o(e.pts, e.kind, !0);
+		return a;
+	}, b = [], x = [], S = [], C = [];
+	for (let e = 0; e <= o; e++) {
+		let t = f - (f - 14) * e / o;
+		b.push(`M${u} ${t.toFixed(1)}H${d}`), i && S.push({
+			x: u - 4,
+			y: t + 3,
+			text: `${e * 10} g`,
+			anchor: "end"
+		}), a && C.push({
+			x: i ? d + 4 : u - 4,
+			y: t + 3,
+			text: `${+(e * s).toFixed(2)} g/s`,
+			anchor: i ? "start" : "end"
+		});
+	}
+	for (let e = 0; e <= r; e += 10) b.push(`M${p(e).toFixed(1)} 14V${f}`), x.push({
+		x: p(e),
+		y: f + 13,
+		text: `${e} s`,
+		anchor: e === 0 ? "start" : e + 10 > r ? "end" : "middle"
+	});
+	return {
+		width: c,
+		height: l,
+		L: u,
+		R: d,
+		T: 14,
+		B: f,
+		timeMax: r,
+		X: p,
+		Yw: h,
+		Yf: g,
+		grid: b,
+		xLabels: x,
+		weightLabels: S,
+		flowLabels: C,
+		weight: i ? y(e.segs, e.dripSegs, h, []) : [],
+		flow: a ? y(e.flowSegs, e.dripFlowSegs, g, e.flowStart ? [e.flowStart] : []) : [],
+		held: i ? e.held.map((e) => ({
+			x: p(e.t),
+			y: h(e.cg / 100)
+		})) : [],
+		finalPoint: i && e.finalPoint ? {
+			x: p(e.finalPoint.t),
+			y: h(e.finalPoint.cg / 100)
+		} : null,
+		tAt: (e) => (e - u) * r / (d - u)
+	};
+}
 // src/shot-chart-card.ts
-var Ke = [
+var at = [
 	"preset_weight",
 	"weight_flow",
 	"weight",
 	"flow"
-], qe = {
+], ot = {
 	chart: "preset_weight",
 	mode_switch: !0,
 	show_header: !0,
 	show_readout: !0,
 	show_legend: !0
-}, Je = (e) => `obbw-shot-view:${e.device_id}:${e.chart}`, Ye = 0, Xe = class extends Z {
+}, st = (e) => `obbw-shot-view:${e.device_id}:${e.chart}`, ct = 0, lt = class extends X {
 	constructor(...e) {
-		super(...e), this.defaults = qe, this._id = `obbws${++Ye}`;
+		super(...e), this.defaults = ot, this._id = `obbws${++ct}`;
 	}
 	static {
 		this.properties = {
-			...Z.properties,
+			...X.properties,
 			_view: { state: !0 },
 			_cursor: { state: !0 }
 		};
@@ -1738,18 +2158,18 @@ var Ke = [
 	}
 	static getStubConfig(e) {
 		return {
-			device_id: Se(e),
+			device_id: Ce(e),
 			chart: "preset_weight"
 		};
 	}
 	setConfig(e) {
-		if (e?.chart && !Ke.includes(e.chart)) throw Error(`Unknown chart: ${e.chart}`);
+		if (e?.chart && !at.includes(e.chart)) throw Error(`Unknown chart: ${e.chart}`);
 		super.setConfig(e);
 		let t = null;
 		try {
-			t = this._config.mode_switch ? localStorage.getItem(Je(this._config)) : null;
+			t = this._config.mode_switch ? localStorage.getItem(st(this._config)) : null;
 		} catch {}
-		this._view = Ke.includes(t) ? t : this._config.chart;
+		this._view = at.includes(t) ? t : this._config.chart;
 	}
 	getCardSize() {
 		return 6;
@@ -1766,11 +2186,11 @@ var Ke = [
 	_prepare(e) {
 		if (e === this._shotKey) return this._prepared;
 		this._shotKey = e, this._cursor = void 0;
-		let t = He(e), n = t && Ue(t);
+		let t = Je(e), n = t && Ye(t);
 		return this._prepared = n ? {
 			row: t,
 			model: n,
-			rule: We(t),
+			rule: Xe(t),
 			weight: n.pts.slice().sort((e, t) => e.t - t.t),
 			flow: n.flowSegs.concat(n.dripFlowSegs).flatMap((e) => e.pts).sort((e, t) => e.t - t.t)
 		} : null, this._prepared;
@@ -1792,30 +2212,11 @@ var Ke = [
     `;
 	}
 	_header(e, t) {
-		let n = this._config, r = String(t?.shotType ?? ""), i = ["fast", "slow"].includes(String(t?.verdict)) ? String(t.verdict) : "on_recipe", a = t ? r === "manual" ? {
-			cls: "manual",
-			text: e("shot.manual")
-		} : r === "timer_only" ? {
-			cls: "manual",
-			text: e("shot.timer_only")
-		} : {
-			cls: i,
-			text: e(`verdict.${i}`)
-		} : null, o = [t && t.hasWallTime && typeof t.endedAtUnixSec == "number" ? new Intl.DateTimeFormat(this.hass?.locale?.language ?? this.hass?.language, {
-			dateStyle: "medium",
-			timeStyle: "short"
-		}).format(/* @__PURE__ */ new Date(t.endedAtUnixSec * 1e3)) : null, t?.presetName].filter(Boolean).join(" · ");
-		return U`<div class="header" part="header">
-      <div class="titles">
-        <div class="title" part="title">${n.title || e("shot.title")}</div>
-        ${o ? U`<div class="subtitle" part="subtitle">${o}</div>` : K}
-      </div>
-      ${a ? U`<span class="chip ${a.cls}" part="chip">${a.text}</span>` : K}
-    </div>`;
+		return Ke(e, t, this._config.title, this.hass?.locale?.language ?? this.hass?.language);
 	}
 	_switch(e, t, n) {
 		return U`<div class="views" part="views" role="group" aria-label=${e("view.label")}>
-      ${Ke.filter((e) => n || e !== "preset_weight").map((n) => U`<button
+      ${at.filter((e) => n || e !== "preset_weight").map((n) => U`<button
           type="button"
           class="view"
           part="view"
@@ -1829,7 +2230,7 @@ var Ke = [
 	_pick(e) {
 		this._view = e;
 		try {
-			localStorage.setItem(Je(this._config), e);
+			localStorage.setItem(st(this._config), e);
 		} catch {}
 	}
 	_label(e, t = "") {
@@ -1837,12 +2238,12 @@ var Ke = [
 	}
 	_presetView(e, t) {
 		if (!this._width) return U`<div class="chart"></div>`;
-		let { model: n, rule: r, row: i } = t, a = r, o = Math.max(a.wall, n.dur), s = Ae(a, this._width, {
+		let { model: n, rule: r, row: i } = t, a = r, o = Math.max(a.wall, n.dur), s = je(a, this._width, {
 			compact: !0,
 			tens: !0,
 			maxG: n.rawMaxW,
 			maxT: o
-		}), c = this._id, l = String(i.shotType).toLowerCase() === "timer_only" ? "none" : ["fast", "slow"].includes(String(i.verdict)) ? String(i.verdict) : "on_recipe", u = (e, t, n, r) => n ? r ? W`<path class=${`band ${e}`} part=${`band ${e}`} d=${t} fill=${`url(#${c}${e})`}/>` : K : W`<path class="band-off" d=${t}/>`, d = (e, t) => W`<linearGradient id=${c + e} x1="0" y1="0" x2="0" y2="1"><stop class=${t}/><stop class=${`${t} stop-fade`} offset="1"/></linearGradient>`, f = n.dripSegs.length && Number.isFinite(Number(i.endS)) ? Number(i.endS) : null, p = this._cursor, m = Ge(t.weight, p), h = a.mode === "active" ? `${Ee(p, a).toFixed(1)} g` : "—", g = e("shot.cursor", p.toFixed(1), m.toFixed(1), h);
+		}), c = this._id, l = String(i.shotType).toLowerCase() === "timer_only" ? "none" : ["fast", "slow"].includes(String(i.verdict)) ? String(i.verdict) : "on_recipe", u = (e, t, n, r) => n ? r ? W`<path class=${`band ${e}`} part=${`band ${e}`} d=${t} fill=${`url(#${c}${e})`}/>` : K : W`<path class="band-off" d=${t}/>`, d = (e, t) => W`<linearGradient id=${c + e} x1="0" y1="0" x2="0" y2="1"><stop class=${t}/><stop class=${`${t} stop-fade`} offset="1"/></linearGradient>`, f = n.dripSegs.length && Number.isFinite(Number(i.endS)) ? Number(i.endS) : null, p = this._cursor, m = Ze(t.weight, p), h = a.mode === "active" ? `${De(p, a).toFixed(1)} g` : "—", g = e("shot.cursor", p.toFixed(1), m.toFixed(1), h);
 		return this._tAt = s.tAt, U`
       ${this._chart(s.width, s.height, W`
           <defs>
@@ -1865,8 +2266,8 @@ var Ke = [
           <path class="max-line" part="max-line" d=${`M${s.maxX.toFixed(1)} ${s.T}V${s.B}`}/>
           <path class="window-edge" part="window-edge" d=${s.windowEdges}/>
           <path class=${`cut-line ${a.mode === "timerOnly" ? "off" : ""}`} part="cut-line" d=${s.cut}/>
-          ${n.segs.map((e) => W`<path class="shot-line" part="shot-line" d=${ze(e.pts, s.X, s.Y, o)}/>`)}
-          ${n.dripSegs.map((e) => W`<path class="shot-line drip" part="shot-line drip" d=${ze(e.pts, s.X, s.Y, o)}/>`)}
+          ${n.segs.map((e) => W`<path class="shot-line" part="shot-line" d=${rt(e.pts, s.X, s.Y, o)}/>`)}
+          ${n.dripSegs.map((e) => W`<path class="shot-line drip" part="shot-line drip" d=${rt(e.pts, s.X, s.Y, o)}/>`)}
           ${n.held.map((e) => W`<circle class="held" part="held" cx=${s.X(e.t).toFixed(1)} cy=${s.Y(e.cg / 100).toFixed(1)} r="2"/>`)}
           ${this._label({
 			x: s.R - 2,
@@ -1874,7 +2275,7 @@ var Ke = [
 			text: e("graph.target", +a.goal.toFixed(1)),
 			anchor: "end"
 		}, "halo strong")}
-          ${f == null ? K : W`<circle class="stop-point" part="stop-point" r="3" cx=${s.X(f).toFixed(2)} cy=${s.Y(Ge(t.weight, f)).toFixed(2)}/>`}
+          ${f == null ? K : W`<circle class="stop-point" part="stop-point" r="3" cx=${s.X(f).toFixed(2)} cy=${s.Y(Ze(t.weight, f)).toFixed(2)}/>`}
           ${n.finalPoint ? W`<circle class="final-point shot" part="final-point" r="3" cx=${s.X(n.finalPoint.t).toFixed(1)} cy=${s.Y(n.finalPoint.cg / 100).toFixed(1)}/>` : K}
           <g class="cursor" part="cursor">
             <path class="cursor-guide" d=${`M${s.X(p).toFixed(1)} ${s.T}V${s.B}`}/>
@@ -1894,7 +2295,7 @@ var Ke = [
 	}
 	_sparkView(e, t, n) {
 		if (!this._width) return U`<div class="chart"></div>`;
-		let { model: r, rule: i } = t, a = Be(r, this._width, n, i ? Math.max(i.wall, r.dur) : r.timeMax), o = this._id, s = this._cursor, c = Ge(t.weight, s), l = t.flow.length && s >= t.flow[0].t && s <= t.flow.at(-1).t ? Ge(t.flow, s) : null, u = n === "weight" ? `${s.toFixed(1)} s · ${c.toFixed(1)} g` : n === "flow" ? `${s.toFixed(1)} s · ${l?.toFixed(1) ?? "—"} g/s` : e("shot.flow_cursor", s.toFixed(1), c.toFixed(1), l?.toFixed(1) ?? "—"), d = [...new Set(r.segs.map((e) => e.kind))], f = (e, t) => {
+		let { model: r, rule: i } = t, a = it(r, this._width, n, i ? Math.max(i.wall, r.dur) : r.timeMax), o = this._id, s = this._cursor, c = Ze(t.weight, s), l = t.flow.length && s >= t.flow[0].t && s <= t.flow.at(-1).t ? Ze(t.flow, s) : null, u = n === "weight" ? `${s.toFixed(1)} s · ${c.toFixed(1)} g` : n === "flow" ? `${s.toFixed(1)} s · ${l?.toFixed(1) ?? "—"} g/s` : e("shot.flow_cursor", s.toFixed(1), c.toFixed(1), l?.toFixed(1) ?? "—"), d = [...new Set(r.segs.map((e) => e.kind))], f = (e, t) => {
 			let n = (e) => t ? "flow" : `weight ${e.kind}`;
 			return W`${e.map((e, r) => e.area ? W`<linearGradient id=${`${o}${t ? "f" : "w"}${r}`} x1="0" y1="0" x2="0" y2="1">
                 <stop class=${`fill-top ${n(e)}`}/><stop class=${`fill-base ${n(e)}`} offset="1"/></linearGradient>
@@ -1974,28 +2375,9 @@ var Ke = [
 	}
 	static {
 		this.styles = [
-			je,
 			Me,
+			Ne,
 			l`
-      :where(.chip) {
-        flex: none;
-        padding: 3px 10px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 500;
-        --_c: var(--_ok);
-        color: color-mix(in srgb, var(--_c) 70%, var(--_fg));
-        background: color-mix(in srgb, var(--_c) 18%, var(--_surface));
-      }
-      :where(.chip.fast) {
-        --_c: var(--_fast);
-      }
-      :where(.chip.slow) {
-        --_c: var(--_slow);
-      }
-      :where(.chip.manual) {
-        --_c: var(--_muted);
-      }
       :where(.views) {
         display: inline-flex;
         flex-wrap: wrap;
@@ -2177,12 +2559,12 @@ var Ke = [
     `
 		];
 	}
-}, Ze = [
+}, ut = [
 	"mode_switch",
 	"show_header",
 	"show_readout",
 	"show_legend"
-], Qe = class extends X {
+], dt = class extends Y {
 	static {
 		this.properties = {
 			hass: { attribute: !1 },
@@ -2197,13 +2579,13 @@ var Ke = [
 		let e = n(this.hass.locale?.language ?? this.hass.language), t = [
 			{
 				name: "device_id",
-				selector: { device: { integration: be } }
+				selector: { device: { integration: xe } }
 			},
 			{
 				name: "chart",
 				selector: { select: {
 					mode: "dropdown",
-					options: Ke.map((t) => ({
+					options: at.map((t) => ({
 						value: t,
 						label: e(`view.${t}`)
 					}))
@@ -2216,14 +2598,14 @@ var Ke = [
 			{
 				name: "",
 				type: "grid",
-				schema: Ze.map((e) => ({
+				schema: ut.map((e) => ({
 					name: e,
 					selector: { boolean: {} }
 				}))
 			}
 		], r = {
 			chart: "preset_weight",
-			...Object.fromEntries(Ze.map((e) => [e, !0])),
+			...Object.fromEntries(ut.map((e) => [e, !0])),
 			...this._config
 		};
 		return U`<ha-form
@@ -2241,18 +2623,24 @@ var Ke = [
 		}}
     ></ha-form>`;
 	}
-}, $e = [
-	["open-brew-by-weight-preset-card", Ie],
-	["open-brew-by-weight-preset-card-editor", Re],
-	["open-brew-by-weight-shot-chart-card", Xe],
-	["open-brew-by-weight-shot-chart-card-editor", Qe]
+}, ft = [
+	["open-brew-by-weight-preset-card", Le],
+	["open-brew-by-weight-preset-card-editor", ze],
+	["open-brew-by-weight-shot-chart-card", lt],
+	["open-brew-by-weight-shot-chart-card-editor", dt],
+	["open-brew-by-weight-shot-card", tt],
+	["open-brew-by-weight-shot-card-editor", nt]
 ];
-for (let [e, t] of $e) customElements.get(e) || customElements.define(e, t);
-var et = n(navigator.language), tt = window.customCards ??= [], nt = "https://github.com/Cheerpipe/ha-open-brew-by-weight/blob/main/docs/cards.md";
-for (let [e, t] of [["open-brew-by-weight-preset-card", "preset"], ["open-brew-by-weight-shot-chart-card", "shot"]]) tt.some((t) => t.type === e) || tt.push({
+for (let [e, t] of ft) customElements.get(e) || customElements.define(e, t);
+var pt = n(navigator.language), mt = window.customCards ??= [], ht = "https://github.com/Cheerpipe/ha-open-brew-by-weight/blob/main/docs/cards.md";
+for (let [e, t] of [
+	["open-brew-by-weight-preset-card", "preset"],
+	["open-brew-by-weight-shot-chart-card", "shot"],
+	["open-brew-by-weight-shot-card", "details"]
+]) mt.some((t) => t.type === e) || mt.push({
 	type: e,
-	name: et(`card.${t}.name`),
-	description: et(`card.${t}.description`),
+	name: pt(`card.${t}.name`),
+	description: pt(`card.${t}.description`),
 	preview: !0,
-	documentationURL: nt
+	documentationURL: ht
 });

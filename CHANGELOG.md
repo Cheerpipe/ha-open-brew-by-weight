@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- A **shot details card**: every number of your last shot, like a shot card
+  on the controller's Stats page. Choose and order the fields, pick which
+  ones show as large numbers, and set the columns.
 - A **last shot card**: your last shot over its preset, weight and flow
   together, or either alone, the same charts as the controller's Web UI.
   Buttons switch the chart, the cursor reads the shot at any moment, and every
