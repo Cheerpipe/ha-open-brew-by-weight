@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0
+
+Switches changed together now reach the controller as one change. This needs
+Open Brew by Weight firmware that accepts several Quick Settings in one
+update; update the controller together with this release.
+
+- A scene or an automation that flips several switches sends them in a single
+  update: they apply at the same moment, Home Assistant confirms them once, and
+  the controller sends one update back instead of one per switch.
+
 ## 0.3.0
 
 Adds support for the controller's optional Web UI password. To use it, the
