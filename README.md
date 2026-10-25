@@ -44,6 +44,9 @@ It runs entirely on your local network. No cloud, no account, no polling.
   BBW, scale-loss backup, shorten slow shots, extend fast shots, avoid
   accidental touch, and cup protection, all in sync with the controller.
 - **A safe restart button** that waits for a shot to finish before it acts.
+- **Dashboard cards.** A preset card draws how the preset stops a shot, just
+  like the controller's Web UI, and every color in it can be restyled. See
+  [Dashboard cards](docs/cards.md).
 
 Updates arrive the instant they happen, pushed by the controller itself.
 

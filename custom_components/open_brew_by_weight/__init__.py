@@ -15,6 +15,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.typing import ConfigType
 
 from .api import ApiError, AuthRequired, OpenBrewByWeightApi, describe_error
+from .cards import async_register_cards
 from .const import (
     CONF_DEVICE_ID,
     CONF_WEBHOOK_ID,
@@ -34,8 +35,9 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Register the card data commands."""
+    """Serve the dashboard cards and their data commands."""
     async_register_websocket(hass)
+    await async_register_cards(hass)
     return True
 
 

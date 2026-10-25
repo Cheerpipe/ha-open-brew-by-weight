@@ -1,0 +1,25 @@
+{
+  "name": "open-brew-by-weight-cards",
+  "private": true,
+  "type": "module",
+  "description": "Home Assistant dashboard cards for Open Brew by Weight",
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "dev": "vite --port 5180 --strictPort",
+    "build": "vite build",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lit": "^3.3.3"
+  },
+  "devDependencies": {
+    "happy-dom": "^21.0.4",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}

@@ -3,13 +3,17 @@
 ## Unreleased
 
 Home Assistant now keeps the data the controller draws its preset and shot
-charts from, ready for dashboard cards. This needs Open Brew by Weight
+charts from, and the first dashboard card uses it. This needs Open Brew by Weight
 firmware that shares it; with older firmware nothing changes.
 
 - Each preset's settings (target, on-recipe window, fast and slow shot limits)
   and its recent shot arrival times, refreshed when a preset changes.
 - The last shot's full record and weight curve, read once per shot and kept
   across Home Assistant restarts.
+- A **preset card**: draws how a preset stops a shot, with the example shot
+  you can drag, like the controller's Web UI. It comes with the integration,
+  needs no dashboard resource, and every color can be changed with UIX or a
+  theme. See [Dashboard cards](docs/cards.md).
 
 ## 0.4.0
 

@@ -20,3 +20,23 @@ jobs:
       - run: uv run --no-sync pytest
       - run: uv run --no-sync ruff check .
       - run: uv run --no-sync mypy
+
+  cards:
+    name: Dashboard cards
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      # The integration ships the built module: it must match the sources.
+      - run: npm run build
+      - run: git diff --exit-code -- ../custom_components/open_brew_by_weight/frontend

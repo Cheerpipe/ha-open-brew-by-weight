@@ -1,0 +1,123 @@
+// Card text. English mirrors the controller's Web UI wording; add a language
+// by adding a table with the same keys.
+
+const en = {
+  "card.preset.name": "Open Brew by Weight preset",
+  "card.preset.description": "Shows how a preset decides when to stop a shot, like the controller's Web UI.",
+  "state.loading": "Waiting for the controller…",
+  "state.not_found": "Choose an Open Brew by Weight device in the card settings.",
+  "state.no_rules": "Update the controller firmware to see its presets here.",
+  "state.unavailable": "The controller isn't responding. This shows the last known preset.",
+  "state.missing_preset": "This preset no longer exists on the controller.",
+  "state.empty": "This preset can't be drawn.",
+  "state.timer_only": "Brew by weight is off for this preset: shots stop by hand or at the time limit.",
+  "header.active": "Active preset",
+  "header.preset": "Preset",
+  "header.target": "Target {0} g",
+  "header.dose": "{0} g in",
+  "header.select": "Active preset",
+  "graph.target": "Target {0} g",
+  "graph.max": "Max {0} s",
+  "graph.no_cut": "No weight cut",
+  "graph.scrub": "Time the shot is cut",
+  "graph.readout": "{0} g at {1} s → {2} · stops at {3} g, {4} s",
+  "graph.readout_target": "{0} g at {1} s → {2} · stops at {3} g",
+  "graph.pill": "Cut {4} s · {3} g",
+  "graph.summary":
+    "No weight cut before {0} s. Cuts at {1} g until {2} s, at {3} g from {4} to {5} s, and at {6} g from {7} s. The shot ends by {8} s.",
+  "verdict.fast": "Fast",
+  "verdict.on_recipe": "On recipe",
+  "verdict.slow": "Slow",
+  "verdict.max_time": "Max time",
+  "legend.cut": "Stop at",
+  "legend.pace": "Typical pace",
+  "legend.example": "Example shot (drag)",
+  "legend.arrivals": "Recent shots",
+  "legend.window": "On-recipe window",
+  "legend.fast": "Extend (full / partial)",
+  "legend.slow": "Shorten (full / partial)",
+  "legend.no_cut": "No weight cut",
+  "note.pace": "Typical pace is illustrative: shots are judged by when they reach the target.",
+  "note.start_preset": "Reference pace starts at {0} s, when this preset's first drops usually fall.",
+  "note.start_others":
+    "Reference pace starts at {0} s, when first drops usually fall on your other presets, until this one records its own.",
+  "note.start_none": "Reference pace starts at 0 s until a shot records its first drop.",
+  "editor.device": "Device",
+  "editor.preset": "Preset",
+  "editor.preset_active": "The active preset",
+  "editor.title": "Title (optional)",
+  "editor.show_header": "Show the header",
+  "editor.show_selector": "Let the card change the active preset",
+  "editor.show_example": "Show the example shot",
+  "editor.show_readout": "Show the example shot reading",
+  "editor.show_arrivals": "Show recent shots",
+  "editor.show_legend": "Show the legend",
+  "editor.show_note": "Show the pace note",
+};
+
+type Key = keyof typeof en;
+
+const es: Record<Key, string> = {
+  "card.preset.name": "Preset de Open Brew by Weight",
+  "card.preset.description": "Muestra cómo decide un preset cuándo cortar el shot, igual que la web del controlador.",
+  "state.loading": "Esperando al controlador…",
+  "state.not_found": "Elige un dispositivo Open Brew by Weight en la configuración de la card.",
+  "state.no_rules": "Actualiza el firmware del controlador para ver sus presets aquí.",
+  "state.unavailable": "El controlador no responde. Se muestra el último preset conocido.",
+  "state.missing_preset": "Este preset ya no existe en el controlador.",
+  "state.empty": "Este preset no se puede dibujar.",
+  "state.timer_only": "Brew by weight está apagado en este preset: el shot se corta a mano o al llegar al tiempo máximo.",
+  "header.active": "Preset activo",
+  "header.preset": "Preset",
+  "header.target": "Meta {0} g",
+  "header.dose": "{0} g de café",
+  "header.select": "Preset activo",
+  "graph.target": "Meta {0} g",
+  "graph.max": "Máx. {0} s",
+  "graph.no_cut": "Sin corte por peso",
+  "graph.scrub": "Momento en que se corta el shot",
+  "graph.readout": "{0} g a los {1} s → {2} · corta en {3} g, {4} s",
+  "graph.readout_target": "{0} g a los {1} s → {2} · corta en {3} g",
+  "graph.pill": "Corte {4} s · {3} g",
+  "graph.summary":
+    "Sin corte por peso antes de {0} s. Corta en {1} g hasta {2} s, en {3} g de {4} a {5} s y en {6} g desde {7} s. El shot termina a más tardar a los {8} s.",
+  "verdict.fast": "Rápido",
+  "verdict.on_recipe": "En receta",
+  "verdict.slow": "Lento",
+  "verdict.max_time": "Tiempo máximo",
+  "legend.cut": "Corta en",
+  "legend.pace": "Ritmo típico",
+  "legend.example": "Shot de ejemplo (arrastra)",
+  "legend.arrivals": "Shots recientes",
+  "legend.window": "Ventana en receta",
+  "legend.fast": "Alargar (total / parcial)",
+  "legend.slow": "Acortar (total / parcial)",
+  "legend.no_cut": "Sin corte por peso",
+  "note.pace": "El ritmo típico es ilustrativo: los shots se juzgan por cuándo llegan a la meta.",
+  "note.start_preset": "El ritmo de referencia empieza a los {0} s, cuando suelen caer las primeras gotas de este preset.",
+  "note.start_others":
+    "El ritmo de referencia empieza a los {0} s, cuando suelen caer las primeras gotas en tus otros presets, hasta que este registre las suyas.",
+  "note.start_none": "El ritmo de referencia empieza en 0 s hasta que un shot registre su primera gota.",
+  "editor.device": "Dispositivo",
+  "editor.preset": "Preset",
+  "editor.preset_active": "El preset activo",
+  "editor.title": "Título (opcional)",
+  "editor.show_header": "Mostrar la cabecera",
+  "editor.show_selector": "Permitir cambiar el preset activo desde la card",
+  "editor.show_example": "Mostrar el shot de ejemplo",
+  "editor.show_readout": "Mostrar la lectura del shot de ejemplo",
+  "editor.show_arrivals": "Mostrar shots recientes",
+  "editor.show_legend": "Mostrar la leyenda",
+  "editor.show_note": "Mostrar la nota del ritmo",
+};
+
+const tables: Record<string, Record<Key, string>> = { en, es };
+
+export type Localize = (key: Key, ...values: (string | number)[]) => string;
+
+/** Text in the user's Home Assistant language, English when it is missing. */
+export function localizer(language: string | undefined): Localize {
+  const table = tables[(language ?? "en").split("-")[0]] ?? en;
+  return (key, ...values) =>
+    (table[key] ?? en[key]).replace(/\{(\d+)\}/g, (_, i: string) => String(values[Number(i)]));
+}

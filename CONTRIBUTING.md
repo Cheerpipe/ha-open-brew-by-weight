@@ -38,6 +38,27 @@ quietly changing your environment; `--locked` refuses a stale lockfile.
 GitHub Actions runs the same checks on every push and pull request, plus
 Home Assistant's hassfest and the HACS validation.
 
+## Dashboard cards
+
+The cards live in `frontend/` (TypeScript and Lit). The integration ships the
+built module, `custom_components/open_brew_by_weight/frontend/open-brew-by-weight-cards.js`,
+so rebuild it in the same commit as any change to `frontend/src/`:
+
+```sh
+cd frontend
+npm ci
+npm run typecheck
+npm test
+npm run build
+```
+
+`npm run dev` opens a page with every card in light and dark themes against
+the test fixtures. The chart math is ported from the controller's Web UI;
+`test/fixtures/preset-golden.json` pins it to the firmware's own output. After
+the firmware changes its charts, regenerate it with
+`node scripts/golden-from-firmware.mjs <path to the firmware repository>` and
+port the difference.
+
 ## Controller fixtures
 
 `tests/fixtures/` holds sample messages and snapshots copied from the firmware

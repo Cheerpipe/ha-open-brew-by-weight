@@ -14,6 +14,11 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.setup import async_setup_component
 
 from custom_components.open_brew_by_weight import async_setup
+from custom_components.open_brew_by_weight.cards import (
+    CARDS_FILE,
+    CARDS_URL,
+    async_register_cards,
+)
 from custom_components.open_brew_by_weight.const import DOMAIN
 from custom_components.open_brew_by_weight.coordinator import (
     OpenBrewByWeightCoordinator,
@@ -182,7 +187,8 @@ async def test_presets_webhook_keeps_rules_then_reads_them(hass) -> None:
 async def test_websocket_feed(hass, hass_ws_client) -> None:
     """Cards get the data now, on change, and a note when the entry unloads."""
     assert await async_setup_component(hass, "websocket_api", {})
-    assert await async_setup(hass, {})
+    with patch("custom_components.open_brew_by_weight.async_register_cards"):
+        assert await async_setup(hass, {})
     coordinator, _api = _coordinator(hass)
     coordinator.async_set_updated_data(
         replace(coordinator.data, shot_detail=_detail())
@@ -217,3 +223,23 @@ async def test_websocket_feed(hass, hass_ws_client) -> None:
     assert (await client.receive_json())["success"]
     await asyncio.sleep(0)
     await coordinator.async_shutdown()
+
+
+async def test_cards_are_served_to_every_dashboard(hass) -> None:
+    """The bundled module is served and loaded with a content-hash version."""
+    assert CARDS_FILE.is_file()
+    with patch("custom_components.open_brew_by_weight.cards.add_extra_js_url") as add:
+        await async_register_cards(hass)  # headless: nothing to serve
+    add.assert_not_called()
+    hass.http = MagicMock(async_register_static_paths=AsyncMock())
+    hass.config.components.add("frontend")
+    with patch("custom_components.open_brew_by_weight.cards.add_extra_js_url") as add:
+        await async_register_cards(hass)
+    (config,) = hass.http.async_register_static_paths.await_args.args[0]
+    assert (config.url_path, config.path, config.cache_headers) == (
+        CARDS_URL,
+        str(CARDS_FILE),
+        True,
+    )
+    url = add.call_args.args[1]
+    assert url.startswith(f"{CARDS_URL}?v=") and len(url) == len(CARDS_URL) + 15

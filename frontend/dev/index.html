@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Open Brew by Weight cards</title>
+    <style>
+      body { margin: 0; padding: 24px; font-family: Roboto, system-ui, sans-serif; display: grid; gap: 24px; }
+      .theme { padding: 16px; border-radius: 12px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+      .light { background: #fafafa; --primary-text-color: #212121; --secondary-text-color: #727272; --card-background-color: #fff; --divider-color: #e0e0e0; --primary-color: #03a9f4; }
+      .dark { background: #111; --primary-text-color: #e1e1e1; --secondary-text-color: #9b9b9b; --card-background-color: #1c1c1c; --divider-color: #2f2f2f; --primary-color: #03a9f4; color: #e1e1e1; }
+      ha-card { display: block; background: var(--card-background-color); border-radius: 12px; border: 1px solid var(--divider-color); }
+      h2 { grid-column: 1 / -1; margin: 0; font-size: 14px; font-weight: 500; }
+    </style>
+  </head>
+  <body>
+    <section class="theme light" id="light"><h2>Light</h2></section>
+    <section class="theme dark" id="dark"><h2>Dark</h2></section>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
