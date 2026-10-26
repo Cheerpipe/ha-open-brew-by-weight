@@ -33,7 +33,6 @@ def card_payload(coordinator: OpenBrewByWeightCoordinator) -> dict[str, Any]:
         "available": coordinator.last_update_success,
         "shotState": data.snapshot.shot_state,
         "activePresetId": data.presets.active_id,
-        "cutRampS": data.presets.cut_ramp_s,
         "presets": [
             {"id": p.id, "name": p.name, "isFactory": p.is_factory, **(p.rule or {})}
             for p in data.presets.items

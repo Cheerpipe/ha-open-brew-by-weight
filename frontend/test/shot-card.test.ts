@@ -15,7 +15,6 @@ const payload = (lastShot: CardData["lastShot"] = row()): CardData => ({
   available: true,
   shotState: "idle",
   activePresetId: presets.activeId,
-  cutRampS: presets.cutRampS,
   presets: presets.items,
   lastShot,
 });

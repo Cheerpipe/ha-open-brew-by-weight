@@ -13,7 +13,10 @@
    "t2": 36,
    "prot": 12,
    "wall": 50,
-   "d": 3,
+   "dFast": 3,
+   "dSlow": 3,
+   "curveFast": 0,
+   "curveSlow": 0,
    "firstDrop": 4.9,
    "firstDropN": 5,
    "scrubMin": 12,
@@ -57,7 +60,10 @@
    "t2": 36,
    "prot": 12,
    "wall": 50,
-   "d": 3,
+   "dFast": 3,
+   "dSlow": 3,
+   "curveFast": 0,
+   "curveSlow": 0,
    "firstDrop": 4.9,
    "firstDropN": 5,
    "scrubMin": 12,
@@ -101,7 +107,10 @@
    "t2": 36,
    "prot": 12,
    "wall": 50,
-   "d": 3,
+   "dFast": 3,
+   "dSlow": 3,
+   "curveFast": 0,
+   "curveSlow": 0,
    "firstDrop": 0,
    "firstDropN": 0,
    "scrubMin": 12,
@@ -145,7 +154,10 @@
    "t2": 18,
    "prot": 12,
    "wall": 25,
-   "d": 3,
+   "dFast": 3,
+   "dSlow": 3,
+   "curveFast": 0,
+   "curveSlow": 0,
    "firstDrop": 4.9,
    "firstDropN": 5,
    "scrubMin": 12,
@@ -178,6 +190,53 @@
   },
   "invalid": {
    "mode": "empty"
+  },
+  "curves": {
+   "mode": "active",
+   "fast": true,
+   "slow": true,
+   "fastMargin": 6,
+   "slowMargin": 3,
+   "goal": 36,
+   "ceil": 42,
+   "floor": 33,
+   "t1": 27,
+   "t2": 36,
+   "prot": 12,
+   "wall": 50,
+   "dFast": 2,
+   "dSlow": 8,
+   "curveFast": 8,
+   "curveSlow": 4,
+   "firstDrop": 4.9,
+   "firstDropN": 5,
+   "scrubMin": 12,
+   "pts": [
+    [
+     12,
+     42
+    ],
+    [
+     25,
+     42
+    ],
+    [
+     27,
+     36
+    ],
+    [
+     36,
+     36
+    ],
+    [
+     44,
+     33
+    ],
+    [
+     50,
+     33
+    ]
+   ]
   }
  },
  "cutLine": {
@@ -2124,6 +2183,492 @@
     25,
     15
    ]
+  ],
+  "curves": [
+   [
+    0,
+    42
+   ],
+   [
+    0.4166666666666667,
+    42
+   ],
+   [
+    0.8333333333333334,
+    42
+   ],
+   [
+    1.25,
+    42
+   ],
+   [
+    1.6666666666666667,
+    42
+   ],
+   [
+    2.0833333333333335,
+    42
+   ],
+   [
+    2.5,
+    42
+   ],
+   [
+    2.9166666666666665,
+    42
+   ],
+   [
+    3.3333333333333335,
+    42
+   ],
+   [
+    3.75,
+    42
+   ],
+   [
+    4.166666666666667,
+    42
+   ],
+   [
+    4.583333333333333,
+    42
+   ],
+   [
+    5,
+    42
+   ],
+   [
+    5.416666666666667,
+    42
+   ],
+   [
+    5.833333333333333,
+    42
+   ],
+   [
+    6.25,
+    42
+   ],
+   [
+    6.666666666666667,
+    42
+   ],
+   [
+    7.083333333333333,
+    42
+   ],
+   [
+    7.5,
+    42
+   ],
+   [
+    7.916666666666667,
+    42
+   ],
+   [
+    8.333333333333334,
+    42
+   ],
+   [
+    8.75,
+    42
+   ],
+   [
+    9.166666666666666,
+    42
+   ],
+   [
+    9.583333333333334,
+    42
+   ],
+   [
+    10,
+    42
+   ],
+   [
+    10.416666666666666,
+    42
+   ],
+   [
+    10.833333333333334,
+    42
+   ],
+   [
+    11.25,
+    42
+   ],
+   [
+    11.666666666666666,
+    42
+   ],
+   [
+    12.083333333333334,
+    42
+   ],
+   [
+    12.5,
+    42
+   ],
+   [
+    12.916666666666666,
+    42
+   ],
+   [
+    13.333333333333334,
+    42
+   ],
+   [
+    13.75,
+    42
+   ],
+   [
+    14.166666666666666,
+    42
+   ],
+   [
+    14.583333333333334,
+    42
+   ],
+   [
+    15,
+    42
+   ],
+   [
+    15.416666666666666,
+    42
+   ],
+   [
+    15.833333333333334,
+    42
+   ],
+   [
+    16.25,
+    42
+   ],
+   [
+    16.666666666666668,
+    42
+   ],
+   [
+    17.083333333333332,
+    42
+   ],
+   [
+    17.5,
+    42
+   ],
+   [
+    17.916666666666668,
+    42
+   ],
+   [
+    18.333333333333332,
+    42
+   ],
+   [
+    18.75,
+    42
+   ],
+   [
+    19.166666666666668,
+    42
+   ],
+   [
+    19.583333333333332,
+    42
+   ],
+   [
+    20,
+    42
+   ],
+   [
+    20.416666666666668,
+    42
+   ],
+   [
+    20.833333333333332,
+    42
+   ],
+   [
+    21.25,
+    42
+   ],
+   [
+    21.666666666666668,
+    42
+   ],
+   [
+    22.083333333333332,
+    42
+   ],
+   [
+    22.5,
+    42
+   ],
+   [
+    22.916666666666668,
+    42
+   ],
+   [
+    23.333333333333332,
+    42
+   ],
+   [
+    23.75,
+    42
+   ],
+   [
+    24.166666666666668,
+    42
+   ],
+   [
+    24.583333333333332,
+    42
+   ],
+   [
+    25,
+    42
+   ],
+   [
+    25.416666666666668,
+    41.9
+   ],
+   [
+    25.833333333333332,
+    41.8
+   ],
+   [
+    26.25,
+    40.8
+   ],
+   [
+    26.666666666666668,
+    37.9
+   ],
+   [
+    27.083333333333332,
+    36
+   ],
+   [
+    27.5,
+    36
+   ],
+   [
+    27.916666666666668,
+    36
+   ],
+   [
+    28.333333333333332,
+    36
+   ],
+   [
+    28.75,
+    36
+   ],
+   [
+    29.166666666666668,
+    36
+   ],
+   [
+    29.583333333333332,
+    36
+   ],
+   [
+    30,
+    36
+   ],
+   [
+    30.416666666666668,
+    36
+   ],
+   [
+    30.833333333333332,
+    36
+   ],
+   [
+    31.25,
+    36
+   ],
+   [
+    31.666666666666668,
+    36
+   ],
+   [
+    32.083333333333336,
+    36
+   ],
+   [
+    32.5,
+    36
+   ],
+   [
+    32.916666666666664,
+    36
+   ],
+   [
+    33.333333333333336,
+    36
+   ],
+   [
+    33.75,
+    36
+   ],
+   [
+    34.166666666666664,
+    36
+   ],
+   [
+    34.583333333333336,
+    36
+   ],
+   [
+    35,
+    36
+   ],
+   [
+    35.416666666666664,
+    36
+   ],
+   [
+    35.833333333333336,
+    36
+   ],
+   [
+    36.25,
+    36
+   ],
+   [
+    36.666666666666664,
+    35.9
+   ],
+   [
+    37.083333333333336,
+    35.6
+   ],
+   [
+    37.5,
+    35.3
+   ],
+   [
+    37.916666666666664,
+    35
+   ],
+   [
+    38.333333333333336,
+    34.7
+   ],
+   [
+    38.75,
+    34.4
+   ],
+   [
+    39.166666666666664,
+    34.1
+   ],
+   [
+    39.583333333333336,
+    33.8
+   ],
+   [
+    40,
+    33.6
+   ],
+   [
+    40.416666666666664,
+    33.4
+   ],
+   [
+    40.833333333333336,
+    33.3
+   ],
+   [
+    41.25,
+    33.2
+   ],
+   [
+    41.666666666666664,
+    33.1
+   ],
+   [
+    42.083333333333336,
+    33.1
+   ],
+   [
+    42.5,
+    33.1
+   ],
+   [
+    42.916666666666664,
+    33.1
+   ],
+   [
+    43.333333333333336,
+    33.1
+   ],
+   [
+    43.75,
+    33.1
+   ],
+   [
+    44.166666666666664,
+    33
+   ],
+   [
+    44.583333333333336,
+    33
+   ],
+   [
+    45,
+    33
+   ],
+   [
+    45.416666666666664,
+    33
+   ],
+   [
+    45.833333333333336,
+    33
+   ],
+   [
+    46.25,
+    33
+   ],
+   [
+    46.666666666666664,
+    33
+   ],
+   [
+    47.083333333333336,
+    33
+   ],
+   [
+    47.5,
+    33
+   ],
+   [
+    47.916666666666664,
+    33
+   ],
+   [
+    48.333333333333336,
+    33
+   ],
+   [
+    48.75,
+    33
+   ],
+   [
+    49.166666666666664,
+    33
+   ],
+   [
+    49.583333333333336,
+    33
+   ],
+   [
+    50,
+    33
+   ]
   ]
  },
  "graphs": {
@@ -2138,7 +2683,10 @@
   "timerOnly-400-compact": "<svg viewBox=\"0 0 400 180\" width=\"400\" height=\"180\"><defs><linearGradient id=\"grvFastFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvFastPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvWindow\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--ok)\" stop-opacity=\"calc(var(--bandWin) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--ok)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><pattern id=\"gHatch\" width=\"6\" height=\"6\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(45)\"><path class=\"rvHatchLine\" d=\"M0 0V6\"/></pattern><clipPath id=\"gUnder\"><path d=\"M34.00 162.00L34.00 20.73L119.44 20.73L204.88 20.73C212.00 20.73 219.12 40.91 226.24 40.91L290.32 40.91C297.44 40.91 304.56 51.00 311.68 51.00L390.00 51.00L390.00 162.00Z\"/></clipPath></defs><g role=\"img\" aria-label=\"No weight cut before 12 s. Cuts at 42 g until 24 s, at 36 g from 27 to 36 s, and at 33 g from 39 s. The shot ends by 50 s. Typical pace is illustrative: shots are judged by when they reach the target.\"><path class=\"rvGrid\" d=\"M34 162.0H390\"/><path class=\"rvGrid\" d=\"M34 128.4H390\"/><path class=\"rvGrid\" d=\"M34 94.7H390\"/><path class=\"rvGrid\" d=\"M34 61.1H390\"/><path class=\"rvGrid\" d=\"M34 27.5H390\"/><g clip-path=\"url(#gUnder)\"><path class=\"rvFastFull\" d=\"M34.00 162.00L34.00 162.00Q131.77 137.06 229.54 10.64L229.54 10.64L34.00 10.64Z\" fill=\"url(#grvFastFull)\"/><path class=\"rvFastPart\" d=\"M34.00 162.00L34.00 162.00Q143.99 137.06 253.98 10.64L390.00 10.64L229.54 10.64Q131.77 137.06 34.00 162.00Z\" fill=\"url(#grvFastPart)\"/><path class=\"rvWindow\" d=\"M34.00 162.00L34.00 162.00Q130.12 140.20 226.24 40.91L290.32 40.91Q162.16 140.20 34.00 162.00Z\" fill=\"url(#grvWindow)\"/><path class=\"rvSlowPart\" d=\"M34.00 162.00L34.00 162.00Q180.66 137.06 327.31 10.64L390.00 10.64L351.75 10.64Q192.88 137.06 34.00 162.00Z\" fill=\"url(#grvSlowPart)\"/><path class=\"rvSlowFull\" d=\"M34.00 162.00L34.00 162.00Q192.88 137.06 351.75 10.64L390.00 10.64L390.00 162.00Z\" fill=\"url(#grvSlowFull)\"/><path class=\"rvPace\" d=\"M34.00 162.00Q131.77 137.06 229.54 10.64M34.00 162.00Q143.99 137.06 253.98 10.64M34.00 162.00Q180.66 137.06 327.31 10.64M34.00 162.00Q192.88 137.06 351.75 10.64\"><title>Typical pace (illustration)</title></path></g><text class=\"rvLbl \" x=\"30.0\" y=\"165.0\" text-anchor=\"end\">0 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"131.4\" text-anchor=\"end\">10 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"97.7\" text-anchor=\"end\">20 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"64.1\" text-anchor=\"end\">30 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"30.5\" text-anchor=\"end\">40 g</text><text class=\"rvLbl \" x=\"34.0\" y=\"175.0\" text-anchor=\"start\">0 s</text><text class=\"rvLbl \" x=\"119.4\" y=\"175.0\" text-anchor=\"middle\">12 s</text><text class=\"rvLbl \" x=\"226.2\" y=\"175.0\" text-anchor=\"middle\">27 s</text><text class=\"rvLbl \" x=\"290.3\" y=\"175.0\" text-anchor=\"middle\">36 s</text><text class=\"rvLbl \" x=\"399.0\" y=\"175.0\" text-anchor=\"end\">50 s</text><path class=\"rvTarget\" d=\"M34 40.9H390\"/><path class=\"rvMax\" d=\"M390.0 14V162\"/><path class=\"rvWin\" d=\"M226.2 14V162M290.3 14V162\"/><path class=\"rvCut off\" d=\"M119.44 20.73L204.88 20.73C212.00 20.73 219.12 40.91 226.24 40.91L290.32 40.91C297.44 40.91 304.56 51.00 311.68 51.00L390.00 51.00\"/><circle class=\"rvArrival\" cx=\"186.4\" cy=\"40.9\" r=\"3\"/><circle class=\"rvArrival\" cx=\"241.2\" cy=\"40.9\" r=\"3\"/><circle class=\"rvArrival\" cx=\"251.9\" cy=\"40.9\" r=\"3\"/><circle class=\"rvArrival\" cx=\"266.8\" cy=\"40.9\" r=\"3\"/><circle class=\"rvArrival\" cx=\"277.5\" cy=\"40.9\" r=\"3\"/><text class=\"rvLbl rvHalo strong\" x=\"388.0\" y=\"36.9\" text-anchor=\"end\">Target 36 g</text></g></svg>",
   "tightWindow-600": "<svg viewBox=\"0 0 600 220\" width=\"600\" height=\"220\"><defs><linearGradient id=\"grvFastFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvFastPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvWindow\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--ok)\" stop-opacity=\"calc(var(--bandWin) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--ok)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><pattern id=\"gHatch\" width=\"6\" height=\"6\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(45)\"><path class=\"rvHatchLine\" d=\"M0 0V6\"/></pattern><clipPath id=\"gUnder\"><path d=\"M34.00 202.00L34.00 28.46L300.88 28.46L300.88 28.46C315.71 28.46 330.53 71.85 345.36 71.85L434.32 71.85C456.56 71.85 478.80 93.54 501.04 93.54L590.00 93.54L590.00 202.00Z\"/></clipPath></defs><g role=\"img\" aria-label=\"No weight cut before 12 s. Cuts at 24 g until 12 s, at 18 g from 14 to 18 s, and at 15 g from 21 s. The shot ends by 25 s. Typical pace is illustrative: shots are judged by when they reach the target. Reference pace starts at 4.9 s, when this preset's first drops usually fall.\"><path class=\"rvGrid\" d=\"M34 202.0H590\"/><path class=\"rvGrid\" d=\"M34 165.8H590\"/><path class=\"rvGrid\" d=\"M34 129.7H590\"/><path class=\"rvGrid\" d=\"M34 93.5H590\"/><path class=\"rvGrid\" d=\"M34 57.4H590\"/><path class=\"rvGrid\" d=\"M34 21.2H590\"/><g clip-path=\"url(#gUnder)\"><path class=\"rvFastFull\" d=\"M34.00 202.00L142.98 202.00Q229.48 172.12 315.99 6.77L315.99 6.77L34.00 6.77Z\" fill=\"url(#grvFastFull)\"/><path class=\"rvFastPart\" d=\"M34.00 202.00L142.98 202.00Q272.03 172.12 401.08 6.77L590.00 6.77L315.99 6.77Q229.48 172.12 142.98 202.00Z\" fill=\"url(#grvFastPart)\"/><path class=\"rvWindow\" d=\"M34.00 202.00L142.98 202.00Q244.17 178.57 345.36 71.85L434.32 71.85Q288.65 178.57 142.98 202.00Z\" fill=\"url(#grvWindow)\"/><path class=\"rvSlowPart\" d=\"M34.00 202.00L142.98 202.00Q328.75 172.12 514.53 6.77L590.00 6.77L590.00 13.67Q366.49 172.75 142.98 202.00Z\" fill=\"url(#grvSlowPart)\"/><path class=\"rvSlowFull\" d=\"M34.00 202.00L142.98 202.00Q366.49 172.75 590.00 13.67L590.00 6.77L590.00 202.00Z\" fill=\"url(#grvSlowFull)\"/><path class=\"rvPace\" d=\"M142.98 202.00Q229.48 172.12 315.99 6.77M142.98 202.00Q272.03 172.12 401.08 6.77M142.98 202.00Q328.75 172.12 514.53 6.77M142.98 202.00Q366.49 172.75 590.00 13.67\"><title>Typical pace (illustration)</title></path></g><text class=\"rvLbl \" x=\"30.0\" y=\"205.0\" text-anchor=\"end\">0 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"168.8\" text-anchor=\"end\">5 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"132.7\" text-anchor=\"end\">10 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"96.5\" text-anchor=\"end\">15 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"60.4\" text-anchor=\"end\">20 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"24.2\" text-anchor=\"end\">25 g</text><text class=\"rvLbl \" x=\"34.0\" y=\"215.0\" text-anchor=\"start\">0 s</text><text class=\"rvLbl \" x=\"300.9\" y=\"215.0\" text-anchor=\"middle\">12 s</text><text class=\"rvLbl \" x=\"345.4\" y=\"215.0\" text-anchor=\"middle\">14 s</text><text class=\"rvLbl \" x=\"434.3\" y=\"215.0\" text-anchor=\"middle\">18 s</text><text class=\"rvLbl \" x=\"599.0\" y=\"215.0\" text-anchor=\"end\">25 s</text><rect x=\"34\" y=\"14\" width=\"266.9\" height=\"188\" fill=\"url(#gHatch)\"/><path class=\"rvTarget\" d=\"M34 71.8H590\"/><path class=\"rvMax\" d=\"M590.0 14V202\"/><path class=\"rvWin\" d=\"M345.4 14V202M434.3 14V202\"/><path class=\"rvCut\" d=\"M300.88 28.46L300.88 28.46C315.71 28.46 330.53 71.85 345.36 71.85L434.32 71.85C456.56 71.85 478.80 93.54 501.04 93.54L590.00 93.54\"/><circle class=\"rvArrival\" cx=\"509.9\" cy=\"71.8\" r=\"3\"/><text class=\"rvLbl rvHalo\" x=\"167.4\" y=\"108.0\" text-anchor=\"middle\">No weight cut</text><text class=\"rvLbl rvHalo strong\" x=\"588.0\" y=\"67.8\" text-anchor=\"end\">Target 18 g</text><text class=\"rvLbl \" x=\"590.0\" y=\"10.0\" text-anchor=\"end\">Max 25 s</text></g><g class=\"rvScrub\" role=\"slider\" tabindex=\"0\" aria-label=\"Time the shot is cut\" aria-valuemin=\"12\" aria-valuemax=\"25\"><path class=\"rvGuide\"/><path class=\"rvShot\"/><circle class=\"rvHandle\" r=\"5\"/></g></svg>",
   "tightWindow-320": "<svg viewBox=\"0 0 320 180\" width=\"320\" height=\"180\"><defs><linearGradient id=\"grvFastFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvFastPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvWindow\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--ok)\" stop-opacity=\"calc(var(--bandWin) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--ok)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><pattern id=\"gHatch\" width=\"6\" height=\"6\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(45)\"><path class=\"rvHatchLine\" d=\"M0 0V6\"/></pattern><clipPath id=\"gUnder\"><path d=\"M34.00 162.00L34.00 25.38L166.48 25.38L166.48 25.38C173.84 25.38 181.20 59.54 188.56 59.54L232.72 59.54C243.76 59.54 254.80 76.62 265.84 76.62L310.00 76.62L310.00 162.00Z\"/></clipPath></defs><g role=\"img\" aria-label=\"No weight cut before 12 s. Cuts at 24 g until 12 s, at 18 g from 14 to 18 s, and at 15 g from 21 s. The shot ends by 25 s. Typical pace is illustrative: shots are judged by when they reach the target. Reference pace starts at 4.9 s, when this preset's first drops usually fall.\"><path class=\"rvGrid\" d=\"M34 162.0H310\"/><path class=\"rvGrid\" d=\"M34 133.5H310\"/><path class=\"rvGrid\" d=\"M34 105.1H310\"/><path class=\"rvGrid\" d=\"M34 76.6H310\"/><path class=\"rvGrid\" d=\"M34 48.2H310\"/><path class=\"rvGrid\" d=\"M34 19.7H310\"/><g clip-path=\"url(#gUnder)\"><path class=\"rvFastFull\" d=\"M34.00 162.00L88.10 162.00Q131.04 138.48 173.98 8.31L173.98 8.31L34.00 8.31Z\" fill=\"url(#grvFastFull)\"/><path class=\"rvFastPart\" d=\"M34.00 162.00L88.10 162.00Q152.16 138.48 216.22 8.31L310.00 8.31L173.98 8.31Q131.04 138.48 88.10 162.00Z\" fill=\"url(#grvFastPart)\"/><path class=\"rvWindow\" d=\"M34.00 162.00L88.10 162.00Q138.33 143.56 188.56 59.54L232.72 59.54Q160.41 143.56 88.10 162.00Z\" fill=\"url(#grvWindow)\"/><path class=\"rvSlowPart\" d=\"M34.00 162.00L88.10 162.00Q180.32 138.48 272.54 8.31L310.00 8.31L310.00 13.74Q199.05 138.97 88.10 162.00Z\" fill=\"url(#grvSlowPart)\"/><path class=\"rvSlowFull\" d=\"M34.00 162.00L88.10 162.00Q199.05 138.97 310.00 13.74L310.00 8.31L310.00 162.00Z\" fill=\"url(#grvSlowFull)\"/><path class=\"rvPace\" d=\"M88.10 162.00Q131.04 138.48 173.98 8.31M88.10 162.00Q152.16 138.48 216.22 8.31M88.10 162.00Q180.32 138.48 272.54 8.31M88.10 162.00Q199.05 138.97 310.00 13.74\"><title>Typical pace (illustration)</title></path></g><text class=\"rvLbl \" x=\"30.0\" y=\"165.0\" text-anchor=\"end\">0 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"136.5\" text-anchor=\"end\">5 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"108.1\" text-anchor=\"end\">10 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"79.6\" text-anchor=\"end\">15 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"51.2\" text-anchor=\"end\">20 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"22.7\" text-anchor=\"end\">25 g</text><text class=\"rvLbl \" x=\"34.0\" y=\"175.0\" text-anchor=\"start\">0 s</text><text class=\"rvLbl \" x=\"166.5\" y=\"175.0\" text-anchor=\"middle\">12 s</text><text class=\"rvLbl \" x=\"232.7\" y=\"175.0\" text-anchor=\"middle\">18 s</text><text class=\"rvLbl \" x=\"319.0\" y=\"175.0\" text-anchor=\"end\">25 s</text><rect x=\"34\" y=\"14\" width=\"132.5\" height=\"148\" fill=\"url(#gHatch)\"/><path class=\"rvTarget\" d=\"M34 59.5H310\"/><path class=\"rvMax\" d=\"M310.0 14V162\"/><path class=\"rvWin\" d=\"M188.6 14V162M232.7 14V162\"/><path class=\"rvCut\" d=\"M166.48 25.38L166.48 25.38C173.84 25.38 181.20 59.54 188.56 59.54L232.72 59.54C243.76 59.54 254.80 76.62 265.84 76.62L310.00 76.62\"/><circle class=\"rvArrival\" cx=\"270.3\" cy=\"59.5\" r=\"3\"/><text class=\"rvLbl rvHalo\" x=\"100.2\" y=\"88.0\" text-anchor=\"middle\">No weight cut</text><text class=\"rvLbl rvHalo strong\" x=\"308.0\" y=\"55.5\" text-anchor=\"end\">Target 18 g</text><text class=\"rvLbl \" x=\"310.0\" y=\"10.0\" text-anchor=\"end\">Max 25 s</text></g><g class=\"rvScrub\" role=\"slider\" tabindex=\"0\" aria-label=\"Time the shot is cut\" aria-valuemin=\"12\" aria-valuemax=\"25\"><path class=\"rvGuide\"/><path class=\"rvShot\"/><circle class=\"rvHandle\" r=\"5\"/></g></svg>",
-  "tightWindow-400-compact": "<svg viewBox=\"0 0 400 180\" width=\"400\" height=\"180\"><defs><linearGradient id=\"grvFastFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvFastPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvWindow\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--ok)\" stop-opacity=\"calc(var(--bandWin) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--ok)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><pattern id=\"gHatch\" width=\"6\" height=\"6\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(45)\"><path class=\"rvHatchLine\" d=\"M0 0V6\"/></pattern><clipPath id=\"gUnder\"><path d=\"M34.00 162.00L34.00 25.38L204.88 25.38L204.88 25.38C214.37 25.38 223.87 59.54 233.36 59.54L290.32 59.54C304.56 59.54 318.80 76.62 333.04 76.62L390.00 76.62L390.00 162.00Z\"/></clipPath></defs><g role=\"img\" aria-label=\"No weight cut before 12 s. Cuts at 24 g until 12 s, at 18 g from 14 to 18 s, and at 15 g from 21 s. The shot ends by 25 s. Typical pace is illustrative: shots are judged by when they reach the target.\"><path class=\"rvGrid\" d=\"M34 162.0H390\"/><path class=\"rvGrid\" d=\"M34 133.5H390\"/><path class=\"rvGrid\" d=\"M34 105.1H390\"/><path class=\"rvGrid\" d=\"M34 76.6H390\"/><path class=\"rvGrid\" d=\"M34 48.2H390\"/><path class=\"rvGrid\" d=\"M34 19.7H390\"/><g clip-path=\"url(#gUnder)\"><path class=\"rvFastFull\" d=\"M34.00 162.00L103.78 162.00Q159.16 138.48 214.55 8.31L214.55 8.31L34.00 8.31Z\" fill=\"url(#grvFastFull)\"/><path class=\"rvFastPart\" d=\"M34.00 162.00L103.78 162.00Q186.41 138.48 269.03 8.31L390.00 8.31L214.55 8.31Q159.16 138.48 103.78 162.00Z\" fill=\"url(#grvFastPart)\"/><path class=\"rvWindow\" d=\"M34.00 162.00L103.78 162.00Q168.57 143.56 233.36 59.54L290.32 59.54Q197.05 143.56 103.78 162.00Z\" fill=\"url(#grvWindow)\"/><path class=\"rvSlowPart\" d=\"M34.00 162.00L103.78 162.00Q222.73 138.48 341.68 8.31L390.00 8.31L390.00 13.74Q246.89 138.97 103.78 162.00Z\" fill=\"url(#grvSlowPart)\"/><path class=\"rvSlowFull\" d=\"M34.00 162.00L103.78 162.00Q246.89 138.97 390.00 13.74L390.00 8.31L390.00 162.00Z\" fill=\"url(#grvSlowFull)\"/><path class=\"rvPace\" d=\"M103.78 162.00Q159.16 138.48 214.55 8.31M103.78 162.00Q186.41 138.48 269.03 8.31M103.78 162.00Q222.73 138.48 341.68 8.31M103.78 162.00Q246.89 138.97 390.00 13.74\"><title>Typical pace (illustration)</title></path></g><text class=\"rvLbl \" x=\"30.0\" y=\"165.0\" text-anchor=\"end\">0 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"136.5\" text-anchor=\"end\">5 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"108.1\" text-anchor=\"end\">10 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"79.6\" text-anchor=\"end\">15 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"51.2\" text-anchor=\"end\">20 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"22.7\" text-anchor=\"end\">25 g</text><text class=\"rvLbl \" x=\"34.0\" y=\"175.0\" text-anchor=\"start\">0 s</text><text class=\"rvLbl \" x=\"204.9\" y=\"175.0\" text-anchor=\"middle\">12 s</text><text class=\"rvLbl \" x=\"290.3\" y=\"175.0\" text-anchor=\"middle\">18 s</text><text class=\"rvLbl \" x=\"399.0\" y=\"175.0\" text-anchor=\"end\">25 s</text><path class=\"rvTarget\" d=\"M34 59.5H390\"/><path class=\"rvMax\" d=\"M390.0 14V162\"/><path class=\"rvWin\" d=\"M233.4 14V162M290.3 14V162\"/><path class=\"rvCut\" d=\"M204.88 25.38L204.88 25.38C214.37 25.38 223.87 59.54 233.36 59.54L290.32 59.54C304.56 59.54 318.80 76.62 333.04 76.62L390.00 76.62\"/><circle class=\"rvArrival\" cx=\"338.7\" cy=\"59.5\" r=\"3\"/><text class=\"rvLbl rvHalo strong\" x=\"388.0\" y=\"55.5\" text-anchor=\"end\">Target 18 g</text></g></svg>"
+  "tightWindow-400-compact": "<svg viewBox=\"0 0 400 180\" width=\"400\" height=\"180\"><defs><linearGradient id=\"grvFastFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvFastPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvWindow\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--ok)\" stop-opacity=\"calc(var(--bandWin) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--ok)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><pattern id=\"gHatch\" width=\"6\" height=\"6\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(45)\"><path class=\"rvHatchLine\" d=\"M0 0V6\"/></pattern><clipPath id=\"gUnder\"><path d=\"M34.00 162.00L34.00 25.38L204.88 25.38L204.88 25.38C214.37 25.38 223.87 59.54 233.36 59.54L290.32 59.54C304.56 59.54 318.80 76.62 333.04 76.62L390.00 76.62L390.00 162.00Z\"/></clipPath></defs><g role=\"img\" aria-label=\"No weight cut before 12 s. Cuts at 24 g until 12 s, at 18 g from 14 to 18 s, and at 15 g from 21 s. The shot ends by 25 s. Typical pace is illustrative: shots are judged by when they reach the target.\"><path class=\"rvGrid\" d=\"M34 162.0H390\"/><path class=\"rvGrid\" d=\"M34 133.5H390\"/><path class=\"rvGrid\" d=\"M34 105.1H390\"/><path class=\"rvGrid\" d=\"M34 76.6H390\"/><path class=\"rvGrid\" d=\"M34 48.2H390\"/><path class=\"rvGrid\" d=\"M34 19.7H390\"/><g clip-path=\"url(#gUnder)\"><path class=\"rvFastFull\" d=\"M34.00 162.00L103.78 162.00Q159.16 138.48 214.55 8.31L214.55 8.31L34.00 8.31Z\" fill=\"url(#grvFastFull)\"/><path class=\"rvFastPart\" d=\"M34.00 162.00L103.78 162.00Q186.41 138.48 269.03 8.31L390.00 8.31L214.55 8.31Q159.16 138.48 103.78 162.00Z\" fill=\"url(#grvFastPart)\"/><path class=\"rvWindow\" d=\"M34.00 162.00L103.78 162.00Q168.57 143.56 233.36 59.54L290.32 59.54Q197.05 143.56 103.78 162.00Z\" fill=\"url(#grvWindow)\"/><path class=\"rvSlowPart\" d=\"M34.00 162.00L103.78 162.00Q222.73 138.48 341.68 8.31L390.00 8.31L390.00 13.74Q246.89 138.97 103.78 162.00Z\" fill=\"url(#grvSlowPart)\"/><path class=\"rvSlowFull\" d=\"M34.00 162.00L103.78 162.00Q246.89 138.97 390.00 13.74L390.00 8.31L390.00 162.00Z\" fill=\"url(#grvSlowFull)\"/><path class=\"rvPace\" d=\"M103.78 162.00Q159.16 138.48 214.55 8.31M103.78 162.00Q186.41 138.48 269.03 8.31M103.78 162.00Q222.73 138.48 341.68 8.31M103.78 162.00Q246.89 138.97 390.00 13.74\"><title>Typical pace (illustration)</title></path></g><text class=\"rvLbl \" x=\"30.0\" y=\"165.0\" text-anchor=\"end\">0 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"136.5\" text-anchor=\"end\">5 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"108.1\" text-anchor=\"end\">10 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"79.6\" text-anchor=\"end\">15 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"51.2\" text-anchor=\"end\">20 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"22.7\" text-anchor=\"end\">25 g</text><text class=\"rvLbl \" x=\"34.0\" y=\"175.0\" text-anchor=\"start\">0 s</text><text class=\"rvLbl \" x=\"204.9\" y=\"175.0\" text-anchor=\"middle\">12 s</text><text class=\"rvLbl \" x=\"290.3\" y=\"175.0\" text-anchor=\"middle\">18 s</text><text class=\"rvLbl \" x=\"399.0\" y=\"175.0\" text-anchor=\"end\">25 s</text><path class=\"rvTarget\" d=\"M34 59.5H390\"/><path class=\"rvMax\" d=\"M390.0 14V162\"/><path class=\"rvWin\" d=\"M233.4 14V162M290.3 14V162\"/><path class=\"rvCut\" d=\"M204.88 25.38L204.88 25.38C214.37 25.38 223.87 59.54 233.36 59.54L290.32 59.54C304.56 59.54 318.80 76.62 333.04 76.62L390.00 76.62\"/><circle class=\"rvArrival\" cx=\"338.7\" cy=\"59.5\" r=\"3\"/><text class=\"rvLbl rvHalo strong\" x=\"388.0\" y=\"55.5\" text-anchor=\"end\">Target 18 g</text></g></svg>",
+  "curves-600": "<svg viewBox=\"0 0 600 220\" width=\"600\" height=\"220\"><defs><linearGradient id=\"grvFastFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvFastPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvWindow\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--ok)\" stop-opacity=\"calc(var(--bandWin) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--ok)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><pattern id=\"gHatch\" width=\"6\" height=\"6\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(45)\"><path class=\"rvHatchLine\" d=\"M0 0V6\"/></pattern><clipPath id=\"gUnder\"><path d=\"M34.00 202.00L34.00 22.55L167.44 22.55L312.00 22.55L312.46 22.55L312.93 22.55L313.39 22.55L313.85 22.55L314.32 22.55L314.78 22.55L315.24 22.55L315.71 22.55L316.17 22.55L316.63 22.56L317.10 22.57L317.56 22.58L318.02 22.60L318.49 22.63L318.95 22.67L319.41 22.72L319.88 22.79L320.34 22.88L320.80 23.00L321.27 23.15L321.73 23.33L322.19 23.56L322.66 23.83L323.12 24.15L323.58 24.53L324.05 24.97L324.51 25.49L324.97 26.08L325.44 26.75L325.90 27.51L326.36 28.36L326.83 29.30L327.29 30.33L327.75 31.45L328.22 32.66L328.68 33.95L329.14 35.32L329.61 36.75L330.07 38.22L330.53 39.72L331.00 41.21L331.46 42.68L331.92 44.08L332.39 45.36L332.85 46.48L333.31 47.37L333.78 47.96L334.24 48.18L434.32 48.18L436.17 48.24L438.03 48.39L439.88 48.62L441.73 48.93L443.59 49.30L445.44 49.73L447.29 50.20L449.15 50.70L451.00 51.22L452.85 51.77L454.71 52.33L456.56 52.89L458.41 53.45L460.27 54.01L462.12 54.56L463.97 55.09L465.83 55.61L467.68 56.11L469.53 56.59L471.39 57.04L473.24 57.47L475.09 57.87L476.95 58.25L478.80 58.60L480.65 58.92L482.51 59.21L484.36 59.47L486.21 59.71L488.07 59.92L489.92 60.11L491.77 60.28L493.63 60.42L495.48 60.54L497.33 60.64L499.19 60.73L501.04 60.80L502.89 60.86L504.75 60.90L506.60 60.93L508.45 60.96L510.31 60.97L512.16 60.99L514.01 60.99L515.87 61.00L517.72 61.00L519.57 61.00L521.43 61.00L523.28 61.00L590.00 61.00L590.00 202.00Z\"/></clipPath></defs><g role=\"img\" aria-label=\"No weight cut before 12 s. Cuts at 42 g until 25 s, at 36 g from 27 to 36 s, and at 33 g from 44 s. The shot ends by 50 s. Typical pace is illustrative: shots are judged by when they reach the target. Reference pace starts at 4.9 s, when this preset's first drops usually fall.\"><path class=\"rvGrid\" d=\"M34 202.0H590\"/><path class=\"rvGrid\" d=\"M34 159.3H590\"/><path class=\"rvGrid\" d=\"M34 116.5H590\"/><path class=\"rvGrid\" d=\"M34 73.8H590\"/><path class=\"rvGrid\" d=\"M34 31.1H590\"/><g clip-path=\"url(#gUnder)\"><path class=\"rvFastFull\" d=\"M34.00 202.00L88.49 202.00Q216.37 170.32 344.26 9.73L344.26 9.73L34.00 9.73Z\" fill=\"url(#grvFastFull)\"/><path class=\"rvFastPart\" d=\"M34.00 202.00L88.49 202.00Q229.10 170.32 369.70 9.73L590.00 9.73L344.26 9.73Q216.37 170.32 88.49 202.00Z\" fill=\"url(#grvFastPart)\"/><path class=\"rvWindow\" d=\"M34.00 202.00L88.49 202.00Q211.36 174.31 334.24 48.18L434.32 48.18Q261.40 174.31 88.49 202.00Z\" fill=\"url(#grvWindow)\"/><path class=\"rvSlowPart\" d=\"M34.00 202.00L88.49 202.00Q286.36 170.32 484.23 9.73L590.00 9.73L586.03 9.73Q337.26 170.32 88.49 202.00Z\" fill=\"url(#grvSlowPart)\"/><path class=\"rvSlowFull\" d=\"M34.00 202.00L88.49 202.00Q337.26 170.32 586.03 9.73L590.00 9.73L590.00 202.00Z\" fill=\"url(#grvSlowFull)\"/><path class=\"rvPace\" d=\"M88.49 202.00Q216.37 170.32 344.26 9.73M88.49 202.00Q229.10 170.32 369.70 9.73M88.49 202.00Q286.36 170.32 484.23 9.73M88.49 202.00Q337.26 170.32 586.03 9.73\"><title>Typical pace (illustration)</title></path></g><text class=\"rvLbl \" x=\"30.0\" y=\"205.0\" text-anchor=\"end\">0 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"162.3\" text-anchor=\"end\">10 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"119.5\" text-anchor=\"end\">20 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"76.8\" text-anchor=\"end\">30 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"34.1\" text-anchor=\"end\">40 g</text><text class=\"rvLbl \" x=\"34.0\" y=\"215.0\" text-anchor=\"start\">0 s</text><text class=\"rvLbl \" x=\"167.4\" y=\"215.0\" text-anchor=\"middle\">12 s</text><text class=\"rvLbl \" x=\"334.2\" y=\"215.0\" text-anchor=\"middle\">27 s</text><text class=\"rvLbl \" x=\"434.3\" y=\"215.0\" text-anchor=\"middle\">36 s</text><text class=\"rvLbl \" x=\"599.0\" y=\"215.0\" text-anchor=\"end\">50 s</text><rect x=\"34\" y=\"14\" width=\"133.4\" height=\"188\" fill=\"url(#gHatch)\"/><path class=\"rvTarget\" d=\"M34 48.2H590\"/><path class=\"rvMax\" d=\"M590.0 14V202\"/><path class=\"rvWin\" d=\"M334.2 14V202M434.3 14V202\"/><path class=\"rvCut\" d=\"M167.44 22.55L312.00 22.55L312.46 22.55L312.93 22.55L313.39 22.55L313.85 22.55L314.32 22.55L314.78 22.55L315.24 22.55L315.71 22.55L316.17 22.55L316.63 22.56L317.10 22.57L317.56 22.58L318.02 22.60L318.49 22.63L318.95 22.67L319.41 22.72L319.88 22.79L320.34 22.88L320.80 23.00L321.27 23.15L321.73 23.33L322.19 23.56L322.66 23.83L323.12 24.15L323.58 24.53L324.05 24.97L324.51 25.49L324.97 26.08L325.44 26.75L325.90 27.51L326.36 28.36L326.83 29.30L327.29 30.33L327.75 31.45L328.22 32.66L328.68 33.95L329.14 35.32L329.61 36.75L330.07 38.22L330.53 39.72L331.00 41.21L331.46 42.68L331.92 44.08L332.39 45.36L332.85 46.48L333.31 47.37L333.78 47.96L334.24 48.18L434.32 48.18L436.17 48.24L438.03 48.39L439.88 48.62L441.73 48.93L443.59 49.30L445.44 49.73L447.29 50.20L449.15 50.70L451.00 51.22L452.85 51.77L454.71 52.33L456.56 52.89L458.41 53.45L460.27 54.01L462.12 54.56L463.97 55.09L465.83 55.61L467.68 56.11L469.53 56.59L471.39 57.04L473.24 57.47L475.09 57.87L476.95 58.25L478.80 58.60L480.65 58.92L482.51 59.21L484.36 59.47L486.21 59.71L488.07 59.92L489.92 60.11L491.77 60.28L493.63 60.42L495.48 60.54L497.33 60.64L499.19 60.73L501.04 60.80L502.89 60.86L504.75 60.90L506.60 60.93L508.45 60.96L510.31 60.97L512.16 60.99L514.01 60.99L515.87 61.00L517.72 61.00L519.57 61.00L521.43 61.00L523.28 61.00L590.00 61.00\"/><circle class=\"rvArrival\" cx=\"272.0\" cy=\"48.2\" r=\"3\"/><circle class=\"rvArrival\" cx=\"357.6\" cy=\"48.2\" r=\"3\"/><circle class=\"rvArrival\" cx=\"374.3\" cy=\"48.2\" r=\"3\"/><circle class=\"rvArrival\" cx=\"397.6\" cy=\"48.2\" r=\"3\"/><circle class=\"rvArrival\" cx=\"414.3\" cy=\"48.2\" r=\"3\"/><text class=\"rvLbl rvHalo\" x=\"100.7\" y=\"108.0\" text-anchor=\"middle\">No weight cut</text><text class=\"rvLbl rvHalo strong\" x=\"588.0\" y=\"44.2\" text-anchor=\"end\">Target 36 g</text><text class=\"rvLbl \" x=\"590.0\" y=\"10.0\" text-anchor=\"end\">Max 50 s</text></g><g class=\"rvScrub\" role=\"slider\" tabindex=\"0\" aria-label=\"Time the shot is cut\" aria-valuemin=\"12\" aria-valuemax=\"50\"><path class=\"rvGuide\"/><path class=\"rvShot\"/><circle class=\"rvHandle\" r=\"5\"/></g></svg>",
+  "curves-320": "<svg viewBox=\"0 0 320 180\" width=\"320\" height=\"180\"><defs><linearGradient id=\"grvFastFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvFastPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvWindow\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--ok)\" stop-opacity=\"calc(var(--bandWin) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--ok)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><pattern id=\"gHatch\" width=\"6\" height=\"6\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(45)\"><path class=\"rvHatchLine\" d=\"M0 0V6\"/></pattern><clipPath id=\"gUnder\"><path d=\"M34.00 162.00L34.00 20.73L100.24 20.73L172.00 20.73L172.23 20.73L172.46 20.73L172.69 20.73L172.92 20.73L173.15 20.73L173.38 20.73L173.61 20.73L173.84 20.73L174.07 20.73L174.30 20.74L174.53 20.74L174.76 20.75L174.99 20.77L175.22 20.79L175.45 20.82L175.68 20.87L175.91 20.92L176.14 20.99L176.37 21.09L176.60 21.20L176.83 21.35L177.06 21.52L177.29 21.73L177.52 21.99L177.75 22.29L177.98 22.64L178.21 23.04L178.44 23.51L178.67 24.04L178.90 24.64L179.13 25.30L179.36 26.04L179.59 26.85L179.82 27.74L180.05 28.69L180.28 29.71L180.51 30.78L180.74 31.91L180.97 33.07L181.20 34.24L181.43 35.42L181.66 36.58L181.89 37.68L182.12 38.69L182.35 39.57L182.58 40.27L182.81 40.74L183.04 40.91L232.72 40.91L233.64 40.95L234.56 41.07L235.48 41.26L236.40 41.50L237.32 41.79L238.24 42.13L239.16 42.50L240.08 42.89L241.00 43.30L241.92 43.73L242.84 44.17L243.76 44.61L244.68 45.06L245.60 45.50L246.52 45.93L247.44 46.35L248.36 46.76L249.28 47.15L250.20 47.53L251.12 47.88L252.04 48.22L252.96 48.54L253.88 48.83L254.80 49.11L255.72 49.36L256.64 49.59L257.56 49.80L258.48 49.99L259.40 50.15L260.32 50.30L261.24 50.43L262.16 50.54L263.08 50.64L264.00 50.72L264.92 50.79L265.84 50.84L266.76 50.89L267.68 50.92L268.60 50.95L269.52 50.97L270.44 50.98L271.36 50.99L272.28 50.99L273.20 51.00L274.12 51.00L275.04 51.00L275.96 51.00L276.88 51.00L310.00 51.00L310.00 162.00Z\"/></clipPath></defs><g role=\"img\" aria-label=\"No weight cut before 12 s. Cuts at 42 g until 25 s, at 36 g from 27 to 36 s, and at 33 g from 44 s. The shot ends by 50 s. Typical pace is illustrative: shots are judged by when they reach the target. Reference pace starts at 4.9 s, when this preset's first drops usually fall.\"><path class=\"rvGrid\" d=\"M34 162.0H310\"/><path class=\"rvGrid\" d=\"M34 128.4H310\"/><path class=\"rvGrid\" d=\"M34 94.7H310\"/><path class=\"rvGrid\" d=\"M34 61.1H310\"/><path class=\"rvGrid\" d=\"M34 27.5H310\"/><g clip-path=\"url(#gUnder)\"><path class=\"rvFastFull\" d=\"M34.00 162.00L61.05 162.00Q124.53 137.06 188.01 10.64L188.01 10.64L34.00 10.64Z\" fill=\"url(#grvFastFull)\"/><path class=\"rvFastPart\" d=\"M34.00 162.00L61.05 162.00Q130.85 137.06 200.64 10.64L310.00 10.64L188.01 10.64Q124.53 137.06 61.05 162.00Z\" fill=\"url(#grvFastPart)\"/><path class=\"rvWindow\" d=\"M34.00 162.00L61.05 162.00Q122.04 140.20 183.04 40.91L232.72 40.91Q146.88 140.20 61.05 162.00Z\" fill=\"url(#grvWindow)\"/><path class=\"rvSlowPart\" d=\"M34.00 162.00L61.05 162.00Q159.27 137.06 257.49 10.64L310.00 10.64L308.03 10.64Q184.54 137.06 61.05 162.00Z\" fill=\"url(#grvSlowPart)\"/><path class=\"rvSlowFull\" d=\"M34.00 162.00L61.05 162.00Q184.54 137.06 308.03 10.64L310.00 10.64L310.00 162.00Z\" fill=\"url(#grvSlowFull)\"/><path class=\"rvPace\" d=\"M61.05 162.00Q124.53 137.06 188.01 10.64M61.05 162.00Q130.85 137.06 200.64 10.64M61.05 162.00Q159.27 137.06 257.49 10.64M61.05 162.00Q184.54 137.06 308.03 10.64\"><title>Typical pace (illustration)</title></path></g><text class=\"rvLbl \" x=\"30.0\" y=\"165.0\" text-anchor=\"end\">0 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"131.4\" text-anchor=\"end\">10 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"97.7\" text-anchor=\"end\">20 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"64.1\" text-anchor=\"end\">30 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"30.5\" text-anchor=\"end\">40 g</text><text class=\"rvLbl \" x=\"34.0\" y=\"175.0\" text-anchor=\"start\">0 s</text><text class=\"rvLbl \" x=\"100.2\" y=\"175.0\" text-anchor=\"middle\">12 s</text><text class=\"rvLbl \" x=\"183.0\" y=\"175.0\" text-anchor=\"middle\">27 s</text><text class=\"rvLbl \" x=\"232.7\" y=\"175.0\" text-anchor=\"middle\">36 s</text><text class=\"rvLbl \" x=\"319.0\" y=\"175.0\" text-anchor=\"end\">50 s</text><rect x=\"34\" y=\"14\" width=\"66.2\" height=\"148\" fill=\"url(#gHatch)\"/><path class=\"rvTarget\" d=\"M34 40.9H310\"/><path class=\"rvMax\" d=\"M310.0 14V162\"/><path class=\"rvWin\" d=\"M183.0 14V162M232.7 14V162\"/><path class=\"rvCut\" d=\"M100.24 20.73L172.00 20.73L172.23 20.73L172.46 20.73L172.69 20.73L172.92 20.73L173.15 20.73L173.38 20.73L173.61 20.73L173.84 20.73L174.07 20.73L174.30 20.74L174.53 20.74L174.76 20.75L174.99 20.77L175.22 20.79L175.45 20.82L175.68 20.87L175.91 20.92L176.14 20.99L176.37 21.09L176.60 21.20L176.83 21.35L177.06 21.52L177.29 21.73L177.52 21.99L177.75 22.29L177.98 22.64L178.21 23.04L178.44 23.51L178.67 24.04L178.90 24.64L179.13 25.30L179.36 26.04L179.59 26.85L179.82 27.74L180.05 28.69L180.28 29.71L180.51 30.78L180.74 31.91L180.97 33.07L181.20 34.24L181.43 35.42L181.66 36.58L181.89 37.68L182.12 38.69L182.35 39.57L182.58 40.27L182.81 40.74L183.04 40.91L232.72 40.91L233.64 40.95L234.56 41.07L235.48 41.26L236.40 41.50L237.32 41.79L238.24 42.13L239.16 42.50L240.08 42.89L241.00 43.30L241.92 43.73L242.84 44.17L243.76 44.61L244.68 45.06L245.60 45.50L246.52 45.93L247.44 46.35L248.36 46.76L249.28 47.15L250.20 47.53L251.12 47.88L252.04 48.22L252.96 48.54L253.88 48.83L254.80 49.11L255.72 49.36L256.64 49.59L257.56 49.80L258.48 49.99L259.40 50.15L260.32 50.30L261.24 50.43L262.16 50.54L263.08 50.64L264.00 50.72L264.92 50.79L265.84 50.84L266.76 50.89L267.68 50.92L268.60 50.95L269.52 50.97L270.44 50.98L271.36 50.99L272.28 50.99L273.20 51.00L274.12 51.00L275.04 51.00L275.96 51.00L276.88 51.00L310.00 51.00\"/><circle class=\"rvArrival\" cx=\"152.1\" cy=\"40.9\" r=\"3\"/><circle class=\"rvArrival\" cx=\"194.6\" cy=\"40.9\" r=\"3\"/><circle class=\"rvArrival\" cx=\"202.9\" cy=\"40.9\" r=\"3\"/><circle class=\"rvArrival\" cx=\"214.5\" cy=\"40.9\" r=\"3\"/><circle class=\"rvArrival\" cx=\"222.8\" cy=\"40.9\" r=\"3\"/><text class=\"rvLbl rvHalo strong\" x=\"308.0\" y=\"36.9\" text-anchor=\"end\">Target 36 g</text><text class=\"rvLbl \" x=\"310.0\" y=\"10.0\" text-anchor=\"end\">Max 50 s</text></g><g class=\"rvScrub\" role=\"slider\" tabindex=\"0\" aria-label=\"Time the shot is cut\" aria-valuemin=\"12\" aria-valuemax=\"50\"><path class=\"rvGuide\"/><path class=\"rvShot\"/><circle class=\"rvHandle\" r=\"5\"/></g></svg>",
+  "curves-400-compact": "<svg viewBox=\"0 0 400 180\" width=\"400\" height=\"180\"><defs><linearGradient id=\"grvFastFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvFastPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gFast)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gFast)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvWindow\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--ok)\" stop-opacity=\"calc(var(--bandWin) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--ok)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowPart\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandPart) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><linearGradient id=\"grvSlowFull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"var(--gSlow)\" stop-opacity=\"calc(var(--bandFull) * 2.2)\"/><stop offset=\"1\" stop-color=\"var(--gSlow)\" stop-opacity=\"0.03\"/></linearGradient><pattern id=\"gHatch\" width=\"6\" height=\"6\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(45)\"><path class=\"rvHatchLine\" d=\"M0 0V6\"/></pattern><clipPath id=\"gUnder\"><path d=\"M34.00 162.00L34.00 20.73L119.44 20.73L212.00 20.73L212.30 20.73L212.59 20.73L212.89 20.73L213.19 20.73L213.48 20.73L213.78 20.73L214.08 20.73L214.37 20.73L214.67 20.73L214.97 20.74L215.26 20.74L215.56 20.75L215.86 20.77L216.15 20.79L216.45 20.82L216.75 20.87L217.04 20.92L217.34 20.99L217.64 21.09L217.93 21.20L218.23 21.35L218.53 21.52L218.82 21.73L219.12 21.99L219.42 22.29L219.71 22.64L220.01 23.04L220.31 23.51L220.60 24.04L220.90 24.64L221.20 25.30L221.49 26.04L221.79 26.85L222.09 27.74L222.38 28.69L222.68 29.71L222.98 30.78L223.27 31.91L223.57 33.07L223.87 34.24L224.16 35.42L224.46 36.58L224.76 37.68L225.05 38.69L225.35 39.57L225.65 40.27L225.94 40.74L226.24 40.91L290.32 40.91L291.51 40.95L292.69 41.07L293.88 41.26L295.07 41.50L296.25 41.79L297.44 42.13L298.63 42.50L299.81 42.89L301.00 43.30L302.19 43.73L303.37 44.17L304.56 44.61L305.75 45.06L306.93 45.50L308.12 45.93L309.31 46.35L310.49 46.76L311.68 47.15L312.87 47.53L314.05 47.88L315.24 48.22L316.43 48.54L317.61 48.83L318.80 49.11L319.99 49.36L321.17 49.59L322.36 49.80L323.55 49.99L324.73 50.15L325.92 50.30L327.11 50.43L328.29 50.54L329.48 50.64L330.67 50.72L331.85 50.79L333.04 50.84L334.23 50.89L335.41 50.92L336.60 50.95L337.79 50.97L338.97 50.98L340.16 50.99L341.35 50.99L342.53 51.00L343.72 51.00L344.91 51.00L346.09 51.00L347.28 51.00L390.00 51.00L390.00 162.00Z\"/></clipPath></defs><g role=\"img\" aria-label=\"No weight cut before 12 s. Cuts at 42 g until 25 s, at 36 g from 27 to 36 s, and at 33 g from 44 s. The shot ends by 50 s. Typical pace is illustrative: shots are judged by when they reach the target.\"><path class=\"rvGrid\" d=\"M34 162.0H390\"/><path class=\"rvGrid\" d=\"M34 128.4H390\"/><path class=\"rvGrid\" d=\"M34 94.7H390\"/><path class=\"rvGrid\" d=\"M34 61.1H390\"/><path class=\"rvGrid\" d=\"M34 27.5H390\"/><g clip-path=\"url(#gUnder)\"><path class=\"rvFastFull\" d=\"M34.00 162.00L68.89 162.00Q150.77 137.06 232.65 10.64L232.65 10.64L34.00 10.64Z\" fill=\"url(#grvFastFull)\"/><path class=\"rvFastPart\" d=\"M34.00 162.00L68.89 162.00Q158.92 137.06 248.95 10.64L390.00 10.64L232.65 10.64Q150.77 137.06 68.89 162.00Z\" fill=\"url(#grvFastPart)\"/><path class=\"rvWindow\" d=\"M34.00 162.00L68.89 162.00Q147.56 140.20 226.24 40.91L290.32 40.91Q179.60 140.20 68.89 162.00Z\" fill=\"url(#grvWindow)\"/><path class=\"rvSlowPart\" d=\"M34.00 162.00L68.89 162.00Q195.58 137.06 322.28 10.64L390.00 10.64L387.46 10.64Q228.17 137.06 68.89 162.00Z\" fill=\"url(#grvSlowPart)\"/><path class=\"rvSlowFull\" d=\"M34.00 162.00L68.89 162.00Q228.17 137.06 387.46 10.64L390.00 10.64L390.00 162.00Z\" fill=\"url(#grvSlowFull)\"/><path class=\"rvPace\" d=\"M68.89 162.00Q150.77 137.06 232.65 10.64M68.89 162.00Q158.92 137.06 248.95 10.64M68.89 162.00Q195.58 137.06 322.28 10.64M68.89 162.00Q228.17 137.06 387.46 10.64\"><title>Typical pace (illustration)</title></path></g><text class=\"rvLbl \" x=\"30.0\" y=\"165.0\" text-anchor=\"end\">0 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"131.4\" text-anchor=\"end\">10 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"97.7\" text-anchor=\"end\">20 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"64.1\" text-anchor=\"end\">30 g</text><text class=\"rvLbl \" x=\"30.0\" y=\"30.5\" text-anchor=\"end\">40 g</text><text class=\"rvLbl \" x=\"34.0\" y=\"175.0\" text-anchor=\"start\">0 s</text><text class=\"rvLbl \" x=\"119.4\" y=\"175.0\" text-anchor=\"middle\">12 s</text><text class=\"rvLbl \" x=\"226.2\" y=\"175.0\" text-anchor=\"middle\">27 s</text><text class=\"rvLbl \" x=\"290.3\" y=\"175.0\" text-anchor=\"middle\">36 s</text><text class=\"rvLbl \" x=\"399.0\" y=\"175.0\" text-anchor=\"end\">50 s</text><path class=\"rvTarget\" d=\"M34 40.9H390\"/><path class=\"rvMax\" d=\"M390.0 14V162\"/><path class=\"rvWin\" d=\"M226.2 14V162M290.3 14V162\"/><path class=\"rvCut\" d=\"M119.44 20.73L212.00 20.73L212.30 20.73L212.59 20.73L212.89 20.73L213.19 20.73L213.48 20.73L213.78 20.73L214.08 20.73L214.37 20.73L214.67 20.73L214.97 20.74L215.26 20.74L215.56 20.75L215.86 20.77L216.15 20.79L216.45 20.82L216.75 20.87L217.04 20.92L217.34 20.99L217.64 21.09L217.93 21.20L218.23 21.35L218.53 21.52L218.82 21.73L219.12 21.99L219.42 22.29L219.71 22.64L220.01 23.04L220.31 23.51L220.60 24.04L220.90 24.64L221.20 25.30L221.49 26.04L221.79 26.85L222.09 27.74L222.38 28.69L222.68 29.71L222.98 30.78L223.27 31.91L223.57 33.07L223.87 34.24L224.16 35.42L224.46 36.58L224.76 37.68L225.05 38.69L225.35 39.57L225.65 40.27L225.94 40.74L226.24 40.91L290.32 40.91L291.51 40.95L292.69 41.07L293.88 41.26L295.07 41.50L296.25 41.79L297.44 42.13L298.63 42.50L299.81 42.89L301.00 43.30L302.19 43.73L303.37 44.17L304.56 44.61L305.75 45.06L306.93 45.50L308.12 45.93L309.31 46.35L310.49 46.76L311.68 47.15L312.87 47.53L314.05 47.88L315.24 48.22L316.43 48.54L317.61 48.83L318.80 49.11L319.99 49.36L321.17 49.59L322.36 49.80L323.55 49.99L324.73 50.15L325.92 50.30L327.11 50.43L328.29 50.54L329.48 50.64L330.67 50.72L331.85 50.79L333.04 50.84L334.23 50.89L335.41 50.92L336.60 50.95L337.79 50.97L338.97 50.98L340.16 50.99L341.35 50.99L342.53 51.00L343.72 51.00L344.91 51.00L346.09 51.00L347.28 51.00L390.00 51.00\"/><circle class=\"rvArrival\" cx=\"186.4\" cy=\"40.9\" r=\"3\"/><circle class=\"rvArrival\" cx=\"241.2\" cy=\"40.9\" r=\"3\"/><circle class=\"rvArrival\" cx=\"251.9\" cy=\"40.9\" r=\"3\"/><circle class=\"rvArrival\" cx=\"266.8\" cy=\"40.9\" r=\"3\"/><circle class=\"rvArrival\" cx=\"277.5\" cy=\"40.9\" r=\"3\"/><text class=\"rvLbl rvHalo strong\" x=\"388.0\" y=\"36.9\" text-anchor=\"end\">Target 36 g</text></g></svg>"
  },
  "shots": {
   "base": {
@@ -2187,7 +2735,12 @@
     "slowMarginG": 3,
     "delayS": 12,
     "wallS": 50,
-    "cutRampS": 3,
+    "fastRampS": 3,
+    "slowRampS": 3,
+    "fastCurve": "even",
+    "slowCurve": "even",
+    "fastCurveHardness": "soft",
+    "slowCurveHardness": "soft",
     "dripDelayS": 1.6,
     "actualWeightSource": "post_drip",
     "rating": 4,
@@ -6692,7 +7245,10 @@
     "t2": 36,
     "prot": 12,
     "wall": 50,
-    "d": 3,
+    "dFast": 3,
+    "dSlow": 3,
+    "curveFast": 0,
+    "curveSlow": 0,
     "firstDrop": 5.2,
     "firstDropN": 0,
     "scrubMin": 12,
@@ -6781,7 +7337,12 @@
     "slowMarginG": 3,
     "delayS": 12,
     "wallS": 50,
-    "cutRampS": 3,
+    "fastRampS": 3,
+    "slowRampS": 3,
+    "fastCurve": "even",
+    "slowCurve": "even",
+    "fastCurveHardness": "soft",
+    "slowCurveHardness": "soft",
     "dripDelayS": 1.6,
     "actualWeightSource": "post_drip",
     "rating": 4,
@@ -11299,7 +11860,10 @@
     "t2": 36,
     "prot": 12,
     "wall": 50,
-    "d": 3,
+    "dFast": 3,
+    "dSlow": 3,
+    "curveFast": 0,
+    "curveSlow": 0,
     "firstDrop": 5.2,
     "firstDropN": 0,
     "scrubMin": 12,
@@ -11388,7 +11952,12 @@
     "slowMarginG": 3,
     "delayS": 12,
     "wallS": 50,
-    "cutRampS": 3,
+    "fastRampS": 3,
+    "slowRampS": 3,
+    "fastCurve": "even",
+    "slowCurve": "even",
+    "fastCurveHardness": "soft",
+    "slowCurveHardness": "soft",
     "dripDelayS": 1.6,
     "actualWeightSource": "post_drip",
     "rating": 4,
@@ -15948,7 +16517,10 @@
     "t2": 36,
     "prot": 12,
     "wall": 50,
-    "d": 3,
+    "dFast": 3,
+    "dSlow": 3,
+    "curveFast": 0,
+    "curveSlow": 0,
     "firstDrop": 5.2,
     "firstDropN": 0,
     "scrubMin": 12,
@@ -16037,7 +16609,12 @@
     "slowMarginG": 3,
     "delayS": 12,
     "wallS": 50,
-    "cutRampS": 3,
+    "fastRampS": 3,
+    "slowRampS": 3,
+    "fastCurve": "even",
+    "slowCurve": "even",
+    "fastCurveHardness": "soft",
+    "slowCurveHardness": "soft",
     "dripDelayS": 1.6,
     "actualWeightSource": "post_drip",
     "rating": 4,
@@ -20443,7 +21020,10 @@
     "t2": 36,
     "prot": 12,
     "wall": 50,
-    "d": 3,
+    "dFast": 3,
+    "dSlow": 3,
+    "curveFast": 0,
+    "curveSlow": 0,
     "firstDrop": 5.2,
     "firstDropN": 0,
     "scrubMin": 12,
@@ -20532,7 +21112,12 @@
     "slowMarginG": 3,
     "delayS": 12,
     "wallS": 50,
-    "cutRampS": 3,
+    "fastRampS": 3,
+    "slowRampS": 3,
+    "fastCurve": "even",
+    "slowCurve": "even",
+    "fastCurveHardness": "soft",
+    "slowCurveHardness": "soft",
     "dripDelayS": 1.6,
     "actualWeightSource": "post_drip",
     "rating": 4,
@@ -24925,7 +25510,10 @@
     "t2": 36,
     "prot": 12,
     "wall": 50,
-    "d": 3,
+    "dFast": 3,
+    "dSlow": 3,
+    "curveFast": 0,
+    "curveSlow": 0,
     "firstDrop": 5.2,
     "firstDropN": 0,
     "scrubMin": 12,
@@ -25014,7 +25602,12 @@
     "slowMarginG": 3,
     "delayS": 12,
     "wallS": 50,
-    "cutRampS": 3,
+    "fastRampS": 3,
+    "slowRampS": 3,
+    "fastCurve": "even",
+    "slowCurve": "even",
+    "fastCurveHardness": "soft",
+    "slowCurveHardness": "soft",
     "dripDelayS": 1.6,
     "actualWeightSource": "post_drip",
     "rating": 4,
@@ -28799,7 +29392,10 @@
     "t2": 36,
     "prot": 12,
     "wall": 50,
-    "d": 3,
+    "dFast": 3,
+    "dSlow": 3,
+    "curveFast": 0,
+    "curveSlow": 0,
     "firstDrop": 5.2,
     "firstDropN": 0,
     "scrubMin": 12,
@@ -28884,7 +29480,12 @@
     "slowMarginG": 3,
     "delayS": 12,
     "wallS": 50,
-    "cutRampS": 3,
+    "fastRampS": 3,
+    "slowRampS": 3,
+    "fastCurve": "even",
+    "slowCurve": "even",
+    "fastCurveHardness": "soft",
+    "slowCurveHardness": "soft",
     "dripDelayS": 1.6,
     "actualWeightSource": "post_drip",
     "rating": 4,
@@ -33389,7 +33990,10 @@
     "t2": 36,
     "prot": 12,
     "wall": 50,
-    "d": 3,
+    "dFast": 3,
+    "dSlow": 3,
+    "curveFast": 0,
+    "curveSlow": 0,
     "firstDrop": 5.2,
     "firstDropN": 0,
     "scrubMin": 12,
@@ -33478,7 +34082,12 @@
     "slowMarginG": 3,
     "delayS": 12,
     "wallS": 50,
-    "cutRampS": 3,
+    "fastRampS": 3,
+    "slowRampS": 3,
+    "fastCurve": "even",
+    "slowCurve": "even",
+    "fastCurveHardness": "soft",
+    "slowCurveHardness": "soft",
     "dripDelayS": 1.6,
     "actualWeightSource": "post_drip",
     "rating": 4,
@@ -37983,7 +38592,10 @@
     "t2": 36,
     "prot": 12,
     "wall": 50,
-    "d": 3,
+    "dFast": 3,
+    "dSlow": 3,
+    "curveFast": 0,
+    "curveSlow": 0,
     "firstDrop": 5.2,
     "firstDropN": 0,
     "scrubMin": 12,
@@ -38072,7 +38684,12 @@
     "slowMarginG": 3,
     "delayS": 12,
     "wallS": 50,
-    "cutRampS": 3,
+    "fastRampS": 3,
+    "slowRampS": 3,
+    "fastCurve": "even",
+    "slowCurve": "even",
+    "fastCurveHardness": "soft",
+    "slowCurveHardness": "soft",
     "dripDelayS": 1.6,
     "actualWeightSource": "last_known",
     "rating": 4,
@@ -42590,7 +43207,10 @@
     "t2": 36,
     "prot": 12,
     "wall": 50,
-    "d": 3,
+    "dFast": 3,
+    "dSlow": 3,
+    "curveFast": 0,
+    "curveSlow": 0,
     "firstDrop": 5.2,
     "firstDropN": 0,
     "scrubMin": 12,

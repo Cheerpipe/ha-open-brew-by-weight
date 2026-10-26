@@ -6,7 +6,6 @@ export interface CardData {
   available: boolean;
   shotState: "idle" | "brewing";
   activePresetId: number;
-  cutRampS: number | null;
   presets: PresetRender[];
   lastShot: Record<string, unknown> | null;
 }

@@ -27,7 +27,6 @@ const english = JSON.parse(
 const context = vm.createContext({
   __WEBUI_TEXT__: (key) => english[key] ?? key,
   sub: (text, values) => text.replace(/\{(\d+)\}/g, (_, i) => values[i]),
-  presetState: { cutRampS: 3 },
   atob,
 });
 vm.runInContext(
@@ -35,6 +34,10 @@ vm.runInContext(
     "const PACE_SOFT = 0.18;",
     "const PILL = '';",
     block("function buildRuleChartModel("),
+    block("function rampCurveIndex("),
+    runtime.slice(runtime.indexOf("const RAMP_CURVES = ["), runtime.indexOf("];", runtime.indexOf("const RAMP_CURVES = [")) + 2),
+    block("function rampEase("),
+    block("function rampDg("),
     block("function cutLine("),
     block("function paceStartNote("),
     block("function referencePace("),
@@ -70,13 +73,24 @@ const {
 const presets = JSON.parse(
   fs.readFileSync(path.join(firmware, "src/tests/fixtures/integration_presets.json"), "utf8"),
 );
-const base = { ...presets.items[0], cutRampS: presets.cutRampS };
+const base = presets.items[0];
 const cases = {
   double: base,
   noGuards: { ...base, fastExtractionGuardEnabled: false, slowExtractionGuardEnabled: false },
   timerOnly: { ...base, brewByWeight: false, firstDropS: 0, firstDropN: 0 },
   tightWindow: { ...base, fastBeforeS: 14, slowAfterS: 18, operationalWallMs: 25000, goalWeightG: 18 },
   invalid: { ...base, slowAfterS: 20 },
+  // Each side's own transition: Fast steep late and hard over 2 s, Slow steep
+  // early over 8 s.
+  curves: {
+    ...base,
+    fastRampS: 2,
+    fastCurve: "late",
+    fastCurveHardness: "hard",
+    slowRampS: 8,
+    slowCurve: "early",
+    slowCurveHardness: "medium",
+  },
 };
 const out = { models: {}, cutLine: {}, graphs: {} };
 for (const [name, preset] of Object.entries(cases)) {

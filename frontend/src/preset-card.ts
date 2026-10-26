@@ -42,8 +42,6 @@ const DEFAULTS: Omit<Resolved, "type"> = {
   show_note: true,
 };
 
-// The controller's own ramp length when it does not say.
-const DEFAULT_CUT_RAMP_S = 3;
 const n = (v: number) => +(+v).toFixed(1);
 let uid = 0;
 
@@ -102,7 +100,7 @@ export class OpenBrewByWeightPresetCard extends OpenBrewByWeightCard<Resolved> {
       preset = data.presets.find((p) => p.id === (following ? data.activePresetId : Number(config.preset)));
     if (!preset) return html`<p class="message">${t("state.missing_preset")}</p>`;
     if (preset.goalWeightG == null) return html`<p class="message">${t("state.no_rules")}</p>`;
-    const m = buildRuleChartModel(preset, data.cutRampS ?? DEFAULT_CUT_RAMP_S);
+    const m = buildRuleChartModel(preset);
     return html`
       ${config.show_header ? this._header(t, data, preset, following) : nothing}
       ${data.available ? nothing : html`<p class="message" part="status">${t("state.unavailable")}</p>`}
@@ -162,8 +160,8 @@ export class OpenBrewByWeightPresetCard extends OpenBrewByWeightCard<Resolved> {
     const reading = scrubReading(this._scrub!, m),
       values = [n(m.goal), reading.arrival.toFixed(1), t(`verdict.${reading.verdict}`), reading.weight.toFixed(1), reading.stop.toFixed(1)],
       readout = t(reading.atTarget ? "graph.readout_target" : "graph.readout", ...values),
-      a = Math.max(m.prot, m.t1 - m.d),
-      b = Math.min(m.wall, m.t2 + m.d),
+      a = Math.max(m.prot, m.t1 - m.dFast),
+      b = Math.min(m.wall, m.t2 + m.dSlow),
       summary = t("graph.summary", n(m.prot), n(m.ceil), n(a), n(m.goal), n(m.t1), n(m.t2), n(m.floor), n(b), n(m.wall)),
       band = (cls: string, d: string, on: boolean) =>
         svg`<path class=${on ? `band ${cls}` : "band-off"} part=${`band ${cls}`} d=${d} fill=${`url(#${u}${cls})`}/>`,

@@ -1,6 +1,6 @@
 // Preset chart math and geometry, ported from the firmware Web UI
-// (src/web/js/runtime.js: buildRuleChartModel, cutLine, referencePace,
-// presetGraph, positionPresetScrub). test/preset-chart.test.ts checks every
+// (src/web/js/runtime.js: buildRuleChartModel, rampCurveIndex, RAMP_CURVES,
+// rampEase, rampDg, cutLine, referencePace, presetGraph, positionPresetScrub). test/preset-chart.test.ts checks every
 // path against output generated from that code; keep the two in step.
 
 /** One item of the integration's preset render (firmware preset_rules_v1). */
@@ -22,6 +22,13 @@ export interface PresetRender {
   firstDropN?: number;
   arrivalsS?: number[];
   doseG?: number;
+  /** Each side's transition: its length (s) and curve (type and hardness). */
+  fastRampS?: number;
+  slowRampS?: number;
+  fastCurve?: string;
+  slowCurve?: string;
+  fastCurveHardness?: string;
+  slowCurveHardness?: string;
 }
 
 export interface RuleModel {
@@ -37,7 +44,10 @@ export interface RuleModel {
   t2: number;
   prot: number;
   wall: number;
-  d: number;
+  dFast: number;
+  dSlow: number;
+  curveFast: number;
+  curveSlow: number;
   firstDrop: number;
   firstDropN: number;
   scrubMin: number;
@@ -46,14 +56,16 @@ export interface RuleModel {
 export const PACE_SOFT = 0.18;
 
 /** The chart model of a preset, or null when its rule cannot be drawn. */
-export function buildRuleChartModel(c: PresetRender, cutRampS: number): RuleModel | null {
+export function buildRuleChartModel(c: PresetRender): RuleModel | null {
   const N = (v: unknown) => (Number.isFinite(Number(v)) ? Number(v) : NaN),
     goal = N(c.goalWeightG),
     t1 = N(c.fastBeforeS),
     t2 = N(c.slowAfterS),
     prot = N(c.bbwProtectionMs) / 1e3,
     wall = N(c.operationalWallMs) / 1e3,
-    d = N(cutRampS),
+    // Shots and presets without a transition length used the 5 s default.
+    dFast = N(c.fastRampS ?? 5),
+    dSlow = N(c.slowRampS ?? 5),
     fast = !!c.fastExtractionGuardEnabled,
     slow = !!c.slowExtractionGuardEnabled,
     fastMargin = N(c.fastMarginG),
@@ -63,7 +75,7 @@ export function buildRuleChartModel(c: PresetRender, cutRampS: number): RuleMode
     // Paces start at the usual first drop, kept 0.5 s before the window.
     start = Math.max(0, Math.min(N(c.firstDropS) || 0, t1 - 0.5));
   if (
-    ![goal, t1, t2, prot, wall, d, ceil, floor].every(Number.isFinite) ||
+    ![goal, t1, t2, prot, wall, dFast, dSlow, ceil, floor].every(Number.isFinite) ||
     !(prot < t1 && t1 < t2 && t2 < wall)
   )
     return null;
@@ -80,11 +92,68 @@ export function buildRuleChartModel(c: PresetRender, cutRampS: number): RuleMode
     t2,
     prot,
     wall,
-    d,
+    dFast,
+    dSlow,
+    curveFast: rampCurveIndex(c.fastCurve, c.fastCurveHardness),
+    curveSlow: rampCurveIndex(c.slowCurve, c.slowCurveHardness),
     firstDrop: start,
     firstDropN: N(c.firstDropN) || 0,
     scrubMin: Math.max(prot, start + 0.5),
   };
+}
+
+/** Index of a side's transition curve in RAMP_CURVES: type * 3 + hardness. */
+export function rampCurveIndex(type?: string, hardness?: string): number {
+  const t = ["even", "early", "late"].indexOf(type ?? ""),
+    h = ["soft", "medium", "hard"].indexOf(hardness ?? "");
+  return t < 0 || h < 0 ? 0 : t * 3 + h;
+}
+
+/**
+ * Transition curves e(u) = I(u; a, b), the regularized incomplete beta, as
+ * the firmware's corridor::RAMP_CURVES; index 0 (even, soft) is smoothstep.
+ * Every one is monotone and flat at both ends.
+ */
+export const RAMP_CURVES: readonly (readonly [number, number])[] = [
+  [2, 2],
+  [3, 3],
+  [4, 4],
+  [2, 3],
+  [2, 4],
+  [2, 6],
+  [3, 2],
+  [4, 2],
+  [6, 2],
+];
+
+/** e(u) for drawing; the cut weights come from rampDg. */
+export function rampEase(curve: number, u: number): number {
+  const [a, b] = RAMP_CURVES[curve] ?? RAMP_CURVES[0],
+    n = a + b - 1;
+  let e = 0,
+    choose = 1;
+  for (let j = 0; j <= n; j++) {
+    if (j >= a) e += choose * u ** j * (1 - u) ** (n - j);
+    choose = (choose * (n - j)) / (j + 1);
+  }
+  return e;
+}
+
+/**
+ * The firmware's corridor::rampDg, exactly: floor(margin * e(n / d)) when
+ * `reached`, else floor(margin * (1 - e)), from the Bernstein sum over d^N.
+ * The products reach 2^100, hence BigInt.
+ */
+export function rampDg(margin: number, n: number, d: number, curve: number, reached: boolean): number {
+  const [a, b] = RAMP_CURVES[curve] ?? RAMP_CURVES[0],
+    deg = a + b - 1;
+  let sum = BigInt(0),
+    choose = BigInt(1);
+  for (let j = 0; j <= deg; j++) {
+    if (j >= a === reached) sum += choose * BigInt(n) ** BigInt(j) * BigInt(d - n) ** BigInt(deg - j);
+    choose = (choose * BigInt(deg - j)) / BigInt(j + 1);
+  }
+  return Number((BigInt(margin) * sum) / BigInt(d) ** BigInt(deg));
 }
 
 /** Cut weight (g) at t (s), in the firmware's integer units (dg, ms). */
@@ -93,21 +162,17 @@ export function cutLine(t: number, m: RuleModel): number {
     dg = (v: number) => Math.round(v * 10),
     now = ms(Math.max(m.prot, Math.min(m.wall, t))),
     goal = dg(m.goal),
-    a = ms(Math.max(m.prot, m.t1 - m.d)),
+    a = ms(Math.max(m.prot, m.t1 - m.dFast)),
     t1 = ms(m.t1),
     t2 = ms(m.t2),
-    b = ms(Math.min(m.wall, m.t2 + m.d));
+    b = ms(Math.min(m.wall, m.t2 + m.dSlow));
   if (now < t1) {
-    const up = m.fast ? dg(m.fastMargin) : 0,
-      n = Math.max(0, now - a),
-      d = t1 - a;
-    return (goal + Math.floor((up * (d ** 3 - 3 * n * n * d + 2 * n ** 3)) / d ** 3)) / 10;
+    const up = m.fast ? dg(m.fastMargin) : 0;
+    return (goal + (now < a ? up : rampDg(up, now - a, t1 - a, m.curveFast, false))) / 10;
   }
-  if (now > t2) {
-    const down = m.slow ? dg(m.slowMargin) : 0,
-      n = Math.min(now, b) - t2,
-      d = b - t2;
-    return (goal - Math.floor((down * (3 * n * n * d - 2 * n ** 3)) / d ** 3)) / 10;
+  if (now > t2 || (now === t2 && b === t2)) {
+    const down = m.slow ? dg(m.slowMargin) : 0;
+    return (goal - (now >= b ? down : rampDg(down, now - t2, b - t2, m.curveSlow, true))) / 10;
   }
   return goal / 10;
 }
@@ -197,15 +262,20 @@ export function presetGeometry(
     Y = (g: number) => B - ((B - T) * g) / top,
     n = (v: number) => +(+v).toFixed(1),
     P = (t: number, g: number) => X(t).toFixed(2) + " " + Y(g).toFixed(2),
-    // Holds and the window are straight; each S-ramp is one cubic Bézier with
-    // control points (x0 + Δx/3, y0) and (x0 + 2Δx/3, y1): exactly smoothstep.
-    ramp = (t0: number, y0: number, t1: number, y1: number) =>
-      `C${P(t0 + (t1 - t0) / 3, y0)} ${P(t0 + (2 * (t1 - t0)) / 3, y1)} ${P(t1, y1)}`,
-    xa = Math.max(m.prot, m.t1 - m.d),
-    xb = Math.min(m.wall, m.t2 + m.d),
-    fastEdge = `L${P(xa, m.ceil)}` + ramp(xa, m.ceil, m.t1, m.goal),
+    // Holds and the window are straight. Smoothstep is one cubic Bézier with
+    // control points (x0 + Δx/3, y0) and (x0 + 2Δx/3, y1), exactly; any other
+    // curve is sampled finely enough to draw as exact.
+    ramp = (t0: number, y0: number, t1: number, y1: number, curve: number) => {
+      if (!curve) return `C${P(t0 + (t1 - t0) / 3, y0)} ${P(t0 + (2 * (t1 - t0)) / 3, y1)} ${P(t1, y1)}`;
+      let d = "";
+      for (let i = 1; i <= 48; i++) d += `L${P(t0 + ((t1 - t0) * i) / 48, y0 + (y1 - y0) * rampEase(curve, i / 48))}`;
+      return d;
+    },
+    xa = Math.max(m.prot, m.t1 - m.dFast),
+    xb = Math.min(m.wall, m.t2 + m.dSlow),
+    fastEdge = `L${P(xa, m.ceil)}` + ramp(xa, m.ceil, m.t1, m.goal, m.curveFast),
     windowEdge = `L${P(m.t2, m.goal)}`,
-    slowEdge = ramp(m.t2, m.goal, xb, m.floor) + `L${P(m.wall, m.floor)}`,
+    slowEdge = ramp(m.t2, m.goal, xb, m.floor, m.curveSlow) + `L${P(m.wall, m.floor)}`,
     // Reference paces as exact quadratic Béziers, ending where they leave the plot.
     t0 = m.firstDrop,
     paceEnd = (ta: number) => {
@@ -225,8 +295,8 @@ export function presetGeometry(
     O = `M${P(0, 0)}L${P(t0, 0)}`,
     S = `M${P(t0, 0)}`,
     corner = `L${P(tMax, top + 1)}`,
-    tA = Math.max(t0 + 0.5, m.t1 - m.d),
-    tB = m.t2 + m.d,
+    tA = Math.max(t0 + 0.5, m.t1 - m.dFast),
+    tB = m.t2 + m.dSlow,
     grid: string[] = [],
     yLabels: Label[] = [],
     xLabels: Label[] = [];

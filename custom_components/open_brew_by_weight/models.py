@@ -156,7 +156,6 @@ class PresetState:
     active_id: int
     revision: int
     items: tuple[Preset, ...]
-    cut_ramp_s: float | None = None
 
     @classmethod
     def from_dict(cls, value: Any) -> Self:
@@ -182,13 +181,7 @@ class PresetState:
         active_id = _integer(data.get("activeId"), "activeId", 1)
         if active_id not in ids:
             raise ProtocolError("activeId is missing from items")
-        ramp = data.get("cutRampS")
-        return cls(
-            active_id,
-            _integer(data.get("revision"), "revision"),
-            tuple(items),
-            None if ramp is None else _number(ramp, "cutRampS"),
-        )
+        return cls(active_id, _integer(data.get("revision"), "revision"), tuple(items))
 
 
 @dataclass(frozen=True, slots=True)

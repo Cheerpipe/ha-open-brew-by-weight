@@ -14,7 +14,6 @@ const payload = (updates: Partial<CardData> = {}): CardData => ({
   available: true,
   shotState: "idle",
   activePresetId: presets.activeId,
-  cutRampS: presets.cutRampS,
   presets: presets.items,
   lastShot: null,
   ...updates,

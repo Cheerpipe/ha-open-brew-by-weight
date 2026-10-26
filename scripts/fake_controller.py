@@ -51,6 +51,12 @@ def preset(pid: int, name: str, goal: float, dose: float, arrivals: list[float],
         "slowExtractionGuardEnabled": True,
         "grindHintsEnabled": True,
         "lineaMicraBrewTargetC": 93.5,
+        "fastRampS": 5.0,
+        "slowRampS": 5.0,
+        "fastCurve": "even",
+        "slowCurve": "even",
+        "fastCurveHardness": "soft",
+        "slowCurveHardness": "soft",
         "shotStats": {
             "n": len(arrivals),
             "total": len(arrivals),
@@ -67,10 +73,14 @@ def preset(pid: int, name: str, goal: float, dose: float, arrivals: list[float],
     return item
 
 
+# Factory transitions of the two Adaptive presets.
+ADAPTIVE = {"fastRampS": 6.0, "slowRampS": 6.0, "fastCurve": "early", "slowCurve": "late"}
+
 PRESETS = [
-    preset(1, "Double · Adaptive", 36.0, 18.0, [28.4, 29.6, 30.2, 31.1, 32.0, 33.5, 24.8]),
-    preset(2, "Single · Adaptive", 18.0, 9.0, [27.9, 30.5, 31.4], fastMarginG=3.0, slowMarginG=1.5),
-    preset(3, "Ristretto", 27.0, 18.0, [22.1, 23.0], fastBeforeS=20.0, slowAfterS=28.0, operationalWallMs=40000),
+    preset(1, "Double · Adaptive", 36.0, 18.0, [28.4, 29.6, 30.2, 31.1, 32.0, 33.5, 24.8], **ADAPTIVE),
+    preset(2, "Single · Adaptive", 18.0, 9.0, [27.9, 30.5, 31.4], fastMarginG=3.0, slowMarginG=1.5, **ADAPTIVE),
+    preset(3, "Ristretto", 27.0, 18.0, [22.1, 23.0], fastBeforeS=20.0, slowAfterS=28.0, operationalWallMs=40000,
+           fastRampS=3.0, fastCurve="late", fastCurveHardness="medium", slowRampS=8.0, slowCurve="early"),
     preset(255, "Manual", 36.0, 18.0, [], brewByWeight=False),
 ]
 
@@ -144,7 +154,9 @@ class Controller:
             "stopDetail": "normal_target", "cutLineG": 36.0, "arrivalS": 28.2, "verdict": "on_recipe",
             "channeling": False, "scaleLossSource": None, "estimatedG": None, "blind": False,
             "fastBeforeS": 27.0, "slowAfterS": 36.0, "fastMarginG": 6.0, "slowMarginG": 3.0,
-            "delayS": 12.0, "wallS": 50.0, "cutRampS": 3.0, "dripDelayS": 2.0,
+            "delayS": 12.0, "wallS": 50.0, **{k: p[k] for k in (
+                "fastRampS", "slowRampS", "fastCurve", "slowCurve", "fastCurveHardness", "slowCurveHardness")},
+            "dripDelayS": 2.0,
             "actualWeightSource": "post_drip", "rating": 4,
         }
         curve = {
@@ -176,7 +188,7 @@ class Controller:
         return base
 
     def presets(self) -> dict[str, Any]:
-        return {"apiVersion": 1, "revision": self.revision, "activeId": self.active, "cutRampS": 3.0, "items": PRESETS}
+        return {"apiVersion": 1, "revision": self.revision, "activeId": self.active, "items": PRESETS}
 
     def accept(self) -> dict[str, Any]:
         self.request_id += 1

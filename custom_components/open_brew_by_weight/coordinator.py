@@ -406,7 +406,6 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
             presets = replace(
                 presets,
                 items=tuple(replace(p, rule=rules.get(p.id)) for p in presets.items),
-                cut_ramp_s=data.presets.cut_ramp_s,
             )
             snapshot = replace(
                 data.snapshot,

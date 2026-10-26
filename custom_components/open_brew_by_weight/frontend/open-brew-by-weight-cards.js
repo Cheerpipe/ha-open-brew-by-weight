@@ -823,9 +823,10 @@ var X = class extends Y {
 		this.hass && this.isConnected && e !== this._following && (this._stop?.(), this._following = e, e ? (this._state = { status: "loading" }, this._stop = ke(this.hass, e, (e) => this._state = e)) : this._state = { status: "not_found" });
 	}
 }, Z = .18;
-function Ae(e, t) {
-	let n = (e) => Number.isFinite(Number(e)) ? Number(e) : NaN, r = n(e.goalWeightG), i = n(e.fastBeforeS), a = n(e.slowAfterS), o = n(e.bbwProtectionMs) / 1e3, s = n(e.operationalWallMs) / 1e3, c = n(t), l = !!e.fastExtractionGuardEnabled, u = !!e.slowExtractionGuardEnabled, d = n(e.fastMarginG), f = n(e.slowMarginG), p = l ? r + d : r, m = u ? r - f : r, h = Math.max(0, Math.min(n(e.firstDropS) || 0, i - .5));
+function Ae(e) {
+	let t = (e) => Number.isFinite(Number(e)) ? Number(e) : NaN, n = t(e.goalWeightG), r = t(e.fastBeforeS), i = t(e.slowAfterS), a = t(e.bbwProtectionMs) / 1e3, o = t(e.operationalWallMs) / 1e3, s = t(e.fastRampS ?? 5), c = t(e.slowRampS ?? 5), l = !!e.fastExtractionGuardEnabled, u = !!e.slowExtractionGuardEnabled, d = t(e.fastMarginG), f = t(e.slowMarginG), p = l ? n + d : n, m = u ? n - f : n, h = Math.max(0, Math.min(t(e.firstDropS) || 0, r - .5));
 	return ![
+		n,
 		r,
 		i,
 		a,
@@ -834,43 +835,79 @@ function Ae(e, t) {
 		c,
 		p,
 		m
-	].every(Number.isFinite) || !(o < i && i < a && a < s) ? null : {
+	].every(Number.isFinite) || !(a < r && r < i && i < o) ? null : {
 		mode: e.brewByWeight === !1 ? "timerOnly" : "active",
 		fast: l,
 		slow: u,
 		fastMargin: d,
 		slowMargin: f,
-		goal: r,
+		goal: n,
 		ceil: p,
 		floor: m,
-		t1: i,
-		t2: a,
-		prot: o,
-		wall: s,
-		d: c,
+		t1: r,
+		t2: i,
+		prot: a,
+		wall: o,
+		dFast: s,
+		dSlow: c,
+		curveFast: je(e.fastCurve, e.fastCurveHardness),
+		curveSlow: je(e.slowCurve, e.slowCurveHardness),
 		firstDrop: h,
-		firstDropN: n(e.firstDropN) || 0,
-		scrubMin: Math.max(o, h + .5)
+		firstDropN: t(e.firstDropN) || 0,
+		scrubMin: Math.max(a, h + .5)
 	};
 }
 function je(e, t) {
-	let n = (e) => Math.round(e * 1e3), r = (e) => Math.round(e * 10), i = n(Math.max(t.prot, Math.min(t.wall, e))), a = r(t.goal), o = n(Math.max(t.prot, t.t1 - t.d)), s = n(t.t1), c = n(t.t2), l = n(Math.min(t.wall, t.t2 + t.d));
+	let n = [
+		"even",
+		"early",
+		"late"
+	].indexOf(e ?? ""), r = [
+		"soft",
+		"medium",
+		"hard"
+	].indexOf(t ?? "");
+	return n < 0 || r < 0 ? 0 : n * 3 + r;
+}
+var Me = [
+	[2, 2],
+	[3, 3],
+	[4, 4],
+	[2, 3],
+	[2, 4],
+	[2, 6],
+	[3, 2],
+	[4, 2],
+	[6, 2]
+];
+function Ne(e, t) {
+	let [n, r] = Me[e] ?? Me[0], i = n + r - 1, a = 0, o = 1;
+	for (let e = 0; e <= i; e++) e >= n && (a += o * t ** e * (1 - t) ** (i - e)), o = o * (i - e) / (e + 1);
+	return a;
+}
+function Pe(e, t, n, r, i) {
+	let [a, o] = Me[r] ?? Me[0], s = a + o - 1, c = BigInt(0), l = BigInt(1);
+	for (let e = 0; e <= s; e++) e >= a === i && (c += l * BigInt(t) ** BigInt(e) * BigInt(n - t) ** BigInt(s - e)), l = l * BigInt(s - e) / BigInt(e + 1);
+	return Number(BigInt(e) * c / BigInt(n) ** BigInt(s));
+}
+function Fe(e, t) {
+	let n = (e) => Math.round(e * 1e3), r = (e) => Math.round(e * 10), i = n(Math.max(t.prot, Math.min(t.wall, e))), a = r(t.goal), o = n(Math.max(t.prot, t.t1 - t.dFast)), s = n(t.t1), c = n(t.t2), l = n(Math.min(t.wall, t.t2 + t.dSlow));
 	if (i < s) {
-		let e = t.fast ? r(t.fastMargin) : 0, n = Math.max(0, i - o), c = s - o;
-		return (a + Math.floor(e * (c ** 3 - 3 * n * n * c + 2 * n ** 3) / c ** 3)) / 10;
+		let e = t.fast ? r(t.fastMargin) : 0;
+		return (a + (i < o ? e : Pe(e, i - o, s - o, t.curveFast, !1))) / 10;
 	}
-	if (i > c) {
-		let e = t.slow ? r(t.slowMargin) : 0, n = Math.min(i, l) - c, o = l - c;
-		return (a - Math.floor(e * (3 * n * n * o - 2 * n ** 3) / o ** 3)) / 10;
+	if (i > c || i === c && l === c) {
+		let e = t.slow ? r(t.slowMargin) : 0;
+		return (a - (i >= l ? e : Pe(e, i - c, l - c, t.curveSlow, !0))) / 10;
 	}
 	return a / 10;
 }
-function Me(e, t, n, r = 0) {
+function Ie(e, t, n, r = 0) {
 	let i = Math.max(0, e - r) / (n - r);
 	return t * (2 * Z * i + (1 - 2 * Z) * i * i);
 }
-function Ne(e, t) {
-	let n = je(e, t), r = Z, i = (Math.sqrt(4 * r * r + 4 * (1 - 2 * r) * n / t.goal) - 2 * r) / (2 * (1 - 2 * r)), a = t.firstDrop + (e - t.firstDrop) / i;
+function Le(e, t) {
+	let n = Fe(e, t), r = Z, i = (Math.sqrt(4 * r * r + 4 * (1 - 2 * r) * n / t.goal) - 2 * r) / (2 * (1 - 2 * r)), a = t.firstDrop + (e - t.firstDrop) / i;
 	return {
 		stop: e,
 		weight: n,
@@ -879,12 +916,17 @@ function Ne(e, t) {
 		atTarget: Math.abs(n - t.goal) < .05
 	};
 }
-var Pe = (e) => Math.max(e.scrubMin, Math.round((e.t1 + e.t2) * 5) / 10);
-function Fe(e, t, n = {}) {
-	let { arrivals: r = [], compact: i = !1, tens: a = !1, maxG: o = 0, maxT: s = 0 } = n, c = t, l = Math.round(i ? Math.min(180, Math.max(140, c * .48)) : Math.min(220, Math.max(180, c * .56))), u = c - 10, d = l - 18, f = Math.ceil(Math.max(e.ceil, o) + 2), p = f > 30 ? 10 : 5, m = Math.max(e.wall, s), h = (e) => 34 + (u - 34) * e / m, g = (e) => d - (d - 14) * e / f, _ = (e) => +(+e).toFixed(1), v = (e, t) => h(e).toFixed(2) + " " + g(t).toFixed(2), y = (e, t, n, r) => `C${v(e + (n - e) / 3, t)} ${v(e + 2 * (n - e) / 3, r)} ${v(n, r)}`, b = Math.max(e.prot, e.t1 - e.d), x = Math.min(e.wall, e.t2 + e.d), S = `L${v(b, e.ceil)}` + y(b, e.ceil, e.t1, e.goal), C = `L${v(e.t2, e.goal)}`, w = y(e.t2, e.goal, x, e.floor) + `L${v(e.wall, e.floor)}`, T = e.firstDrop, E = (t) => {
+var Re = (e) => Math.max(e.scrubMin, Math.round((e.t1 + e.t2) * 5) / 10);
+function ze(e, t, n = {}) {
+	let { arrivals: r = [], compact: i = !1, tens: a = !1, maxG: o = 0, maxT: s = 0 } = n, c = t, l = Math.round(i ? Math.min(180, Math.max(140, c * .48)) : Math.min(220, Math.max(180, c * .56))), u = c - 10, d = l - 18, f = Math.ceil(Math.max(e.ceil, o) + 2), p = f > 30 ? 10 : 5, m = Math.max(e.wall, s), h = (e) => 34 + (u - 34) * e / m, g = (e) => d - (d - 14) * e / f, _ = (e) => +(+e).toFixed(1), v = (e, t) => h(e).toFixed(2) + " " + g(t).toFixed(2), y = (e, t, n, r, i) => {
+		if (!i) return `C${v(e + (n - e) / 3, t)} ${v(e + 2 * (n - e) / 3, r)} ${v(n, r)}`;
+		let a = "";
+		for (let o = 1; o <= 48; o++) a += `L${v(e + (n - e) * o / 48, t + (r - t) * Ne(i, o / 48))}`;
+		return a;
+	}, b = Math.max(e.prot, e.t1 - e.dFast), x = Math.min(e.wall, e.t2 + e.dSlow), S = `L${v(b, e.ceil)}` + y(b, e.ceil, e.t1, e.goal, e.curveFast), C = `L${v(e.t2, e.goal)}`, w = y(e.t2, e.goal, x, e.floor, e.curveSlow) + `L${v(e.wall, e.floor)}`, T = e.firstDrop, E = (t) => {
 		let n = Z, r = (f + 1) / e.goal;
 		return Math.min(m, T + (t - T) * (Math.sqrt(4 * n * n + 4 * (1 - 2 * n) * r) - 2 * n) / (2 * (1 - 2 * n)));
-	}, D = (t, n) => v(T + (n - T) / 2, e.goal * Z * (n - T) / (t - T)), O = (t, n = E(t)) => v(n, Me(n, e.goal, t, T)), k = (e, t = E(e)) => `Q${D(e, t)} ${O(e, t)}`, A = (e, t = E(e)) => `Q${D(e, t)} ${v(T, 0)}`, j = `M${v(0, 0)}L${v(T, 0)}`, M = `M${v(T, 0)}`, N = `L${v(m, f + 1)}`, P = Math.max(T + .5, e.t1 - e.d), F = e.t2 + e.d, I = [], ee = [], L = [];
+	}, D = (t, n) => v(T + (n - T) / 2, e.goal * Z * (n - T) / (t - T)), O = (t, n = E(t)) => v(n, Ie(n, e.goal, t, T)), k = (e, t = E(e)) => `Q${D(e, t)} ${O(e, t)}`, A = (e, t = E(e)) => `Q${D(e, t)} ${v(T, 0)}`, j = `M${v(0, 0)}L${v(T, 0)}`, M = `M${v(T, 0)}`, N = `L${v(m, f + 1)}`, P = Math.max(T + .5, e.t1 - e.dFast), F = e.t2 + e.dSlow, I = [], ee = [], L = [];
 	for (let e = 0; e <= f; e += p) I.push(`M34 ${g(e).toFixed(1)}H${u}`), ee.push({
 		x: 30,
 		y: g(e) + 3,
@@ -953,7 +995,7 @@ function Fe(e, t, n = {}) {
 	};
 }
 // src/theme.ts
-var Ie = p`
+var Be = p`
   /* Defaults live in private variables, so a theme, the card, or ha-card can
      set any --obbw-* variable and win. */
   :host {
@@ -1221,7 +1263,7 @@ var Ie = p`
     padding: 8px 0;
     color: var(--_muted);
   }
-`, Le = p`
+`, Ve = p`
   :where(ha-card) {
     height: 100%;
     box-sizing: border-box;
@@ -1280,7 +1322,7 @@ var Ie = p`
   :where(.chip.manual) {
     --_c: var(--_muted);
   }
-`, Re = {
+`, He = {
 	preset: "active",
 	show_header: !0,
 	show_selector: !0,
@@ -1289,7 +1331,7 @@ var Ie = p`
 	show_arrivals: !0,
 	show_legend: !0,
 	show_note: !0
-}, ze = 3, Q = (e) => +(+e).toFixed(1), Be = 0, Ve = class extends X {
+}, Q = (e) => +(+e).toFixed(1), Ue = 0, We = class extends X {
 	static {
 		this.properties = {
 			...X.properties,
@@ -1298,7 +1340,7 @@ var Ie = p`
 		};
 	}
 	constructor() {
-		super(), this.defaults = Re, this._id = `obbw${++Be}`, this._down = (e) => {
+		super(), this.defaults = He, this._id = `obbw${++Ue}`, this._down = (e) => {
 			e.currentTarget.setPointerCapture(e.pointerId), this.renderRoot.querySelector(".scrub")?.focus({ preventScroll: !0 }), this._held = !0, this._at(e);
 		}, this._move = (e) => {
 			e.currentTarget.hasPointerCapture(e.pointerId) && this._at(e);
@@ -1346,7 +1388,7 @@ var Ie = p`
 		let { data: n } = t, r = this._config, i = r.preset === "active" || r.preset == null, a = n.presets.find((e) => e.id === (i ? n.activePresetId : Number(r.preset)));
 		if (!a) return U`<p class="message">${e("state.missing_preset")}</p>`;
 		if (a.goalWeightG == null) return U`<p class="message">${e("state.no_rules")}</p>`;
-		let o = Ae(a, n.cutRampS ?? ze);
+		let o = Ae(a);
 		return U`
       ${r.show_header ? this._header(e, n, a, i) : K}
       ${n.available ? K : U`<p class="message" part="status">${e("state.unavailable")}</p>`}
@@ -1385,15 +1427,15 @@ var Ie = p`
 	}
 	_chart(e, t, n) {
 		if (!this._width) return U`<div class="chart"></div>`;
-		let r = this._config, i = Fe(t, this._width, { arrivals: r.show_arrivals ? n.arrivalsS : [] }), a = `${n.id}:${t.t1}:${t.t2}:${t.wall}`, o = this._id;
-		this._geometry = i, this._model = t, this._scrubKey === a && this._scrub >= t.scrubMin && this._scrub <= t.wall || (this._scrub = Pe(t), this._scrubKey = a);
-		let s = Ne(this._scrub, t), c = [
+		let r = this._config, i = ze(t, this._width, { arrivals: r.show_arrivals ? n.arrivalsS : [] }), a = `${n.id}:${t.t1}:${t.t2}:${t.wall}`, o = this._id;
+		this._geometry = i, this._model = t, this._scrubKey === a && this._scrub >= t.scrubMin && this._scrub <= t.wall || (this._scrub = Re(t), this._scrubKey = a);
+		let s = Le(this._scrub, t), c = [
 			Q(t.goal),
 			s.arrival.toFixed(1),
 			e(`verdict.${s.verdict}`),
 			s.weight.toFixed(1),
 			s.stop.toFixed(1)
-		], l = e(s.atTarget ? "graph.readout_target" : "graph.readout", ...c), u = Math.max(t.prot, t.t1 - t.d), d = Math.min(t.wall, t.t2 + t.d), f = e("graph.summary", Q(t.prot), Q(t.ceil), Q(u), Q(t.goal), Q(t.t1), Q(t.t2), Q(t.floor), Q(d), Q(t.wall)), p = (e, t, n) => W`<path class=${n ? `band ${e}` : "band-off"} part=${`band ${e}`} d=${t} fill=${`url(#${o}${e})`}/>`, m = (e, t) => W`<linearGradient id=${o + e} x1="0" y1="0" x2="0" y2="1"><stop class=${t}/><stop class=${`${t} stop-fade`} offset="1"/></linearGradient>`, h = (e, t, n, r = "", i = "middle") => W`<text class=${`axis-label ${r}`} x=${e.toFixed(1)} y=${t.toFixed(1)} text-anchor=${i}>${n}</text>`, g = i.X(s.stop), _ = i.Y(s.weight), v = e("graph.pill", ...c), y = v.length * 6.5 + 16;
+		], l = e(s.atTarget ? "graph.readout_target" : "graph.readout", ...c), u = Math.max(t.prot, t.t1 - t.dFast), d = Math.min(t.wall, t.t2 + t.dSlow), f = e("graph.summary", Q(t.prot), Q(t.ceil), Q(u), Q(t.goal), Q(t.t1), Q(t.t2), Q(t.floor), Q(d), Q(t.wall)), p = (e, t, n) => W`<path class=${n ? `band ${e}` : "band-off"} part=${`band ${e}`} d=${t} fill=${`url(#${o}${e})`}/>`, m = (e, t) => W`<linearGradient id=${o + e} x1="0" y1="0" x2="0" y2="1"><stop class=${t}/><stop class=${`${t} stop-fade`} offset="1"/></linearGradient>`, h = (e, t, n, r = "", i = "middle") => W`<text class=${`axis-label ${r}`} x=${e.toFixed(1)} y=${t.toFixed(1)} text-anchor=${i}>${n}</text>`, g = i.X(s.stop), _ = i.Y(s.weight), v = e("graph.pill", ...c), y = v.length * 6.5 + 16;
 		return U`
       <div
         class="chart ${this._held ? "held" : ""}"
@@ -1477,21 +1519,21 @@ var Ie = p`
 		this._seek(this._geometry.tAt((e.clientX - n.left) * this._geometry.width / n.width));
 	}
 	static {
-		this.styles = [Ie, Le];
+		this.styles = [Be, Ve];
 	}
-}, He;
-function Ue() {
-	return customElements.get("ha-form") ? Promise.resolve() : (He ??= (async () => {
+}, Ge;
+function Ke() {
+	return customElements.get("ha-form") ? Promise.resolve() : (Ge ??= (async () => {
 		await (await (await window.loadCardHelpers?.())?.createCardElement({
 			type: "entities",
 			entities: []
 		}))?.constructor.getConfigElement?.();
 	})().catch(() => {
-		He = void 0;
-	}), He);
+		Ge = void 0;
+	}), Ge);
 }
 // src/preset-card-editor.ts
-var We = [
+var qe = [
 	"show_header",
 	"show_selector",
 	"show_example",
@@ -1499,7 +1541,7 @@ var We = [
 	"show_arrivals",
 	"show_legend",
 	"show_note"
-], Ge = class extends Y {
+], Je = class extends Y {
 	static {
 		this.properties = {
 			hass: { attribute: !1 },
@@ -1508,7 +1550,7 @@ var We = [
 		};
 	}
 	connectedCallback() {
-		super.connectedCallback(), Ue().then(() => this.requestUpdate());
+		super.connectedCallback(), Ke().then(() => this.requestUpdate());
 	}
 	setConfig(e) {
 		this._config = e;
@@ -1547,14 +1589,14 @@ var We = [
 			{
 				name: "",
 				type: "grid",
-				schema: We.map((e) => ({
+				schema: qe.map((e) => ({
 					name: e,
 					selector: { boolean: {} }
 				}))
 			}
 		], i = {
 			preset: "active",
-			...Object.fromEntries(We.map((e) => [e, !0])),
+			...Object.fromEntries(qe.map((e) => [e, !0])),
 			...this._config,
 			...typeof this._config.preset == "number" ? { preset: String(this._config.preset) } : {}
 		};
@@ -1574,7 +1616,7 @@ var We = [
 			composed: !0
 		}));
 	}
-}, Ke = [
+}, Ye = [
 	"duration",
 	"yield",
 	"goal",
@@ -1595,20 +1637,20 @@ var We = [
 	"scale",
 	"rating"
 ], $ = (e) => typeof e == "number" && Number.isFinite(e) ? e : null;
-function qe(e, t) {
+function Xe(e, t) {
 	if (typeof e == "number" && e !== 0) return e;
 	if (Array.isArray(t)) {
 		for (let e = t.length - 1; e >= 0; e--) if (typeof t[e] == "number" && t[e] !== 0) return t[e] / 100;
 	}
 	return typeof e == "number" ? e : null;
 }
-function Je(e) {
+function Ze(e) {
 	let t = $(e.avgFlowGS);
 	if (t !== null) return t;
-	let n = qe(e.actualG, e.wCg), r = $(e.durationS), i = $(e.firstDropS) ?? $(e.dropS);
+	let n = Xe(e.actualG, e.wCg), r = $(e.durationS), i = $(e.firstDropS) ?? $(e.dropS);
 	return n == null || r == null || i == null || !(r - i > .5) || !(n > 0) ? null : n / (r - i);
 }
-function Ye(e, t, n) {
+function Qe(e, t, n) {
 	let r = t?.pts.reduce((e, t) => t.t > e.t ? t : e), i = t && e.endS != null && (t.dripSegs[0]?.pts[0] ?? r), a = i ? i.cg / 100 : null;
 	return i ? {
 		s: Number(e.endS),
@@ -1620,7 +1662,7 @@ function Ye(e, t, n) {
 		drip: null
 	};
 }
-function Xe(e, t, n) {
+function $e(e, t, n) {
 	let r = String(t || "").toLowerCase().replace(/_(failure|timeout)$/, ""), i = (t) => e(t === "fast" ? "verdict.fast" : t === "slow" ? "verdict.slow" : "verdict.on_recipe");
 	return /^(ext|fast_|slow_)/.test(r) ? i(r[0] === "s" ? "slow" : "fast") : {
 		paddle: () => e("shot.manual"),
@@ -1641,8 +1683,8 @@ function Xe(e, t, n) {
 		touch_weight_fallback: () => e("ended.touch")
 	}[r]?.() ?? "—";
 }
-function Ze(e, t, n) {
-	let r = t.actualG == null && t.estimatedG != null, i = r ? null : qe(t.actualG, t.wCg), a = $(t.goalG), o = $(t.cutLineG) > 0 ? $(t.cutLineG) : a, s = i === null || !o ? null : (i - o) / o * 100, c = Je(t), l = Ye(t, n, i), u = $(t.targetTempDeciC) > 0 ? $(t.targetTempDeciC) / 10 : null, d = (e, t, n) => e === null ? "—" : e.toFixed(t) + n, f = String(t.shotType ?? ""), p = Math.max(0, Math.min(5, $(t.rating) ?? 0)), m = {
+function et(e, t, n) {
+	let r = t.actualG == null && t.estimatedG != null, i = r ? null : Xe(t.actualG, t.wCg), a = $(t.goalG), o = $(t.cutLineG) > 0 ? $(t.cutLineG) : a, s = i === null || !o ? null : (i - o) / o * 100, c = Ze(t), l = Qe(t, n, i), u = $(t.targetTempDeciC) > 0 ? $(t.targetTempDeciC) / 10 : null, d = (e, t, n) => e === null ? "—" : e.toFixed(t) + n, f = String(t.shotType ?? ""), p = Math.max(0, Math.min(5, $(t.rating) ?? 0)), m = {
 		duration: { value: d($(t.durationS), 1, " s") },
 		yield: { value: r ? e("field.yield_estimated", Math.round(Number(t.estimatedG))) : d(i, 1, " g") },
 		goal: { value: d(a, 1, " g") },
@@ -1659,7 +1701,7 @@ function Ze(e, t, n) {
 		cut_at: { value: l.g == null ? "—" : l.g.toFixed(1) + " g · " + l.s.toFixed(1) + " s" },
 		drip_delay: { value: d($(t.dripDelayS), 1, " s") },
 		late_cup: { value: $(t.tareS) == null ? e("field.none") : Number(t.tareS).toFixed(1) + " s" },
-		ended: { value: Xe(e, t.stopDetail, t.verdict) },
+		ended: { value: $e(e, t.stopDetail, t.verdict) },
 		shot_type: { value: e(f === "manual" ? "shot.manual" : f === "timer_only" ? "shot.timer_only" : "shot.auto") },
 		preset: { value: String(t.presetName || "—") },
 		scale: { value: String(t.scaleName || e("field.none")) },
@@ -1671,7 +1713,7 @@ function Ze(e, t, n) {
 	return u !== null && (m.target_temp = { value: u.toFixed(1) + " °C" }), m;
 }
 // src/shot-header.ts
-function Qe(e, t, n, r) {
+function tt(e, t, n, r) {
 	let i = String(t?.shotType ?? ""), a = ["fast", "slow"].includes(String(t?.verdict)) ? String(t.verdict) : "on_recipe", o = t ? i === "manual" ? {
 		cls: "manual",
 		text: e("shot.manual")
@@ -1694,7 +1736,7 @@ function Qe(e, t, n, r) {
   </div>`;
 }
 // src/shot-model.ts
-function $e(e, t) {
+function nt(e, t) {
 	let n;
 	try {
 		n = atob(String(e));
@@ -1711,15 +1753,15 @@ function $e(e, t) {
 		wCg: i
 	} : null;
 }
-function et(e) {
-	let { wD: t, wRef: n, ...r } = e.curve ?? {}, i = $e(t, n);
+function rt(e) {
+	let { wD: t, wRef: n, ...r } = e.curve ?? {}, i = nt(t, n);
 	return i ? {
 		...e,
 		...r,
 		...i
 	} : null;
 }
-function tt(e) {
+function it(e) {
 	if (!e) return null;
 	let t = Array.isArray(e.wCg) ? e.wCg : [], n = e.wAtMs, r = e.wBreakBefore ?? [], i = e.wHeld ?? [], a = (e) => !Array.isArray(e) || e.some((n, r) => !Number.isInteger(n) || n < 0 || n >= t.length || r && n <= e[r - 1]);
 	if (!Array.isArray(n) || n.length !== t.length || t.length > 1201 || a(r) || a(i) || n.some((e, t) => !Number.isInteger(e) || e < 0 || e > 6e4 || t && e < n[t - 1])) return null;
@@ -1850,7 +1892,7 @@ function tt(e) {
 		flowMax: Math.max(.5, Math.ceil(A / .5) * .5)
 	};
 }
-function nt(e) {
+function at(e) {
 	let t = String(e.shotType || "").toLowerCase() === "timer_only";
 	return Ae({
 		id: 0,
@@ -1865,24 +1907,30 @@ function nt(e) {
 		fastMarginG: e.fastMarginG,
 		slowMarginG: e.slowMarginG,
 		firstDropS: e.firstDropS,
-		brewByWeight: !t
-	}, e.cutRampS);
+		brewByWeight: !t,
+		fastRampS: e.fastRampS,
+		slowRampS: e.slowRampS,
+		fastCurve: e.fastCurve,
+		slowCurve: e.slowCurve,
+		fastCurveHardness: e.fastCurveHardness,
+		slowCurveHardness: e.slowCurveHardness
+	});
 }
-function rt(e, t) {
+function ot(e, t) {
 	let n = 0;
 	for (; n < e.length - 2 && e[n + 1].t < t;) n++;
 	let r = e[n], i = e[n + 1] ?? r, a = i.t > r.t ? Math.min(1, Math.max(0, (t - r.t) / (i.t - r.t))) : 0;
 	return (r.cg + (i.cg - r.cg) * a) / 100;
 }
 // src/shot-card.ts
-var it = ["duration", "yield"], at = Ke.filter((e) => !it.includes(e)), ot = {
+var st = ["duration", "yield"], ct = Ye.filter((e) => !st.includes(e)), lt = {
 	show_header: !0,
-	hero: it,
-	fields: at,
+	hero: st,
+	fields: ct,
 	show_empty: !0
-}, st = class extends X {
+}, ut = class extends X {
 	constructor(...e) {
-		super(...e), this.defaults = ot;
+		super(...e), this.defaults = lt;
 	}
 	static getConfigElement() {
 		return document.createElement("open-brew-by-weight-shot-card-editor");
@@ -1893,7 +1941,7 @@ var it = ["duration", "yield"], at = Ke.filter((e) => !it.includes(e)), ot = {
 	setConfig(e) {
 		for (let t of ["hero", "fields"]) {
 			let n = e?.[t];
-			if (n !== void 0 && (!Array.isArray(n) || n.some((e) => !Ke.includes(e)))) throw Error(`${t} must list fields from: ${Ke.join(", ")}`);
+			if (n !== void 0 && (!Array.isArray(n) || n.some((e) => !Ye.includes(e)))) throw Error(`${t} must list fields from: ${Ye.join(", ")}`);
 		}
 		super.setConfig(e);
 	}
@@ -1913,17 +1961,17 @@ var it = ["duration", "yield"], at = Ke.filter((e) => !it.includes(e)), ot = {
 		let t = this._state;
 		if (t.status === "loading") return U`<p class="message">${e("state.loading")}</p>`;
 		if (t.status === "not_found") return U`<p class="message">${e("state.not_found")}</p>`;
-		let n = this._config, r = t.data.lastShot, i = (t) => n.show_header ? Qe(e, t, n.title, this.hass?.locale?.language ?? this.hass?.language) : K;
+		let n = this._config, r = t.data.lastShot, i = (t) => n.show_header ? tt(e, t, n.title, this.hass?.locale?.language ?? this.hass?.language) : K;
 		if (!r) return U`${i(null)}<p class="message">${e("shot.none")}</p>`;
 		if (r !== this._shotKey) {
 			this._shotKey = r;
-			let e = et(r);
+			let e = rt(r);
 			this._shot = {
 				row: e ?? r,
-				model: e && tt(e)
+				model: e && it(e)
 			};
 		}
-		let { row: a, model: o } = this._shot, s = Ze(e, a, o), c = (e = []) => e.filter((e) => s[e] && (n.show_empty || s[e].value !== "—"));
+		let { row: a, model: o } = this._shot, s = et(e, a, o), c = (e = []) => e.filter((e) => s[e] && (n.show_empty || s[e].value !== "—"));
 		return U`
       ${i(a)}
       ${t.data.available ? K : U`<p class="message" part="status">${e("state.unavailable")}</p>`}
@@ -1949,8 +1997,8 @@ var it = ["duration", "yield"], at = Ke.filter((e) => !it.includes(e)), ot = {
 	}
 	static {
 		this.styles = [
-			Ie,
-			Le,
+			Be,
+			Ve,
 			p`
       :where(.hero) {
         display: grid;
@@ -2002,7 +2050,7 @@ var it = ["duration", "yield"], at = Ke.filter((e) => !it.includes(e)), ot = {
     `
 		];
 	}
-}, ct = class extends Y {
+}, dt = class extends Y {
 	static {
 		this.properties = {
 			hass: { attribute: !1 },
@@ -2010,7 +2058,7 @@ var it = ["duration", "yield"], at = Ke.filter((e) => !it.includes(e)), ot = {
 		};
 	}
 	connectedCallback() {
-		super.connectedCallback(), Ue().then(() => this.requestUpdate());
+		super.connectedCallback(), Ke().then(() => this.requestUpdate());
 	}
 	setConfig(e) {
 		this._config = e;
@@ -2021,7 +2069,7 @@ var it = ["duration", "yield"], at = Ke.filter((e) => !it.includes(e)), ot = {
 			multiple: !0,
 			reorder: !0,
 			mode: "list",
-			options: Ke.map((t) => ({
+			options: Ye.map((t) => ({
 				value: t,
 				label: e(`field.${t}`)
 			}))
@@ -2067,8 +2115,8 @@ var it = ["duration", "yield"], at = Ke.filter((e) => !it.includes(e)), ot = {
 		], i = {
 			show_header: !0,
 			show_empty: !0,
-			hero: it,
-			fields: at,
+			hero: st,
+			fields: ct,
 			...this._config
 		}, a = (t) => t ? e(t === "device_id" ? "editor.device" : t === "show_empty" ? "editor.show_empty" : `editor.${t}`) : "";
 		return U`<ha-form
@@ -2088,10 +2136,10 @@ var it = ["duration", "yield"], at = Ke.filter((e) => !it.includes(e)), ot = {
 	}
 };
 // src/shot-chart.ts
-function lt(e, t, n, r) {
+function ft(e, t, n, r) {
 	return e.filter((e) => e.t <= r).map((e, r) => (r ? "L" : "M") + t(e.t).toFixed(2) + " " + n(e.cg / 100).toFixed(2)).join("");
 }
-function ut(e, t, n, r = e.timeMax) {
+function pt(e, t, n, r = e.timeMax) {
 	let i = n !== "flow", a = n !== "weight", o = e.maxW / 10, s = [
 		.25,
 		.5,
@@ -2172,20 +2220,20 @@ function ut(e, t, n, r = e.timeMax) {
 	};
 }
 // src/shot-chart-card.ts
-var dt = [
+var mt = [
 	"preset_weight",
 	"weight_flow",
 	"weight",
 	"flow"
-], ft = {
+], ht = {
 	chart: "preset_weight",
 	mode_switch: !0,
 	show_header: !0,
 	show_readout: !0,
 	show_legend: !0
-}, pt = (e) => `obbw-shot-view:${e.device_id}:${e.chart}`, mt = 0, ht = class extends X {
+}, gt = (e) => `obbw-shot-view:${e.device_id}:${e.chart}`, _t = 0, vt = class extends X {
 	constructor(...e) {
-		super(...e), this.defaults = ft, this._id = `obbws${++mt}`;
+		super(...e), this.defaults = ht, this._id = `obbws${++_t}`;
 	}
 	static {
 		this.properties = {
@@ -2204,13 +2252,13 @@ var dt = [
 		};
 	}
 	setConfig(e) {
-		if (e?.chart && !dt.includes(e.chart)) throw Error(`Unknown chart: ${e.chart}`);
+		if (e?.chart && !mt.includes(e.chart)) throw Error(`Unknown chart: ${e.chart}`);
 		super.setConfig(e);
 		let t = null;
 		try {
-			t = this._config.mode_switch ? localStorage.getItem(pt(this._config)) : null;
+			t = this._config.mode_switch ? localStorage.getItem(gt(this._config)) : null;
 		} catch {}
-		this._view = dt.includes(t) ? t : this._config.chart;
+		this._view = mt.includes(t) ? t : this._config.chart;
 	}
 	getCardSize() {
 		return 6;
@@ -2227,11 +2275,11 @@ var dt = [
 	_prepare(e) {
 		if (e === this._shotKey) return this._prepared;
 		this._shotKey = e, this._cursor = void 0;
-		let t = et(e), n = t && tt(t);
+		let t = rt(e), n = t && it(t);
 		return this._prepared = n ? {
 			row: t,
 			model: n,
-			rule: nt(t),
+			rule: at(t),
 			weight: n.pts.slice().sort((e, t) => e.t - t.t),
 			flow: n.flowSegs.concat(n.dripFlowSegs).flatMap((e) => e.pts).sort((e, t) => e.t - t.t)
 		} : null, this._prepared;
@@ -2253,11 +2301,11 @@ var dt = [
     `;
 	}
 	_header(e, t) {
-		return Qe(e, t, this._config.title, this.hass?.locale?.language ?? this.hass?.language);
+		return tt(e, t, this._config.title, this.hass?.locale?.language ?? this.hass?.language);
 	}
 	_switch(e, t, n) {
 		return U`<div class="views" part="views" role="group" aria-label=${e("view.label")}>
-      ${dt.filter((e) => n || e !== "preset_weight").map((n) => U`<button
+      ${mt.filter((e) => n || e !== "preset_weight").map((n) => U`<button
           type="button"
           class="view"
           part="view"
@@ -2271,7 +2319,7 @@ var dt = [
 	_pick(e) {
 		this._view = e;
 		try {
-			localStorage.setItem(pt(this._config), e);
+			localStorage.setItem(gt(this._config), e);
 		} catch {}
 	}
 	_label(e, t = "") {
@@ -2279,12 +2327,12 @@ var dt = [
 	}
 	_presetView(e, t) {
 		if (!this._width) return U`<div class="chart"></div>`;
-		let { model: n, rule: r, row: i } = t, a = r, o = Math.max(a.wall, n.dur), s = Fe(a, this._width, {
+		let { model: n, rule: r, row: i } = t, a = r, o = Math.max(a.wall, n.dur), s = ze(a, this._width, {
 			compact: !0,
 			tens: !0,
 			maxG: n.rawMaxW,
 			maxT: o
-		}), c = this._id, l = String(i.shotType).toLowerCase() === "timer_only" ? "none" : ["fast", "slow"].includes(String(i.verdict)) ? String(i.verdict) : "on_recipe", u = (e, t, n, r) => n ? r ? W`<path class=${`band ${e}`} part=${`band ${e}`} d=${t} fill=${`url(#${c}${e})`}/>` : K : W`<path class="band-off" d=${t}/>`, d = (e, t) => W`<linearGradient id=${c + e} x1="0" y1="0" x2="0" y2="1"><stop class=${t}/><stop class=${`${t} stop-fade`} offset="1"/></linearGradient>`, f = n.dripSegs.length && Number.isFinite(Number(i.endS)) ? Number(i.endS) : null, p = this._cursor, m = rt(t.weight, p), h = a.mode === "active" ? `${je(p, a).toFixed(1)} g` : "—", g = e("shot.cursor", p.toFixed(1), m.toFixed(1), h);
+		}), c = this._id, l = String(i.shotType).toLowerCase() === "timer_only" ? "none" : ["fast", "slow"].includes(String(i.verdict)) ? String(i.verdict) : "on_recipe", u = (e, t, n, r) => n ? r ? W`<path class=${`band ${e}`} part=${`band ${e}`} d=${t} fill=${`url(#${c}${e})`}/>` : K : W`<path class="band-off" d=${t}/>`, d = (e, t) => W`<linearGradient id=${c + e} x1="0" y1="0" x2="0" y2="1"><stop class=${t}/><stop class=${`${t} stop-fade`} offset="1"/></linearGradient>`, f = n.dripSegs.length && Number.isFinite(Number(i.endS)) ? Number(i.endS) : null, p = this._cursor, m = ot(t.weight, p), h = a.mode === "active" ? `${Fe(p, a).toFixed(1)} g` : "—", g = e("shot.cursor", p.toFixed(1), m.toFixed(1), h);
 		return this._tAt = s.tAt, U`
       ${this._chart(s.width, s.height, W`
           <defs>
@@ -2307,8 +2355,8 @@ var dt = [
           <path class="max-line" part="max-line" d=${`M${s.maxX.toFixed(1)} ${s.T}V${s.B}`}/>
           <path class="window-edge" part="window-edge" d=${s.windowEdges}/>
           <path class=${`cut-line ${a.mode === "timerOnly" ? "off" : ""}`} part="cut-line" d=${s.cut}/>
-          ${n.segs.map((e) => W`<path class="shot-line" part="shot-line" d=${lt(e.pts, s.X, s.Y, o)}/>`)}
-          ${n.dripSegs.map((e) => W`<path class="shot-line drip" part="shot-line drip" d=${lt(e.pts, s.X, s.Y, o)}/>`)}
+          ${n.segs.map((e) => W`<path class="shot-line" part="shot-line" d=${ft(e.pts, s.X, s.Y, o)}/>`)}
+          ${n.dripSegs.map((e) => W`<path class="shot-line drip" part="shot-line drip" d=${ft(e.pts, s.X, s.Y, o)}/>`)}
           ${n.held.map((e) => W`<circle class="held" part="held" cx=${s.X(e.t).toFixed(1)} cy=${s.Y(e.cg / 100).toFixed(1)} r="2"/>`)}
           ${this._label({
 			x: s.R - 2,
@@ -2316,7 +2364,7 @@ var dt = [
 			text: e("graph.target", +a.goal.toFixed(1)),
 			anchor: "end"
 		}, "halo strong")}
-          ${f == null ? K : W`<circle class="stop-point" part="stop-point" r="3" cx=${s.X(f).toFixed(2)} cy=${s.Y(rt(t.weight, f)).toFixed(2)}/>`}
+          ${f == null ? K : W`<circle class="stop-point" part="stop-point" r="3" cx=${s.X(f).toFixed(2)} cy=${s.Y(ot(t.weight, f)).toFixed(2)}/>`}
           ${n.finalPoint ? W`<circle class="final-point shot" part="final-point" r="3" cx=${s.X(n.finalPoint.t).toFixed(1)} cy=${s.Y(n.finalPoint.cg / 100).toFixed(1)}/>` : K}
           <g class="cursor" part="cursor">
             <path class="cursor-guide" d=${`M${s.X(p).toFixed(1)} ${s.T}V${s.B}`}/>
@@ -2336,7 +2384,7 @@ var dt = [
 	}
 	_sparkView(e, t, n) {
 		if (!this._width) return U`<div class="chart"></div>`;
-		let { model: r, rule: i } = t, a = ut(r, this._width, n, i ? Math.max(i.wall, r.dur) : r.timeMax), o = this._id, s = this._cursor, c = rt(t.weight, s), l = t.flow.length && s >= t.flow[0].t && s <= t.flow.at(-1).t ? rt(t.flow, s) : null, u = n === "weight" ? `${s.toFixed(1)} s · ${c.toFixed(1)} g` : n === "flow" ? `${s.toFixed(1)} s · ${l?.toFixed(1) ?? "—"} g/s` : e("shot.flow_cursor", s.toFixed(1), c.toFixed(1), l?.toFixed(1) ?? "—"), d = [...new Set(r.segs.map((e) => e.kind))], f = (e, t) => {
+		let { model: r, rule: i } = t, a = pt(r, this._width, n, i ? Math.max(i.wall, r.dur) : r.timeMax), o = this._id, s = this._cursor, c = ot(t.weight, s), l = t.flow.length && s >= t.flow[0].t && s <= t.flow.at(-1).t ? ot(t.flow, s) : null, u = n === "weight" ? `${s.toFixed(1)} s · ${c.toFixed(1)} g` : n === "flow" ? `${s.toFixed(1)} s · ${l?.toFixed(1) ?? "—"} g/s` : e("shot.flow_cursor", s.toFixed(1), c.toFixed(1), l?.toFixed(1) ?? "—"), d = [...new Set(r.segs.map((e) => e.kind))], f = (e, t) => {
 			let n = (e) => t ? "flow" : `weight ${e.kind}`;
 			return W`${e.map((e, r) => e.area ? W`<linearGradient id=${`${o}${t ? "f" : "w"}${r}`} x1="0" y1="0" x2="0" y2="1">
                 <stop class=${`fill-top ${n(e)}`}/><stop class=${`fill-base ${n(e)}`} offset="1"/></linearGradient>
@@ -2416,8 +2464,8 @@ var dt = [
 	}
 	static {
 		this.styles = [
-			Ie,
-			Le,
+			Be,
+			Ve,
 			p`
       :where(.views) {
         display: inline-flex;
@@ -2600,12 +2648,12 @@ var dt = [
     `
 		];
 	}
-}, gt = [
+}, yt = [
 	"mode_switch",
 	"show_header",
 	"show_readout",
 	"show_legend"
-], _t = class extends Y {
+], bt = class extends Y {
 	static {
 		this.properties = {
 			hass: { attribute: !1 },
@@ -2613,7 +2661,7 @@ var dt = [
 		};
 	}
 	connectedCallback() {
-		super.connectedCallback(), Ue().then(() => this.requestUpdate());
+		super.connectedCallback(), Ke().then(() => this.requestUpdate());
 	}
 	setConfig(e) {
 		this._config = e;
@@ -2629,7 +2677,7 @@ var dt = [
 				name: "chart",
 				selector: { select: {
 					mode: "dropdown",
-					options: dt.map((t) => ({
+					options: mt.map((t) => ({
 						value: t,
 						label: e(`view.${t}`)
 					}))
@@ -2642,14 +2690,14 @@ var dt = [
 			{
 				name: "",
 				type: "grid",
-				schema: gt.map((e) => ({
+				schema: yt.map((e) => ({
 					name: e,
 					selector: { boolean: {} }
 				}))
 			}
 		], r = {
 			chart: "preset_weight",
-			...Object.fromEntries(gt.map((e) => [e, !0])),
+			...Object.fromEntries(yt.map((e) => [e, !0])),
 			...this._config
 		};
 		return U`<ha-form
@@ -2667,20 +2715,20 @@ var dt = [
 		}}
     ></ha-form>`;
 	}
-}, vt = [
-	["open-brew-by-weight-preset-card", Ve],
-	["open-brew-by-weight-preset-card-editor", Ge],
-	["open-brew-by-weight-shot-chart-card", ht],
-	["open-brew-by-weight-shot-chart-card-editor", _t],
-	["open-brew-by-weight-shot-card", st],
-	["open-brew-by-weight-shot-card-editor", ct]
-], yt = () => {
-	for (let [e, t] of vt) if (!customElements.get(e)) try {
+}, xt = [
+	["open-brew-by-weight-preset-card", We],
+	["open-brew-by-weight-preset-card-editor", Je],
+	["open-brew-by-weight-shot-chart-card", vt],
+	["open-brew-by-weight-shot-chart-card-editor", bt],
+	["open-brew-by-weight-shot-card", ut],
+	["open-brew-by-weight-shot-card-editor", dt]
+], St = () => {
+	for (let [e, t] of xt) if (!customElements.get(e)) try {
 		customElements.define(e, t);
 	} catch {}
 };
-yt();
-var bt = 0, xt = setInterval(() => {
-	yt(), ++bt >= 60 && clearInterval(xt);
+St();
+var Ct = 0, wt = setInterval(() => {
+	St(), ++Ct >= 60 && clearInterval(wt);
 }, 500);
 o(document.documentElement.lang || navigator.language);

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.0
+
+- **Charts follow each preset's transitions.** The preset and last shot charts
+  draw the cut line with each preset's own Fast and Slow transitions — their
+  length and curve, as set in the controller's Settings — and cut exactly where
+  the controller does. A last shot keeps the transitions it ran with.
+  Controllers on earlier firmware keep drawing their 5-second smooth step.
+
 ## 0.6.3
 
 - **Card settings show up for real.** The settings of every card could open

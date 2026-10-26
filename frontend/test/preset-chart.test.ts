@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import golden from "./fixtures/preset-golden.json";
 import presets from "../../tests/fixtures/integration_presets.json";
+import transitions from "../../tests/fixtures/corridor_transitions_v1.json";
 import {
   buildRuleChartModel,
   cutLine,
@@ -12,16 +13,25 @@ import {
 } from "../src/preset-chart";
 
 // The same cases scripts/golden-from-firmware.mjs fed the firmware code.
-const base = { ...presets.items[0], cutRampS: presets.cutRampS } as PresetRender & { cutRampS: number };
-const cases: Record<string, PresetRender & { cutRampS: number }> = {
+const base = presets.items[0] as PresetRender;
+const cases: Record<string, PresetRender> = {
   double: base,
   noGuards: { ...base, fastExtractionGuardEnabled: false, slowExtractionGuardEnabled: false },
   timerOnly: { ...base, brewByWeight: false, firstDropS: 0, firstDropN: 0 },
   tightWindow: { ...base, fastBeforeS: 14, slowAfterS: 18, operationalWallMs: 25000, goalWeightG: 18 },
   invalid: { ...base, slowAfterS: 20 },
+  curves: {
+    ...base,
+    fastRampS: 2,
+    fastCurve: "late",
+    fastCurveHardness: "hard",
+    slowRampS: 8,
+    slowCurve: "early",
+    slowCurveHardness: "medium",
+  },
 };
 const models = golden.models as Record<string, Record<string, unknown>>;
-const model = (name: string) => buildRuleChartModel(cases[name], cases[name].cutRampS) as RuleModel;
+const model = (name: string) => buildRuleChartModel(cases[name]) as RuleModel;
 
 // Every class's path data and every label, as the firmware drew them.
 function pathsOf(svg: string) {
@@ -39,7 +49,7 @@ function pathsOf(svg: string) {
 describe("preset chart model", () => {
   for (const name of Object.keys(cases)) {
     it(`matches the firmware model for ${name}`, () => {
-      const ours = buildRuleChartModel(cases[name], cases[name].cutRampS);
+      const ours = buildRuleChartModel(cases[name]);
       const { pts: _pts, ...theirs } = models[name];
       if (theirs.mode === "empty") expect(ours).toBeNull();
       else expect(ours).toEqual(theirs);
@@ -51,6 +61,40 @@ describe("preset chart model", () => {
       const m = model(name);
       for (const [t, w] of samples) expect(cutLine(t, m)).toBe(w);
     }
+  });
+
+  it("cuts like the firmware kernel on every transition curve", () => {
+    const types = ["even", "early", "late"],
+      hardness = ["soft", "medium", "hard"];
+    let compared = 0;
+    for (const c of transitions.cases) {
+      const m = buildRuleChartModel({
+        id: 0,
+        name: c.name,
+        brewByWeight: true,
+        fastExtractionGuardEnabled: c.fastOn,
+        slowExtractionGuardEnabled: c.slowOn,
+        goalWeightG: c.goalDg / 10,
+        fastMarginG: c.fastMarginDg / 10,
+        slowMarginG: c.slowMarginDg / 10,
+        fastBeforeS: c.fastBeforeMs / 1000,
+        slowAfterS: c.slowAfterMs / 1000,
+        bbwProtectionMs: c.delayMs,
+        operationalWallMs: c.wallMs,
+        fastRampS: c.fastRampMs / 1000,
+        slowRampS: c.slowRampMs / 1000,
+        fastCurve: types[Math.floor(c.fastCurve / 3)],
+        fastCurveHardness: hardness[c.fastCurve % 3],
+        slowCurve: types[Math.floor(c.slowCurve / 3)],
+        slowCurveHardness: hardness[c.slowCurve % 3],
+      }) as RuleModel;
+      for (const [tMs, dg] of c.cutLine) {
+        if (tMs < c.delayMs || tMs > c.wallMs) continue;
+        expect(Math.round(cutLine(tMs / 1000, m) * 10)).toBe(dg);
+        compared++;
+      }
+    }
+    expect(compared).toBeGreaterThan(1000);
   });
 
   it("reads the scrubber like the Web UI", () => {

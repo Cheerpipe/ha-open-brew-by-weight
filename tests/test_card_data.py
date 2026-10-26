@@ -54,14 +54,14 @@ def test_presets_carry_the_web_ui_rules() -> None:
     """Rules pass through beside the original keys and stay out of the hash."""
     presets = PresetState.from_dict(fixture("integration_presets.json"))
     double = presets.items[0]
-    assert presets.cut_ramp_s == 3.0
     assert double.rule is not None
     assert {"id", "name", "isFactory"}.isdisjoint(double.rule)
     assert double.rule["goalWeightG"] == 36.0
     assert double.rule["arrivalsS"] == [21.4, 29.1, 30.6, 32.7, 34.2]
+    # Each preset carries its own Fast and Slow transitions.
+    assert (double.rule["fastRampS"], double.rule["slowCurveHardness"]) == (3.0, "soft")
     assert hash(double) == hash(replace(double, rule=None))
     legacy = PresetState.from_dict(fixture("webhook_presets_changed_v1.json") | {"apiVersion": 1})
-    assert legacy.cut_ramp_s is None
     assert all(item.rule is None for item in legacy.items)
     broken = fixture("integration_presets.json")
     broken["items"][0]["slowAfterS"] = "36"
@@ -173,7 +173,7 @@ async def test_presets_webhook_keeps_rules_then_reads_them(hass) -> None:
     api.async_presets.return_value = fresh
     await coordinator.async_process_webhook(event)
     held = coordinator.data.presets
-    assert held.revision == 20 and held.cut_ramp_s == 3.0
+    assert held.revision == 20
     assert held.items[0].rule == coordinator_data().presets.items[0].rule
     await coordinator._presets_task
     assert coordinator.data.presets == fresh
@@ -208,7 +208,8 @@ async def test_websocket_feed(hass, hass_ws_client) -> None:
     await client.send_json({"id": 2, "type": f"{DOMAIN}/subscribe", "device_id": device.id})
     assert (await client.receive_json())["success"]
     first = (await client.receive_json())["event"]
-    assert first["activePresetId"] == 2 and first["cutRampS"] == 3.0
+    assert first["activePresetId"] == 2 and "cutRampS" not in first
+    assert first["presets"][0]["fastCurve"] == "even"
     assert first["presets"][0]["goalWeightG"] == 36.0
     assert first["lastShot"]["id"] == 1042
 

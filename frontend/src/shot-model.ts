@@ -280,24 +280,27 @@ export function buildShotSparkModel(shot: any): ShotModel | null {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function shotRuleModel(r: any): RuleModel | null {
   const timer = String(r.shotType || "").toLowerCase() === "timer_only";
-  return buildRuleChartModel(
-    {
-      id: 0,
-      name: "",
-      goalWeightG: r.goalG,
-      fastBeforeS: r.fastBeforeS,
-      slowAfterS: r.slowAfterS,
-      bbwProtectionMs: r.delayS * 1e3,
-      operationalWallMs: r.wallS * 1e3,
-      fastExtractionGuardEnabled: !timer && r.extractionGuardEnabled,
-      slowExtractionGuardEnabled: !timer && r.slowExtractionGuardEnabled,
-      fastMarginG: r.fastMarginG,
-      slowMarginG: r.slowMarginG,
-      firstDropS: r.firstDropS,
-      brewByWeight: !timer,
-    },
-    r.cutRampS,
-  );
+  return buildRuleChartModel({
+    id: 0,
+    name: "",
+    goalWeightG: r.goalG,
+    fastBeforeS: r.fastBeforeS,
+    slowAfterS: r.slowAfterS,
+    bbwProtectionMs: r.delayS * 1e3,
+    operationalWallMs: r.wallS * 1e3,
+    fastExtractionGuardEnabled: !timer && r.extractionGuardEnabled,
+    slowExtractionGuardEnabled: !timer && r.slowExtractionGuardEnabled,
+    fastMarginG: r.fastMarginG,
+    slowMarginG: r.slowMarginG,
+    firstDropS: r.firstDropS,
+    brewByWeight: !timer,
+    fastRampS: r.fastRampS,
+    slowRampS: r.slowRampS,
+    fastCurve: r.fastCurve,
+    slowCurve: r.slowCurve,
+    fastCurveHardness: r.fastCurveHardness,
+    slowCurveHardness: r.slowCurveHardness,
+  });
 }
 
 /** The value of a time-sorted curve at t, linear between samples and held at its ends. */
