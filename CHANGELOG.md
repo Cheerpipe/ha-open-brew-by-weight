@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.0
+
+- **Charts show the whole weight range.** Next to *Target*, the preset and
+  last shot charts now name how far the stop line moves: *Up to 42 g* over
+  its high level for fast shots and *Down to 33 g* under its low one for
+  slow shots, as the controller's own preset graph does. Fixed presets and
+  presets without brew by weight keep just the target. Restyle the new
+  labels with `--obbw-hold-label-color`.
+
 ## 0.7.1
 
 - **Charts never guess a transition.** The preset and last shot charts draw
