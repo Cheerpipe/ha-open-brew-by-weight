@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.1
+
+- **Charts never guess a transition.** The preset and last shot charts draw
+  each side's transition only as the controller reports it. If one is ever
+  missing, the chart stays hidden instead of falling back to a 5-second smooth
+  step that might not match where the controller cuts.
+
 ## 0.7.0
 
 - **Charts follow each preset's transitions.** The preset and last shot charts
