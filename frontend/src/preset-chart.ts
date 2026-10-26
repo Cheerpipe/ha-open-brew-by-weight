@@ -63,9 +63,10 @@ export function buildRuleChartModel(c: PresetRender): RuleModel | null {
     t2 = N(c.slowAfterS),
     prot = N(c.bbwProtectionMs) / 1e3,
     wall = N(c.operationalWallMs) / 1e3,
-    // Shots and presets without a transition length used the 5 s default.
-    dFast = N(c.fastRampS ?? 5),
-    dSlow = N(c.slowRampS ?? 5),
+    dFast = N(c.fastRampS),
+    dSlow = N(c.slowRampS),
+    curveFast = rampCurveIndex(c.fastCurve, c.fastCurveHardness),
+    curveSlow = rampCurveIndex(c.slowCurve, c.slowCurveHardness),
     fast = !!c.fastExtractionGuardEnabled,
     slow = !!c.slowExtractionGuardEnabled,
     fastMargin = N(c.fastMarginG),
@@ -75,7 +76,7 @@ export function buildRuleChartModel(c: PresetRender): RuleModel | null {
     // Paces start at the usual first drop, kept 0.5 s before the window.
     start = Math.max(0, Math.min(N(c.firstDropS) || 0, t1 - 0.5));
   if (
-    ![goal, t1, t2, prot, wall, dFast, dSlow, ceil, floor].every(Number.isFinite) ||
+    ![goal, t1, t2, prot, wall, dFast, dSlow, curveFast, curveSlow, ceil, floor].every(Number.isFinite) ||
     !(prot < t1 && t1 < t2 && t2 < wall)
   )
     return null;
@@ -94,19 +95,19 @@ export function buildRuleChartModel(c: PresetRender): RuleModel | null {
     wall,
     dFast,
     dSlow,
-    curveFast: rampCurveIndex(c.fastCurve, c.fastCurveHardness),
-    curveSlow: rampCurveIndex(c.slowCurve, c.slowCurveHardness),
+    curveFast,
+    curveSlow,
     firstDrop: start,
     firstDropN: N(c.firstDropN) || 0,
     scrubMin: Math.max(prot, start + 0.5),
   };
 }
 
-/** Index of a side's transition curve in RAMP_CURVES: type * 3 + hardness. */
+/** Index of a side's transition curve in RAMP_CURVES: type * 3 + hardness; NaN if unknown. */
 export function rampCurveIndex(type?: string, hardness?: string): number {
   const t = ["even", "early", "late"].indexOf(type ?? ""),
     h = ["soft", "medium", "hard"].indexOf(hardness ?? "");
-  return t < 0 || h < 0 ? 0 : t * 3 + h;
+  return t < 0 || h < 0 ? NaN : t * 3 + h;
 }
 
 /**
@@ -128,7 +129,7 @@ export const RAMP_CURVES: readonly (readonly [number, number])[] = [
 
 /** e(u) for drawing; the cut weights come from rampDg. */
 export function rampEase(curve: number, u: number): number {
-  const [a, b] = RAMP_CURVES[curve] ?? RAMP_CURVES[0],
+  const [a, b] = RAMP_CURVES[curve],
     n = a + b - 1;
   let e = 0,
     choose = 1;
@@ -145,7 +146,7 @@ export function rampEase(curve: number, u: number): number {
  * The products reach 2^100, hence BigInt.
  */
 export function rampDg(margin: number, n: number, d: number, curve: number, reached: boolean): number {
-  const [a, b] = RAMP_CURVES[curve] ?? RAMP_CURVES[0],
+  const [a, b] = RAMP_CURVES[curve],
     deg = a + b - 1;
   let sum = BigInt(0),
     choose = BigInt(1);

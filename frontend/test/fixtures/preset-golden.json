@@ -191,6 +191,12 @@
   "invalid": {
    "mode": "empty"
   },
+  "noRamp": {
+   "mode": "empty"
+  },
+  "noCurve": {
+   "mode": "empty"
+  },
   "curves": {
    "mode": "active",
    "fast": true,

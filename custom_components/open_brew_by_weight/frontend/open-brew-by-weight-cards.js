@@ -824,7 +824,7 @@ var X = class extends Y {
 	}
 }, Z = .18;
 function Ae(e) {
-	let t = (e) => Number.isFinite(Number(e)) ? Number(e) : NaN, n = t(e.goalWeightG), r = t(e.fastBeforeS), i = t(e.slowAfterS), a = t(e.bbwProtectionMs) / 1e3, o = t(e.operationalWallMs) / 1e3, s = t(e.fastRampS ?? 5), c = t(e.slowRampS ?? 5), l = !!e.fastExtractionGuardEnabled, u = !!e.slowExtractionGuardEnabled, d = t(e.fastMarginG), f = t(e.slowMarginG), p = l ? n + d : n, m = u ? n - f : n, h = Math.max(0, Math.min(t(e.firstDropS) || 0, r - .5));
+	let t = (e) => Number.isFinite(Number(e)) ? Number(e) : NaN, n = t(e.goalWeightG), r = t(e.fastBeforeS), i = t(e.slowAfterS), a = t(e.bbwProtectionMs) / 1e3, o = t(e.operationalWallMs) / 1e3, s = t(e.fastRampS), c = t(e.slowRampS), l = je(e.fastCurve, e.fastCurveHardness), u = je(e.slowCurve, e.slowCurveHardness), d = !!e.fastExtractionGuardEnabled, f = !!e.slowExtractionGuardEnabled, p = t(e.fastMarginG), m = t(e.slowMarginG), h = d ? n + p : n, g = f ? n - m : n, _ = Math.max(0, Math.min(t(e.firstDropS) || 0, r - .5));
 	return ![
 		n,
 		r,
@@ -833,28 +833,30 @@ function Ae(e) {
 		o,
 		s,
 		c,
-		p,
-		m
+		l,
+		u,
+		h,
+		g
 	].every(Number.isFinite) || !(a < r && r < i && i < o) ? null : {
 		mode: e.brewByWeight === !1 ? "timerOnly" : "active",
-		fast: l,
-		slow: u,
-		fastMargin: d,
-		slowMargin: f,
+		fast: d,
+		slow: f,
+		fastMargin: p,
+		slowMargin: m,
 		goal: n,
-		ceil: p,
-		floor: m,
+		ceil: h,
+		floor: g,
 		t1: r,
 		t2: i,
 		prot: a,
 		wall: o,
 		dFast: s,
 		dSlow: c,
-		curveFast: je(e.fastCurve, e.fastCurveHardness),
-		curveSlow: je(e.slowCurve, e.slowCurveHardness),
-		firstDrop: h,
+		curveFast: l,
+		curveSlow: u,
+		firstDrop: _,
 		firstDropN: t(e.firstDropN) || 0,
-		scrubMin: Math.max(a, h + .5)
+		scrubMin: Math.max(a, _ + .5)
 	};
 }
 function je(e, t) {
@@ -867,7 +869,7 @@ function je(e, t) {
 		"medium",
 		"hard"
 	].indexOf(t ?? "");
-	return n < 0 || r < 0 ? 0 : n * 3 + r;
+	return n < 0 || r < 0 ? NaN : n * 3 + r;
 }
 var Me = [
 	[2, 2],
@@ -881,12 +883,12 @@ var Me = [
 	[6, 2]
 ];
 function Ne(e, t) {
-	let [n, r] = Me[e] ?? Me[0], i = n + r - 1, a = 0, o = 1;
+	let [n, r] = Me[e], i = n + r - 1, a = 0, o = 1;
 	for (let e = 0; e <= i; e++) e >= n && (a += o * t ** e * (1 - t) ** (i - e)), o = o * (i - e) / (e + 1);
 	return a;
 }
 function Pe(e, t, n, r, i) {
-	let [a, o] = Me[r] ?? Me[0], s = a + o - 1, c = BigInt(0), l = BigInt(1);
+	let [a, o] = Me[r], s = a + o - 1, c = BigInt(0), l = BigInt(1);
 	for (let e = 0; e <= s; e++) e >= a === i && (c += l * BigInt(t) ** BigInt(e) * BigInt(n - t) ** BigInt(s - e)), l = l * BigInt(s - e) / BigInt(e + 1);
 	return Number(BigInt(e) * c / BigInt(n) ** BigInt(s));
 }

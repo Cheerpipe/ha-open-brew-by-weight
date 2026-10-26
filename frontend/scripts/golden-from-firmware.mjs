@@ -80,6 +80,8 @@ const cases = {
   timerOnly: { ...base, brewByWeight: false, firstDropS: 0, firstDropN: 0 },
   tightWindow: { ...base, fastBeforeS: 14, slowAfterS: 18, operationalWallMs: 25000, goalWeightG: 18 },
   invalid: { ...base, slowAfterS: 20 },
+  noRamp: { ...base, fastRampS: undefined },
+  noCurve: { ...base, slowCurveHardness: undefined },
   // Each side's own transition: Fast steep late and hard over 2 s, Slow steep
   // early over 8 s.
   curves: {
