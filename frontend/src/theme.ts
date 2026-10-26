@@ -76,6 +76,10 @@ export const themeStyles = css`
   :where(.axis-label.strong) {
     fill: var(--obbw-target-label-color, var(--_fg));
   }
+  :where(.axis-label.hold) {
+    fill: var(--obbw-hold-label-color, var(--_fg));
+    fill-opacity: 0.8;
+  }
   :where(.halo) {
     paint-order: stroke;
     stroke: var(--_surface);

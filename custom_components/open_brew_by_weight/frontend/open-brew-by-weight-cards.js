@@ -79,6 +79,8 @@ var e = {
 	"header.select": "Active preset",
 	"graph.target": "Target {0} g",
 	"graph.max": "Max {0} s",
+	"graph.up_to": "Up to {0} g",
+	"graph.down_to": "Down to {0} g",
 	"graph.no_cut": "No weight cut",
 	"graph.scrub": "Time the shot is cut",
 	"graph.readout": "{0} g at {1} s → {2} · stops at {3} g, {4} s",
@@ -194,6 +196,8 @@ var e = {
 		"header.select": "Preset activo",
 		"graph.target": "Meta {0} g",
 		"graph.max": "Máx. {0} s",
+		"graph.up_to": "Sube hasta {0} g",
+		"graph.down_to": "Baja hasta {0} g",
 		"graph.no_cut": "Sin corte por peso",
 		"graph.scrub": "Momento en que se corta el shot",
 		"graph.readout": "{0} g a los {1} s → {2} · corta en {3} g, {4} s",
@@ -508,22 +512,22 @@ var A = class extends HTMLElement {
 };
 A.elementStyles = [], A.shadowRootOptions = { mode: "open" }, A[E("elementProperties")] = /* @__PURE__ */ new Map(), A[E("finalized")] = /* @__PURE__ */ new Map(), T?.({ ReactiveElement: A }), (S.reactiveElementVersions ??= []).push("2.1.2");
 // node_modules/lit-html/lit-html.js
-var j = globalThis, M = (e) => e, N = j.trustedTypes, P = N ? N.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, F = "$lit$", I = `lit$${Math.random().toFixed(9).slice(2)}$`, ee = "?" + I, L = `<${ee}>`, R = document, z = () => R.createComment(""), B = (e) => e === null || typeof e != "object" && typeof e != "function", te = Array.isArray, ne = (e) => te(e) || typeof e?.[Symbol.iterator] == "function", re = "[ 	\n\f\r]", V = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ie = /-->/g, ae = />/g, H = RegExp(`>|${re}(?:([^\\s"'>=/]+)(${re}*=${re}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), oe = /'/g, se = /"/g, ce = /^(?:script|style|textarea|title)$/i, le = (e) => (t, ...n) => ({
+var j = globalThis, M = (e) => e, N = j.trustedTypes, P = N ? N.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, F = "$lit$", I = `lit$${Math.random().toFixed(9).slice(2)}$`, L = "?" + I, R = `<${L}>`, z = document, B = () => z.createComment(""), V = (e) => e === null || typeof e != "object" && typeof e != "function", ee = Array.isArray, te = (e) => ee(e) || typeof e?.[Symbol.iterator] == "function", ne = "[ 	\n\f\r]", re = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ie = /-->/g, ae = />/g, H = RegExp(`>|${ne}(?:([^\\s"'>=/]+)(${ne}*=${ne}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), oe = /'/g, se = /"/g, ce = /^(?:script|style|textarea|title)$/i, le = (e) => (t, ...n) => ({
 	_$litType$: e,
 	strings: t,
 	values: n
-}), U = le(1), W = le(2), G = Symbol.for("lit-noChange"), K = Symbol.for("lit-nothing"), ue = /* @__PURE__ */ new WeakMap(), q = R.createTreeWalker(R, 129);
+}), U = le(1), W = le(2), G = Symbol.for("lit-noChange"), K = Symbol.for("lit-nothing"), ue = /* @__PURE__ */ new WeakMap(), q = z.createTreeWalker(z, 129);
 function de(e, t) {
-	if (!te(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
+	if (!ee(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
 	return P === void 0 ? t : P.createHTML(t);
 }
 var fe = (e, t) => {
-	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = V;
+	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = re;
 	for (let t = 0; t < n; t++) {
 		let n = e[t], s, c, l = -1, u = 0;
-		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === V ? c[1] === "!--" ? o = ie : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = H) : (ce.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = H) : o = ae : o === H ? c[0] === ">" ? (o = i ?? V, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? H : c[3] === "\"" ? se : oe) : o === se || o === oe ? o = H : o === ie || o === ae ? o = V : (o = H, i = void 0);
+		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === re ? c[1] === "!--" ? o = ie : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = H) : (ce.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = H) : o = ae : o === H ? c[0] === ">" ? (o = i ?? re, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? H : c[3] === "\"" ? se : oe) : o === se || o === oe ? o = H : o === ie || o === ae ? o = re : (o = H, i = void 0);
 		let d = o === H && e[t + 1].startsWith("/>") ? " " : "";
-		a += o === V ? n + L : l >= 0 ? (r.push(s), n.slice(0, l) + F + n.slice(l) + I + d) : n + I + (l === -2 ? t : d);
+		a += o === re ? n + R : l >= 0 ? (r.push(s), n.slice(0, l) + F + n.slice(l) + I + d) : n + I + (l === -2 ? t : d);
 	}
 	return [de(e, a + (e[n] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), r];
 }, pe = class e {
@@ -554,15 +558,15 @@ var fe = (e, t) => {
 					let e = i.textContent.split(I), t = e.length - 1;
 					if (t > 0) {
 						i.textContent = N ? N.emptyScript : "";
-						for (let n = 0; n < t; n++) i.append(e[n], z()), q.nextNode(), c.push({
+						for (let n = 0; n < t; n++) i.append(e[n], B()), q.nextNode(), c.push({
 							type: 2,
 							index: ++a
 						});
-						i.append(e[t], z());
+						i.append(e[t], B());
 					}
 				}
 			} else if (i.nodeType === 8) {
-				if (i.data === ee) c.push({
+				if (i.data === L) c.push({
 					type: 2,
 					index: a
 				});
@@ -578,13 +582,13 @@ var fe = (e, t) => {
 		}
 	}
 	static createElement(e, t) {
-		let n = R.createElement("template");
+		let n = z.createElement("template");
 		return n.innerHTML = e, n;
 	}
 };
 function J(e, t, n = e, r) {
 	if (t === G) return t;
-	let i = r === void 0 ? n._$Cl : n._$Co?.[r], a = B(t) ? void 0 : t._$litDirective$;
+	let i = r === void 0 ? n._$Cl : n._$Co?.[r], a = V(t) ? void 0 : t._$litDirective$;
 	return i?.constructor !== a && (i?._$AO?.(!1), a === void 0 ? i = void 0 : (i = new a(e), i._$AT(e, n, r)), r === void 0 ? n._$Cl = i : (n._$Co ??= [])[r] = i), i !== void 0 && (t = J(e, i._$AS(e, t.values), i, r)), t;
 }
 var me = class {
@@ -598,7 +602,7 @@ var me = class {
 		return this._$AM._$AU;
 	}
 	u(e) {
-		let { el: { content: t }, parts: n } = this._$AD, r = (e?.creationScope ?? R).importNode(t, !0);
+		let { el: { content: t }, parts: n } = this._$AD, r = (e?.creationScope ?? z).importNode(t, !0);
 		q.currentNode = r;
 		let i = q.nextNode(), a = 0, o = 0, s = n[0];
 		for (; s !== void 0;) {
@@ -608,7 +612,7 @@ var me = class {
 			}
 			a !== s?.index && (i = q.nextNode(), a++);
 		}
-		return q.currentNode = R, r;
+		return q.currentNode = z, r;
 	}
 	p(e) {
 		let t = 0;
@@ -632,7 +636,7 @@ var me = class {
 		return this._$AB;
 	}
 	_$AI(e, t = this) {
-		e = J(this, e, t), B(e) ? e === K || e == null || e === "" ? (this._$AH !== K && this._$AR(), this._$AH = K) : e !== this._$AH && e !== G && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? ne(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
+		e = J(this, e, t), V(e) ? e === K || e == null || e === "" ? (this._$AH !== K && this._$AR(), this._$AH = K) : e !== this._$AH && e !== G && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? te(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
 	}
 	O(e) {
 		return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -641,7 +645,7 @@ var me = class {
 		this._$AH !== e && (this._$AR(), this._$AH = this.O(e));
 	}
 	_(e) {
-		this._$AH !== K && B(this._$AH) ? this._$AA.nextSibling.data = e : this.T(R.createTextNode(e)), this._$AH = e;
+		this._$AH !== K && V(this._$AH) ? this._$AA.nextSibling.data = e : this.T(z.createTextNode(e)), this._$AH = e;
 	}
 	$(e) {
 		let { values: t, _$litType$: n } = e, r = typeof n == "number" ? this._$AC(e) : (n.el === void 0 && (n.el = pe.createElement(de(n.h, n.h[0]), this.options)), n);
@@ -656,9 +660,9 @@ var me = class {
 		return t === void 0 && ue.set(e.strings, t = new pe(e)), t;
 	}
 	k(t) {
-		te(this._$AH) || (this._$AH = [], this._$AR());
+		ee(this._$AH) || (this._$AH = [], this._$AR());
 		let n = this._$AH, r, i = 0;
-		for (let a of t) i === n.length ? n.push(r = new e(this.O(z()), this.O(z()), this, this.options)) : r = n[i], r._$AI(a), i++;
+		for (let a of t) i === n.length ? n.push(r = new e(this.O(B()), this.O(B()), this, this.options)) : r = n[i], r._$AI(a), i++;
 		i < n.length && (this._$AR(r && r._$AB.nextSibling, i), n.length = i);
 	}
 	_$AR(e = this._$AA.nextSibling, t) {
@@ -682,10 +686,10 @@ var me = class {
 	}
 	_$AI(e, t = this, n, r) {
 		let i = this.strings, a = !1;
-		if (i === void 0) e = J(this, e, t, 0), a = !B(e) || e !== this._$AH && e !== G, a && (this._$AH = e);
+		if (i === void 0) e = J(this, e, t, 0), a = !V(e) || e !== this._$AH && e !== G, a && (this._$AH = e);
 		else {
 			let r = e, o, s;
-			for (e = i[0], o = 0; o < i.length - 1; o++) s = J(this, r[n + o], t, o), s === G && (s = this._$AH[o]), a ||= !B(s) || s !== this._$AH[o], s === K ? e = K : e !== K && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
+			for (e = i[0], o = 0; o < i.length - 1; o++) s = J(this, r[n + o], t, o), s === G && (s = this._$AH[o]), a ||= !V(s) || s !== this._$AH[o], s === K ? e = K : e !== K && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
 		}
 		a && !r && this.j(e);
 	}
@@ -734,7 +738,7 @@ var Se = (e, t, n) => {
 	let r = n?.renderBefore ?? t, i = r._$litPart$;
 	if (i === void 0) {
 		let e = n?.renderBefore ?? null;
-		r._$litPart$ = i = new he(t.insertBefore(z(), e), e, void 0, n ?? {});
+		r._$litPart$ = i = new he(t.insertBefore(B(), e), e, void 0, n ?? {});
 	}
 	return i._$AI(e), i;
 }, Ce = globalThis, Y = class extends A {
@@ -928,14 +932,14 @@ function ze(e, t, n = {}) {
 	}, b = Math.max(e.prot, e.t1 - e.dFast), x = Math.min(e.wall, e.t2 + e.dSlow), S = `L${v(b, e.ceil)}` + y(b, e.ceil, e.t1, e.goal, e.curveFast), C = `L${v(e.t2, e.goal)}`, w = y(e.t2, e.goal, x, e.floor, e.curveSlow) + `L${v(e.wall, e.floor)}`, T = e.firstDrop, E = (t) => {
 		let n = Z, r = (f + 1) / e.goal;
 		return Math.min(m, T + (t - T) * (Math.sqrt(4 * n * n + 4 * (1 - 2 * n) * r) - 2 * n) / (2 * (1 - 2 * n)));
-	}, D = (t, n) => v(T + (n - T) / 2, e.goal * Z * (n - T) / (t - T)), O = (t, n = E(t)) => v(n, Ie(n, e.goal, t, T)), k = (e, t = E(e)) => `Q${D(e, t)} ${O(e, t)}`, A = (e, t = E(e)) => `Q${D(e, t)} ${v(T, 0)}`, j = `M${v(0, 0)}L${v(T, 0)}`, M = `M${v(T, 0)}`, N = `L${v(m, f + 1)}`, P = Math.max(T + .5, e.t1 - e.dFast), F = e.t2 + e.dSlow, I = [], ee = [], L = [];
-	for (let e = 0; e <= f; e += p) I.push(`M34 ${g(e).toFixed(1)}H${u}`), ee.push({
+	}, D = (t, n) => v(T + (n - T) / 2, e.goal * Z * (n - T) / (t - T)), O = (t, n = E(t)) => v(n, Ie(n, e.goal, t, T)), k = (e, t = E(e)) => `Q${D(e, t)} ${O(e, t)}`, A = (e, t = E(e)) => `Q${D(e, t)} ${v(T, 0)}`, j = `M${v(0, 0)}L${v(T, 0)}`, M = `M${v(T, 0)}`, N = `L${v(m, f + 1)}`, P = Math.max(T + .5, e.t1 - e.dFast), F = e.t2 + e.dSlow, I = [], L = [], R = [];
+	for (let e = 0; e <= f; e += p) I.push(`M34 ${g(e).toFixed(1)}H${u}`), L.push({
 		x: 30,
 		y: g(e) + 3,
 		text: `${e} g`,
 		anchor: "end"
 	});
-	let R = -99;
+	let z = -99;
 	return (a ? Array.from({ length: Math.floor(m / 10) + 1 }, (e, t) => t * 10) : [
 		0,
 		e.prot,
@@ -944,7 +948,7 @@ function ze(e, t, n = {}) {
 		e.wall
 	]).forEach((e, t, n) => {
 		let r = _(e) + " s", i = r.length * 6.5, o = h(e) + i / 2 > c - 1, s = o ? c - 1 - i : t ? h(e) - i / 2 : h(e);
-		s < R + 4 && t < n.length - 1 || (R = s + i, a && I.push(`M${h(e).toFixed(1)} 14V${d}`), L.push({
+		s < z + 4 && t < n.length - 1 || (z = s + i, a && I.push(`M${h(e).toFixed(1)} 14V${d}`), R.push({
 			x: o ? c - 1 : h(e),
 			y: d + 13,
 			text: r,
@@ -961,8 +965,8 @@ function ze(e, t, n = {}) {
 		Y: g,
 		tAt: (e) => (e - 34) * m / (u - 34),
 		grid: I,
-		yLabels: ee,
-		xLabels: L,
+		yLabels: L,
+		xLabels: R,
 		clip: `M${v(0, 0)}L${v(0, e.ceil)}L${v(e.prot, e.ceil)}${S}${C}${w}L${v(e.wall, 0)}Z`,
 		bands: {
 			fastFull: j + k(P) + `L${v(E(P), f + 1)}L${v(0, f + 1)}Z`,
@@ -993,7 +997,19 @@ function ze(e, t, n = {}) {
 		})),
 		pace: (e, t) => M + k(e, t),
 		noCutLabel: !i && h(e.prot) - 34 >= 96,
-		targetAbove: i || g(e.goal) - 4 - 14 >= 16
+		targetAbove: i || g(e.goal) - 4 - 14 >= 16,
+		holds: {
+			up: e.mode === "active" && e.ceil > e.goal ? {
+				x: h(e.prot) + 6,
+				y: g(e.ceil) - 6,
+				anchor: "start"
+			} : null,
+			down: e.mode === "active" && e.floor < e.goal ? {
+				x: h(e.wall) - 4,
+				y: g(e.floor) + 15,
+				anchor: "end"
+			} : null
+		}
 	};
 }
 // src/theme.ts
@@ -1067,6 +1083,10 @@ var Be = p`
   }
   :where(.axis-label.strong) {
     fill: var(--obbw-target-label-color, var(--_fg));
+  }
+  :where(.axis-label.hold) {
+    fill: var(--obbw-hold-label-color, var(--_fg));
+    fill-opacity: 0.8;
   }
   :where(.halo) {
     paint-order: stroke;
@@ -1473,6 +1493,8 @@ var Be = p`
             ${i.arrivals.map((e) => W`<circle class="recent-shot" part="recent-shot" cx=${e.x.toFixed(1)} cy=${e.y.toFixed(1)} r="3"/>`)}
             ${i.noCutLabel ? h((i.L + i.hatch.x + i.hatch.width) / 2, (i.T + i.B) / 2, e("graph.no_cut"), "halo") : K}
             ${h(i.R - 2, i.target + (i.targetAbove ? -4 : 13), e("graph.target", Q(t.goal)), "halo strong", "end")}
+            ${i.holds.up ? h(i.holds.up.x, i.holds.up.y, e("graph.up_to", Q(t.ceil)), "halo hold", "start") : K}
+            ${i.holds.down ? h(i.holds.down.x, i.holds.down.y, e("graph.down_to", Q(t.floor)), "halo hold", "end") : K}
             ${h(i.maxX, i.T - 4, e("graph.max", Q(t.wall)), "", "end")}
           </g>
           ${r.show_example ? W`<g class="scrub" part="scrub" role="slider" tabindex="0" aria-label=${e("graph.scrub")}
@@ -1825,7 +1847,7 @@ function it(e) {
 		};
 		a && a.segment === j && a.t === n[e] ? E[E.length - 1] = c : E.push(c);
 	}
-	let P = 0, F = null, I = null, ee = E.findLast((e) => e.t <= Math.round(d * 1e3))?.segment;
+	let P = 0, F = null, I = null, L = E.findLast((e) => e.t <= Math.round(d * 1e3))?.segment;
 	for (let e = 0; e < E.length; e++) {
 		let t = E[e], n = E[e - 1];
 		if (!n || t.segment !== n.segment) {
@@ -1843,7 +1865,7 @@ function it(e) {
 			t: (t.t - r / 2) / 1e3,
 			cg: c * 100
 		}, u = t.t > g, f = g / 1e3;
-		if (T[t.index] = c, A = Math.max(A, c), u || (k = Math.max(k ?? 0, c)), !u && !C.length && d > 0 && t.segment === ee && (I = l), u && l.t < f) F = l;
+		if (T[t.index] = c, A = Math.max(A, c), u || (k = Math.max(k ?? 0, c)), !u && !C.length && d > 0 && t.segment === L && (I = l), u && l.t < f) F = l;
 		else {
 			if (u && !w.length && F) {
 				let e = {
@@ -1870,22 +1892,22 @@ function it(e) {
 			pts: [e]
 		});
 	}
-	let L = Math.max(u || 0, l || 0, ...S.map((e) => e.t), 0);
-	if (!S.length || L <= 0) return null;
-	let R = Math.max(e.goalG || 0, ...S.map((e) => e.cg / 100), 0), z = x.at(-1)?.pts.at(-1), B = !e.wTruncated && z?.cg === c(e.endCg) ? z : null;
+	let R = Math.max(u || 0, l || 0, ...S.map((e) => e.t), 0);
+	if (!S.length || R <= 0) return null;
+	let z = Math.max(e.goalG || 0, ...S.map((e) => e.cg / 100), 0), B = x.at(-1)?.pts.at(-1), V = !e.wTruncated && B?.cg === c(e.endCg) ? B : null;
 	return {
 		truncated: !!e.wTruncated,
-		dur: L,
-		timeMax: Math.max(10, Math.ceil(L / 10) * 10),
+		dur: R,
+		timeMax: Math.max(10, Math.ceil(R / 10) * 10),
 		firstDropS: d > 0 ? d : null,
 		tareS: f > 0 ? f : null,
 		segs: b,
 		dripSegs: x,
-		finalPoint: B,
+		finalPoint: V,
 		pts: S,
 		held: D,
-		rawMaxW: R,
-		maxW: Math.max(10, Math.ceil(R / 10) * 10),
+		rawMaxW: z,
+		maxW: Math.max(10, Math.ceil(z / 10) * 10),
 		flowSegs: C,
 		dripFlowSegs: w,
 		flowStart: I,
@@ -2366,6 +2388,14 @@ var mt = [
 			text: e("graph.target", +a.goal.toFixed(1)),
 			anchor: "end"
 		}, "halo strong")}
+          ${s.holds.up ? this._label({
+			...s.holds.up,
+			text: e("graph.up_to", +a.ceil.toFixed(1))
+		}, "halo hold") : K}
+          ${s.holds.down ? this._label({
+			...s.holds.down,
+			text: e("graph.down_to", +a.floor.toFixed(1))
+		}, "halo hold") : K}
           ${f == null ? K : W`<circle class="stop-point" part="stop-point" r="3" cx=${s.X(f).toFixed(2)} cy=${s.Y(ot(t.weight, f)).toFixed(2)}/>`}
           ${n.finalPoint ? W`<circle class="final-point shot" part="final-point" r="3" cx=${s.X(n.finalPoint.t).toFixed(1)} cy=${s.Y(n.finalPoint.cg / 100).toFixed(1)}/>` : K}
           <g class="cursor" part="cursor">

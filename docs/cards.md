@@ -13,6 +13,8 @@ curves with Home Assistant. With older firmware the card asks you to update.
 Shows how a preset decides when to stop a shot: the weight it stops at over
 time (the red *Stop at* line), the on-recipe window, how far it extends a fast
 shot or shortens a slow one, and when your recent shots reached the target.
+Labels on the line name the target and how far it moves, for example
+*Up to 42 g* and *Down to 33 g*.
 
 Drag along the chart, or use the arrow keys once it has focus, to move the
 example shot. The line under the chart tells you when that shot would reach
@@ -290,6 +292,7 @@ my_theme:
 | `--obbw-handle-color` | The example shot's handle. |
 | `--obbw-recent-shot-color` | Recent-shot dots. |
 | `--obbw-target-line-color`, `--obbw-target-label-color` | The target line and its label. |
+| `--obbw-hold-label-color` | The *Up to* and *Down to* labels on the stop line. |
 | `--obbw-no-cut-hatch-color` | The hatching before weight cuts start. |
 | `--obbw-grid-color`, `--obbw-axis-label-color` | Grid lines and axis labels. |
 | `--obbw-chart-background`, `--obbw-chart-radius` | Behind the chart (transparent by default). |
@@ -337,7 +340,7 @@ my_theme:
 | `.chart` | The chart area. |
 | `.band.fast-full`, `.band.fast-partial`, `.band.on-recipe`, `.band.slow-partial`, `.band.slow-full` | The bands. |
 | `.cut-line`, `.pace-line`, `.target-line`, `.max-line`, `.window-edge` | Lines. |
-| `.recent-shot`, `.no-cut`, `.grid-line`, `.axis-label` | Marks and axes. |
+| `.recent-shot`, `.no-cut`, `.grid-line`, `.axis-label`, `.axis-label.hold` | Marks, axes, and the *Up to* and *Down to* labels. |
 | `.scrub`, `.example-shot`, `.scrub-handle` | The example shot. |
 | `.readout`, `.legend`, `.note`, `.message` | Text under the chart, and status messages. |
 | `.chip`, `.chip.on_recipe`, `.chip.fast`, `.chip.slow`, `.chip.manual` | How the last shot ended. |

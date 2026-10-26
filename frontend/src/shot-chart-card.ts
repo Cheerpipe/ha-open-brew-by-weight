@@ -231,6 +231,8 @@ export class OpenBrewByWeightShotChartCard extends OpenBrewByWeightCard<ShotChar
           ${m.dripSegs.map((s) => svg`<path class="shot-line drip" part="shot-line drip" d=${polyline(s.pts, g.X, g.Y, tMax)}/>`)}
           ${m.held.map((q) => svg`<circle class="held" part="held" cx=${g.X(q.t).toFixed(1)} cy=${g.Y(q.cg / 100).toFixed(1)} r="2"/>`)}
           ${this._label({ x: g.R - 2, y: g.target + (g.targetAbove ? -4 : 13), text: t("graph.target", +rule.goal.toFixed(1)), anchor: "end" }, "halo strong")}
+          ${g.holds.up ? this._label({ ...g.holds.up, text: t("graph.up_to", +rule.ceil.toFixed(1)) }, "halo hold") : nothing}
+          ${g.holds.down ? this._label({ ...g.holds.down, text: t("graph.down_to", +rule.floor.toFixed(1)) }, "halo hold") : nothing}
           ${stop == null ? nothing : svg`<circle class="stop-point" part="stop-point" r="3" cx=${g.X(stop).toFixed(2)} cy=${g.Y(curveAt(shot.weight, stop)).toFixed(2)}/>`}
           ${m.finalPoint ? svg`<circle class="final-point shot" part="final-point" r="3" cx=${g.X(m.finalPoint.t).toFixed(1)} cy=${g.Y(m.finalPoint.cg / 100).toFixed(1)}/>` : nothing}
           <g class="cursor" part="cursor">

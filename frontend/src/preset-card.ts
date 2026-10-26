@@ -212,6 +212,8 @@ export class OpenBrewByWeightPresetCard extends OpenBrewByWeightCard<Resolved> {
             )}
             ${g.noCutLabel ? label((g.L + g.hatch!.x + g.hatch!.width) / 2, (g.T + g.B) / 2, t("graph.no_cut"), "halo") : nothing}
             ${label(g.R - 2, g.target + (g.targetAbove ? -4 : 13), t("graph.target", n(m.goal)), "halo strong", "end")}
+            ${g.holds.up ? label(g.holds.up.x, g.holds.up.y, t("graph.up_to", n(m.ceil)), "halo hold", "start") : nothing}
+            ${g.holds.down ? label(g.holds.down.x, g.holds.down.y, t("graph.down_to", n(m.floor)), "halo hold", "end") : nothing}
             ${label(g.maxX, g.T - 4, t("graph.max", n(m.wall)), "", "end")}
           </g>
           ${config.show_example

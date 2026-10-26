@@ -234,6 +234,8 @@ export interface PresetGeometry {
   pace: (tArr: number, end: number) => string;
   noCutLabel: boolean;
   targetAbove: boolean;
+  /** Where the upper and lower holds are named, when the cut line has them. */
+  holds: { up: Omit<Label, "text"> | null; down: Omit<Label, "text"> | null };
 }
 
 /**
@@ -352,5 +354,9 @@ export function presetGeometry(
     pace: (ta, end) => S + paceTo(ta, end),
     noCutLabel: !compact && X(m.prot) - L >= 96,
     targetAbove: compact || Y(m.goal) - 4 - T >= 16,
+    holds: {
+      up: m.mode === "active" && m.ceil > m.goal ? { x: X(m.prot) + 6, y: Y(m.ceil) - 6, anchor: "start" } : null,
+      down: m.mode === "active" && m.floor < m.goal ? { x: X(m.wall) - 4, y: Y(m.floor) + 15, anchor: "end" } : null,
+    },
   };
 }

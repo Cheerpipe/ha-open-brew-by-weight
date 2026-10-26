@@ -138,6 +138,12 @@ describe("preset chart geometry", () => {
         (l) => `${l.x.toFixed(1)},${l.y.toFixed(1)},${l.anchor},${l.text}`,
       );
       expect(theirs.labels.slice(0, axis.length)).toEqual(axis);
+      const { up, down } = g.holds,
+        hold = (h: typeof up, text: string) => (h ? [`${h.x.toFixed(1)},${h.y.toFixed(1)},${h.anchor},${text}`] : []);
+      expect(theirs.labels.filter((l) => /,(Up|Down) to /.test(l))).toEqual([
+        ...hold(up, `Up to ${+m.ceil.toFixed(1)} g`),
+        ...hold(down, `Down to ${+m.floor.toFixed(1)} g`),
+      ]);
       if (m.fast) {
         expect(g.bands.fastPart).toBe(theirs.rvFastPart[0]);
       }
