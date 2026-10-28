@@ -42,6 +42,8 @@ class AuthRequired(RequestRejected):
 
 TOKEN_PATTERN = re.compile(r"^[0-9a-f]{32}$")
 PAIRING_STATES = frozenset({"pending", "approved", "denied", "expired", "unknown"})
+# Expected while the controller is briefly busy; the caller asks again later.
+TRANSIENT_CODES = frozenset({"SHOT_CURVE_BUSY"})
 
 
 def describe_error(err: BaseException) -> str:
@@ -110,7 +112,8 @@ class OpenBrewByWeightApi:
             _LOGGER.debug("%s %s failed: %s", method, path or "/", describe_error(err))
             raise CannotConnect(describe_error(err)) from err
         except RequestRejected as err:
-            _LOGGER.warning(
+            _LOGGER.log(
+                logging.DEBUG if err.code in TRANSIENT_CODES else logging.WARNING,
                 "Controller rejected %s %s: %s (HTTP %s)",
                 method, path or "/", err.code, err.status,
             )

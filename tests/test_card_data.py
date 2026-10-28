@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 from dataclasses import replace
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -14,6 +15,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.setup import async_setup_component
 
 from custom_components.open_brew_by_weight import async_setup
+from custom_components.open_brew_by_weight.api import OpenBrewByWeightApi
 from custom_components.open_brew_by_weight.cards import (
     CARDS_FILE,
     CARDS_URL,
@@ -106,8 +108,6 @@ def test_shot_detail_parses_the_stats_row() -> None:
 
 async def test_api_reads_the_last_shot() -> None:
     """The client reads the new route and returns the parsed row."""
-    from custom_components.open_brew_by_weight.api import OpenBrewByWeightApi
-
     session = Session(Response(200, fixture("integration_last_shot.json")))
     detail = await OpenBrewByWeightApi(session, "controller").async_last_shot()
     assert detail is not None and detail.shot_id == 1042
@@ -142,6 +142,33 @@ async def test_refresh_reads_the_row_once_per_shot(hass) -> None:
     older = replace(snapshot, capabilities=snapshot.capabilities - {"last_shot_curve_v1"})
     api.async_snapshot.return_value = older
     assert (await coordinator._async_update_data()).shot_detail is None
+
+
+@pytest.mark.parametrize(
+    ("status", "code", "level"),
+    [
+        (503, "SHOT_CURVE_BUSY", logging.DEBUG),
+        (503, "CONTROL_QUEUE_FULL", logging.WARNING),
+        (500, "PERSISTENCE_FAILED", logging.WARNING),
+    ],
+)
+async def test_busy_curve_keeps_the_row_quietly(
+    hass, caplog, status, code, level
+) -> None:
+    """A curve the controller cannot read yet keeps the row and only logs debug."""
+    caplog.set_level(logging.DEBUG)
+    coordinator, api = _coordinator(hass)
+    api.async_last_shot.return_value = _detail()
+    await coordinator._async_update_data()
+    snapshot = api.async_snapshot.return_value
+    rated = replace(snapshot.last_shot, rating=5)
+    api.async_snapshot.return_value = replace(snapshot, last_shot=rated)
+    client = OpenBrewByWeightApi(Session(Response(status, {"error": code})), "host")
+    api.async_last_shot.side_effect = client.async_last_shot
+    assert (await coordinator._async_update_data()).shot_detail == _detail()
+    [record] = [r for r in caplog.records if "GET /shots/last" in r.getMessage()]
+    assert f"{code} (HTTP {status})" in record.getMessage()
+    assert record.levelno == level
 
 
 async def test_store_keeps_the_row_across_restarts(hass) -> None:
