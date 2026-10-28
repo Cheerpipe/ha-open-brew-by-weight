@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.1
+
+- **A quiet log while the controller starts.** Right after the controller
+  restarts, it can take a moment before the last shot's curve is ready. The
+  integration keeps showing the last shot it already has and refreshes it
+  shortly after, and no longer writes a warning to the Home Assistant log each
+  time this happens. Real errors are still reported as warnings.
+
 ## 0.8.0
 
 - **Charts show the whole weight range.** Next to *Target*, the preset and
