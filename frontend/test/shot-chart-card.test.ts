@@ -71,6 +71,7 @@ describe("last shot card", () => {
       "Stop at",
       "On-recipe window",
       "Last shot",
+      "Drip after the stop",
       "Shot stopped",
       "Final weight, after drips",
     ]);

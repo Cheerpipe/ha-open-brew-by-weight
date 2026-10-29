@@ -255,6 +255,7 @@ export class OpenBrewByWeightShotChartCard extends OpenBrewByWeightCard<ShotChar
                   ? this._key("window", t("legend.window"))
                   : nothing}
             ${this._key("last", t("legend.last"))}
+            ${m.dripSegs.length ? this._key("last-drip", t("legend.drip")) : nothing}
             ${stop == null ? nothing : this._key("stopped", t("legend.stopped"))}
             ${m.finalPoint ? this._key("final", t("legend.final")) : nothing}
             ${m.held.length ? this._key("held", t("legend.held")) : nothing}
@@ -505,15 +506,24 @@ export class OpenBrewByWeightShotChartCard extends OpenBrewByWeightCard<ShotChar
         border-top: 2.5px solid var(--_shot);
         border-radius: 0;
       }
+      :where(.legend .key-last-drip i) {
+        height: 0;
+        border-top: 2.5px dashed var(--_shot);
+        border-radius: 0;
+      }
+      /* The chart dots at the same painted size: the r=3 stop point and
+         final point, with their 1.5px and 1.4px strokes. */
       :where(.legend .key-stopped i, .legend .key-final i) {
-        width: 7px;
-        height: 7px;
+        width: 7.5px;
+        height: 7.5px;
         border-radius: 50%;
         background: var(--_shot);
       }
       :where(.legend .key-final i) {
+        width: 7.4px;
+        height: 7.4px;
         background: var(--_surface);
-        border: 1.5px solid var(--_shot);
+        border: 1.4px solid var(--_shot);
         box-sizing: border-box;
       }
       :where(.legend .key-held i) {
