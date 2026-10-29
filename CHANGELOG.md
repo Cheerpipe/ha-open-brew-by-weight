@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.2
+
+- **The last shot chart names its dashed tail.** In *Preset + weight*, the
+  legend now separates **Last shot**, the solid weight line up to the stop,
+  from **Drip after the stop**, the dashed tail that follows it, matching the
+  controller's Web UI. The **Shot stopped** and **Final weight, after drips**
+  dots in the legend are now exactly the size of the marks on the chart.
+
 ## 0.8.1
 
 - **A quiet log while the controller starts.** Right after the controller
