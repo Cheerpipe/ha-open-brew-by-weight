@@ -38,6 +38,10 @@ It runs entirely on your local network. No cloud, no account, no polling.
   shot numbers.
 - **Your recent form.** Averages over your last ten shots: duration, yield,
   flow, how close you landed to target, and how many shots you pull per day.
+  They always come from the controller's ten newest good shots: an
+  [Open Brew by Weight Companion](https://github.com/Cheerpipe/open-brew-by-weight-companion)
+  keeping your whole shot history, and the larger Stats windows it offers in
+  the Web UI, do not change them.
 - **Preset switching.** Pick *Morning double* or *Decaf* from a dropdown, a
   dashboard button, or an automation.
 - **The same quick toggles as the Web UI header.** Brew by weight, No-scale
