@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.3
+
+- **Your statistics stay the controller's.** The Open Brew by Weight
+  Companion can now keep your whole shot history and show statistics over
+  hundreds of shots in the controller's Web UI. The integration's averages
+  keep coming from the controller's ten newest good shots, so they can differ
+  from the longer windows you see in the Web UI. The README explains this
+  under *Your recent form*. Nothing else changes in this release.
+
 ## 0.8.2
 
 - **The last shot chart names its dashed tail.** In *Preset + weight*, the
