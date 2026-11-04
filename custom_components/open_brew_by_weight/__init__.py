@@ -24,7 +24,7 @@ from .const import (
 )
 from .coordinator import OpenBrewByWeightCoordinator
 from .entity import _configuration_url, _connections
-from .models import DEFAULT_MANUFACTURER, DEFAULT_MODEL
+from .models import DEFAULT_MANUFACTURER, DEFAULT_MODEL, ProtocolError
 from .runtime import OpenBrewByWeightRuntimeData, webhook_url
 from .websocket import SIGNAL_UNLOADED
 from .websocket import async_register as async_register_websocket
@@ -60,10 +60,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpenBrewByWeightConfigEn
         await runtime.async_configure_and_test(callback_url)
         step = "reading the initial state"
         await coordinator.async_config_entry_first_refresh()
+        coordinator.async_start_liveness()
     except Exception as err:
         runtime.async_unregister_webhook()
         if previous is not None:
-            with contextlib.suppress(ApiError):
+            # Whatever this fails with, the entry still has to reach its setup retry.
+            with contextlib.suppress(ApiError, ProtocolError, TimeoutError, KeyError):
                 await api.async_apply_webhook_config(previous)
         if isinstance(err, (AuthRequired, ConfigEntryAuthFailed)):
             raise ConfigEntryAuthFailed(f"Failed {step}: {describe_error(err)}") from err

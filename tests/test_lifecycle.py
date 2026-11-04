@@ -19,6 +19,7 @@ from custom_components.open_brew_by_weight.button import (
     async_setup_entry as async_setup_button,
 )
 from custom_components.open_brew_by_weight.const import DOMAIN
+from custom_components.open_brew_by_weight.models import ProtocolError
 from custom_components.open_brew_by_weight.runtime import OpenBrewByWeightRuntimeData
 from custom_components.open_brew_by_weight.select import (
     async_setup_entry as async_setup_select,
@@ -140,6 +141,35 @@ async def test_setup_rolls_back_receiver(hass) -> None:
         await async_setup_entry(hass, entry)
     runtime.async_unregister_webhook.assert_called_once()
     api.async_apply_webhook_config.assert_awaited_once()
+
+
+@pytest.mark.parametrize("failure", [TimeoutError(), ProtocolError("bad"), KeyError("url")])
+async def test_a_failed_rollback_still_reaches_the_setup_retry(hass, failure) -> None:
+    """Whatever the restore raises, the entry retries instead of staying dead."""
+    entry = config_entry()
+    api = api_mock()
+    api.async_apply_webhook_config = AsyncMock(side_effect=failure)
+    runtime = MagicMock(spec=OpenBrewByWeightRuntimeData)
+    runtime.async_configure_and_test = AsyncMock(side_effect=RuntimeError("offline"))
+    with (
+        patch(
+            "custom_components.open_brew_by_weight.OpenBrewByWeightApi", return_value=api
+        ),
+        patch(
+            "custom_components.open_brew_by_weight.OpenBrewByWeightCoordinator",
+            return_value=_coordinator_double(),
+        ),
+        patch(
+            "custom_components.open_brew_by_weight.OpenBrewByWeightRuntimeData",
+            return_value=runtime,
+        ),
+        patch(
+            "custom_components.open_brew_by_weight.webhook_url",
+            return_value="http://home/webhook",
+        ),
+        pytest.raises(ConfigEntryNotReady),
+    ):
+        await async_setup_entry(hass, entry)
 
 
 async def test_setup_with_revoked_token_starts_reauth(hass) -> None:

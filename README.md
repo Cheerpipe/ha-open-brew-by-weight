@@ -19,7 +19,7 @@ integration brings it into Home Assistant: every shot you pull shows up on your
 dashboard a moment after it ends, you can switch presets from your phone, and
 you can build automations around your coffee routine.
 
-It runs entirely on your local network. No cloud, no account, no polling.
+It runs entirely on your local network. No cloud, no account.
 
 > **It will never start or stop your machine.** Home Assistant can read what
 > happened, choose a preset, and change how shots stop, but pulling a shot is
@@ -176,10 +176,10 @@ under your cup mid-shot.
 
 ## Good to know
 
-- **Updates are pushed, not polled.** That keeps your network quiet and the
-  dashboard instant. The trade-off: if the controller loses power without
-  warning, Home Assistant may keep showing the last known values until the next
-  update or action.
+- **Updates are pushed.** That keeps your network quiet and the dashboard
+  instant. A light check every 5 minutes, skipped during a shot, notices a
+  controller that lost power without warning, so its entities don't keep showing
+  old values for long.
 - **One receiver at a time.** The controller sends updates to a single
   address. If you also use a custom webhook, Home Assistant takes over that
   slot when you add the integration (it asks first).

@@ -6,17 +6,20 @@ import asyncio
 from collections import deque
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, replace
+from datetime import datetime
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import AuthRequired, CannotConnect, OpenBrewByWeightApi
 from .const import (
     DOMAIN,
+    LIVENESS_INTERVAL,
     QUICK_SETTINGS_COALESCE_S,
     RECOVERY_DELAYS,
     STORE_KEY_PREFIX,
@@ -83,6 +86,25 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
         self._refresh_task: asyncio.Task[None] | None = None
         self._refresh_pending = False
         self._required_boot_id: int | None = None
+        self._liveness_unsub: CALLBACK_TYPE | None = None
+        self._liveness_waited = False
+
+    @callback
+    def async_start_liveness(self) -> None:
+        """Pushes cannot report a controller that lost power: read it now and then."""
+        self._liveness_unsub = async_track_time_interval(
+            self.hass, self._async_check_liveness, LIVENESS_INTERVAL
+        )
+
+    async def _async_check_liveness(self, _now: datetime) -> None:
+        """Read the controller, except during a shot, when its radio serves the scale. A shot
+        never lasts two intervals: still brewing by then means the end was never heard."""
+        brewing = self.data is not None and self.data.snapshot.shot_state == "brewing"
+        if brewing and not self._liveness_waited:
+            self._liveness_waited = True
+            return
+        self._liveness_waited = False
+        await self.async_refresh()
 
     async def async_load_store(self) -> None:
         """Restore the compact shot aggregate, ignoring corrupt local data."""
@@ -319,6 +341,9 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
 
     async def async_shutdown(self) -> None:
         """Cancel entry-owned finite recovery work."""
+        if self._liveness_unsub is not None:
+            self._liveness_unsub()
+            self._liveness_unsub = None
         tasks = [
             task
             for task in (self._recovery_task, self._refresh_task, self._presets_task)

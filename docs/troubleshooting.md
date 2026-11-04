@@ -103,13 +103,15 @@ Home Assistant couldn't read from the controller. Usually it's powered off,
 changed address, or dropped off Wi-Fi.
 
 When a read fails, Home Assistant retries on its own after 5, 10, 20, 40, and
-60 seconds, and stops as soon as one succeeds. If all of those fail, it waits
-for the next sign of life: an update from the controller, an action you take
-in Home Assistant, or a reload of the integration.
+60 seconds, and stops as soon as one succeeds. After that it checks every
+5 minutes, and an update from the controller, an action you take in Home
+Assistant, or a reload of the integration brings it back sooner.
 
-If the controller has a new IP address and discovery works on your network,
-Home Assistant picks it up automatically. Otherwise, open the integration and
-choose **Reconfigure** to enter the new address.
+If the controller has a new IP address, Home Assistant picks it up from discovery
+only when the Web UI password is off and nothing answers as that controller at
+the old address. That way, another device on your network can't take its place.
+Otherwise, open the integration and choose **Reconfigure** to enter the new
+address.
 
 ### Values look stale after a shot
 

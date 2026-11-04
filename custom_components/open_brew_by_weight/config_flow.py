@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import logging
+import re
 from collections.abc import Mapping
 from typing import Any
 
@@ -44,6 +45,9 @@ from .repairs import async_create_webhook_repair
 from .runtime import webhook_url
 
 MDNS_SERVICE_SUFFIX = "._http._tcp.local."
+# An mDNS name is shown in a dialog that renders Markdown, and anyone can pick it.
+UNSAFE_NAME_TEXT = re.compile(r"[^\w .-]")
+MAX_NAME_LENGTH = 32
 AUTH_ERRORS = {
     "DEVICE_PASSWORD_INVALID": "invalid_password",
     "INVALID_REQUEST": "invalid_password",
@@ -141,11 +145,29 @@ class OpenBrewByWeightConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             # Identity needs a token here, so match a configured address instead.
             self._async_abort_entries_match({CONF_HOST: host})
         else:
-            await self.async_set_unique_id(snapshot.device_id)
+            entry = await self.async_set_unique_id(snapshot.device_id)
+            # Discovery proves nothing: a device can announce any id. An entry
+            # moves only when it has no token to hand over and its controller
+            # is really gone from the old address.
+            if entry is not None and (
+                entry.data.get(CONF_TOKEN)
+                or await self._async_still_answers(entry.data[CONF_HOST], snapshot.device_id)
+            ):
+                return self.async_abort(reason="already_configured")
             self._abort_if_unique_id_configured(updates={CONF_HOST: host})
         self._discovered_host = host
-        self._discovered_name = name
+        self._discovered_name = UNSAFE_NAME_TEXT.sub("", name)[: MAX_NAME_LENGTH]
         return await self.async_step_confirm()
+
+    async def _async_still_answers(self, host: str, device_id: str) -> bool:
+        """Whether a controller still answers at a configured address."""
+        api = OpenBrewByWeightApi(async_get_clientsession(self.hass), host)
+        try:
+            if await api.async_auth_required():
+                return True
+            return (await api.async_snapshot()).device_id == device_id
+        except (ApiError, ProtocolError):
+            return False
 
     async def async_step_confirm(
         self, user_input: dict[str, Any] | None = None
@@ -155,7 +177,10 @@ class OpenBrewByWeightConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is None:
             return self.async_show_form(
                 step_id="confirm",
-                description_placeholders={"name": self._discovered_name or ""},
+                description_placeholders={
+                    "name": self._discovered_name or "",
+                    "host": self._discovered_host,
+                },
             )
         errors: dict[str, str] = {}
         try:
@@ -167,7 +192,10 @@ class OpenBrewByWeightConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="confirm",
             errors=errors,
-            description_placeholders={"name": self._discovered_name or ""},
+            description_placeholders={
+                "name": self._discovered_name or "",
+                "host": self._discovered_host,
+            },
         )
 
     async def _prepare_entry(
@@ -229,7 +257,10 @@ class OpenBrewByWeightConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="auth",
             data_schema=AUTH_SCHEMA,
             errors=errors,
-            description_placeholders={"code": self._pairing_code or "----"},
+            description_placeholders={
+                "code": self._pairing_code or "----",
+                "host": self._host or "",
+            },
         )
 
     async def _async_start_pairing(self, api: OpenBrewByWeightApi) -> bool:

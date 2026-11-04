@@ -24,20 +24,21 @@ gives it to the controller. From then on:
 - every message carries a revision number. If Home Assistant notices it missed
   one, it re-reads everything once to catch up.
 
-There's no background polling. Home Assistant only reads from the controller
-at setup, after a message that calls for it, after you change something, and
-while recovering from a failure.
+Updates are pushed, so Home Assistant reads from the controller only at setup,
+after a message that calls for it, after you change something, while recovering
+from a failure, and once every 5 minutes to make sure it's still there. That
+check waits while a shot is running, so the controller's radio stays with the
+scale.
 
 ### When the controller goes quiet
 
 If a read fails, Home Assistant marks the entities unavailable and tries again
 after 5, 10, 20, 40, and 60 seconds. The first success brings everything back.
-After the last attempt it stops trying and waits for the controller to get in
-touch, for you to take an action, or for a reload.
+After the last attempt it waits for the 5-minute check, for the controller to
+get in touch, for you to take an action, or for a reload.
 
-Because nothing polls, a controller that loses power without warning can't be
-noticed straight away. The entities keep their last values until the next
-attempt to talk to it.
+A controller that loses power without warning is noticed at the next check, so
+the entities can keep their last values for up to 5 minutes.
 
 If the controller is offline when Home Assistant starts, the integration
 waits and retries using Home Assistant's normal setup retry. It never creates

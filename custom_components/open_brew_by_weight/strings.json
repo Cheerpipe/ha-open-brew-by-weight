@@ -11,7 +11,7 @@
       },
       "confirm": {
         "title": "Discovered Open Brew by Weight",
-        "description": "Home Assistant discovered the controller **{name}** on your network. Set it up now?"
+        "description": "Home Assistant discovered the controller **{name}** at {host} on your network. Set it up only if that's the address you expect."
       },
       "takeover": {
         "title": "Replace the existing webhook",
@@ -22,7 +22,7 @@
       },
       "auth": {
         "title": "Allow Home Assistant to connect",
-        "description": "This controller has its Web UI password turned on, so Home Assistant needs your permission to connect. Use either way:\n\n**Approve it in the Web UI.** Open the controller's Web UI. It asks whether Home Assistant may connect and shows a code. If it reads **{code}**, tap **Allow**, then select **Submit** here.\n\n**Or type the device password** below and select **Submit**. Home Assistant uses it once and doesn't save it.",
+        "description": "The controller at {host} has its Web UI password turned on, so Home Assistant needs your permission to connect. Use either way:\n\n**Approve it in the Web UI.** Open the controller's Web UI. It asks whether Home Assistant may connect and shows a code. If it reads **{code}**, tap **Allow**, then select **Submit** here.\n\n**Or type the device password** below and select **Submit**. Home Assistant uses it once and doesn't save it.",
         "data": {
           "password": "Device password"
         },

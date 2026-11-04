@@ -17,6 +17,9 @@ from .const import (
 )
 
 MAX_WEBHOOK_BYTES = 8192
+# The largest whole number JSON and the frontend's numbers keep exact, and year 9999.
+MAX_INTEGER = 2**53
+MAX_UNIX_SEC = 253402300799
 MAX_PRESETS = 8
 DEVICE_ID = re.compile(r"^[0-9A-F]{2}(?::[0-9A-F]{2}){5}$")
 MAC = re.compile(r"^[0-9A-F]{2}(?::[0-9A-F]{2}){5}$")
@@ -61,8 +64,12 @@ def _string(value: Any, field: str, maximum: int) -> str:
     return value
 
 
-def _integer(value: Any, field: str, minimum: int = 0) -> int:
-    if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
+def _integer(value: Any, field: str, minimum: int = 0, maximum: int = MAX_INTEGER) -> int:
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, int)
+        or not minimum <= value <= maximum
+    ):
         raise ProtocolError(f"{field} is invalid")
     return value
 
@@ -243,7 +250,7 @@ class Shot:
             else _integer(optional_rating, "rating", 1),
             ended_at_unix_sec=None
             if optional_ended_at is None
-            else _integer(optional_ended_at, "endedAtUnixSec"),
+            else _integer(optional_ended_at, "endedAtUnixSec", maximum=MAX_UNIX_SEC),
             shot_id=None
             if optional_shot_id is None
             else _integer(optional_shot_id, "shotId"),
@@ -392,7 +399,9 @@ class LastActivation:
                 data.get("hasWallTime"), "lastActivation.hasWallTime"
             ),
             ended_at_unix_sec=_integer(
-                data.get("endedAtUnixSec"), "lastActivation.endedAtUnixSec"
+                data.get("endedAtUnixSec"),
+                "lastActivation.endedAtUnixSec",
+                maximum=MAX_UNIX_SEC,
             ),
             ended_at_local_sec=_integer(
                 data.get("endedAtLocalSec"), "lastActivation.endedAtLocalSec"
@@ -471,7 +480,7 @@ class DeviceSnapshot:
         data = _mapping(value)
         if (
             data.get("apiVersion") not in (API_VERSION, 2)
-            or data.get("minimumClientApiVersion", 1) > 2
+            or _integer(data.get("minimumClientApiVersion", 1), "minimumClientApiVersion") > 2
         ):
             raise ProtocolError("incompatible API version")
         device_id = _string(data.get("deviceId"), "deviceId", 17).upper()
@@ -558,7 +567,7 @@ class WebhookEvent:
         if data.get("schemaVersion") != 1:
             raise ProtocolError("unsupported webhook schema")
         event = data.get("event")
-        if event not in EVENT_TYPES:
+        if not isinstance(event, str) or event not in EVENT_TYPES:
             raise ProtocolError("webhook event is invalid")
         device_id = _string(data.get("deviceId"), "deviceId", 17).upper()
         if not DEVICE_ID.fullmatch(device_id):
