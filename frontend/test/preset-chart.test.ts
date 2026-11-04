@@ -31,6 +31,8 @@ const cases: Record<string, PresetRender> = {
     slowCurve: "early",
     slowCurveHardness: "medium",
   },
+  continuous: { ...base, fastCurve: "late", fastCurveHardness: 25.5, slowCurve: "early", slowCurveHardness: 72 },
+  legacyLevels: { ...base, fastCurveHardness: "soft", slowCurveHardness: "soft" },
 };
 const models = golden.models as Record<string, Record<string, unknown>>;
 const model = (name: string) => buildRuleChartModel(cases[name]) as RuleModel;

@@ -61,7 +61,7 @@ def test_presets_carry_the_web_ui_rules() -> None:
     assert double.rule["goalWeightG"] == 36.0
     assert double.rule["arrivalsS"] == [21.4, 29.1, 30.6, 32.7, 34.2]
     # Each preset carries its own Fast and Slow transitions.
-    assert (double.rule["fastRampS"], double.rule["slowCurveHardness"]) == (3.0, "soft")
+    assert (double.rule["fastRampS"], double.rule["slowCurveHardness"]) == (3.0, 0.0)
     assert hash(double) == hash(replace(double, rule=None))
     legacy = PresetState.from_dict(fixture("webhook_presets_changed_v1.json") | {"apiVersion": 1})
     assert all(item.rule is None for item in legacy.items)

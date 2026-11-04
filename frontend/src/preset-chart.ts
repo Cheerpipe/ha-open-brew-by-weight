@@ -27,8 +27,9 @@ export interface PresetRender {
   slowRampS?: number;
   fastCurve?: string;
   slowCurve?: string;
-  fastCurveHardness?: string;
-  slowCurveHardness?: string;
+  /** Percent 0 to 100, or the level name older firmware sends. */
+  fastCurveHardness?: number | string;
+  slowCurveHardness?: number | string;
 }
 
 export interface RuleModel {
@@ -103,11 +104,17 @@ export function buildRuleChartModel(c: PresetRender): RuleModel | null {
   };
 }
 
-/** Index of a side's transition curve in RAMP_CURVES: type * 3 + hardness; NaN if unknown. */
-export function rampCurveIndex(type?: string, hardness?: string): number {
-  const t = ["even", "early", "late"].indexOf(type ?? ""),
-    h = ["soft", "medium", "hard"].indexOf(hardness ?? "");
-  return t < 0 || h < 0 ? NaN : t * 3 + h;
+/**
+ * Index of a side's transition curve in RAMP_CURVES: type * 3 + hardness; NaN
+ * if unknown. A fractional index is a hardness between two adjacent curves.
+ */
+export function rampCurveIndex(type?: string, hardness?: number | string): number {
+  const t = ["even", "early", "late"].indexOf(type ?? "");
+  if (t < 0) return NaN;
+  const pct = Number(hardness);
+  if (Number.isFinite(pct)) return t * 3 + Math.min(2, Math.max(0, pct / 50));
+  const h = ["soft", "medium", "hard"].indexOf(String(hardness));
+  return h < 0 ? NaN : t * 3 + h;
 }
 
 /**
@@ -127,8 +134,14 @@ export const RAMP_CURVES: readonly (readonly [number, number])[] = [
   [6, 2],
 ];
 
-/** e(u) for drawing; the cut weights come from rampDg. */
+/** e(u) for drawing, a fractional curve blending its neighbours; the cut weights come from rampDg. */
 export function rampEase(curve: number, u: number): number {
+  const lo = Math.floor(curve),
+    f = curve - lo;
+  if (f > 0) {
+    const e = rampEase(lo, u);
+    return e + (rampEase(lo + 1, u) - e) * f;
+  }
   const [a, b] = RAMP_CURVES[curve],
     n = a + b - 1;
   let e = 0,
@@ -143,9 +156,17 @@ export function rampEase(curve: number, u: number): number {
 /**
  * The firmware's corridor::rampDg, exactly: floor(margin * e(n / d)) when
  * `reached`, else floor(margin * (1 - e)), from the Bernstein sum over d^N.
- * The products reach 2^100, hence BigInt.
+ * The products reach 2^100, hence BigInt. A fractional curve index takes the
+ * firmware's rampDgBlend: both integer terms, one fixed-point rounding.
  */
 export function rampDg(margin: number, n: number, d: number, curve: number, reached: boolean): number {
+  const lo = Math.floor(curve),
+    f = Math.round((curve - lo) * 100);
+  if (f > 0) {
+    const a = rampDg(margin, n, d, lo, reached),
+      b = rampDg(margin, n, d, lo + 1, reached);
+    return Math.floor((a * (100 - f) + b * f + 50) / 100);
+  }
   const [a, b] = RAMP_CURVES[curve],
     deg = a + b - 1;
   let sum = BigInt(0),
