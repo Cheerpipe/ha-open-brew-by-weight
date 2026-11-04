@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.4
 
 - **Your controller can't be impersonated by discovery.** A device on your
   network announcing itself as your controller could quietly take its place and
