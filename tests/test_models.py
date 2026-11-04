@@ -23,6 +23,8 @@ from custom_components.open_brew_by_weight.models import (
     WebhookEvent,
 )
 
+from .helpers import fixture
+
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
@@ -332,3 +334,20 @@ def test_rejects_non_object_protocol_values() -> None:
     payload["weightG"] = "36"
     with pytest.raises(ProtocolError):
         Shot.from_dict(payload)
+
+
+def test_numbers_have_a_plausible_range() -> None:
+    """A value too large to use would otherwise break a sensor or the store at shutdown."""
+    snapshot = fixture("integration_snapshot.json")
+    with pytest.raises(ProtocolError):
+        DeviceSnapshot.from_dict(snapshot | {"bootId": 10**400})
+    with pytest.raises(ProtocolError):
+        DeviceSnapshot.from_dict(snapshot | {"minimumClientApiVersion": "x"})
+    last = snapshot["lastGoodShot"] | {"endedAtUnixSec": 10**12}
+    with pytest.raises(ProtocolError):
+        DeviceSnapshot.from_dict(snapshot | {"lastGoodShot": last})
+
+
+def test_a_webhook_event_of_the_wrong_type_is_a_protocol_error() -> None:
+    with pytest.raises(ProtocolError, match="event"):
+        WebhookEvent.from_bytes(json.dumps({"schemaVersion": 1, "event": ["x"]}).encode())

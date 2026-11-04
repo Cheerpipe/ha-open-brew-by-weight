@@ -104,7 +104,12 @@ class OpenBrewByWeightRuntimeData:
             )
             return Response(status=400)
         try:
-            payload = await request.content.read(MAX_WEBHOOK_BYTES + 1)
+            # read(n) returns what has arrived, which a long body may not yet be.
+            payload = b""
+            while len(payload) <= MAX_WEBHOOK_BYTES and (
+                chunk := await request.content.read(MAX_WEBHOOK_BYTES + 1 - len(payload))
+            ):
+                payload += chunk
             if len(payload) > MAX_WEBHOOK_BYTES:
                 raise ProtocolError("payload too large")
             event = WebhookEvent.from_bytes(payload)

@@ -410,7 +410,9 @@ class _Request:
         self.content = self
 
     async def read(self, maximum: int = -1) -> bytes:
-        return self.payload if maximum < 0 else self.payload[:maximum]
+        size = len(self.payload) if maximum < 0 else maximum
+        piece, self.payload = self.payload[:size], self.payload[size:]
+        return piece
 
 
 async def test_runtime_register_validate_and_transaction(hass, caplog) -> None:
@@ -788,3 +790,45 @@ async def test_diagnostics_redact_identifiers(hass) -> None:
     assert "controller.local" not in rendered
     assert "AA:BB:CC:DD:EE:FF" not in rendered
     async_create_webhook_repair(hass, entry.entry_id)
+
+
+async def test_liveness_check_reads_but_waits_out_a_shot(hass) -> None:
+    """A controller that lost power is found; a shot is left alone once, never forever."""
+    coordinator, _api, _entry = _coordinator(hass)
+    coordinator.async_refresh = AsyncMock()
+    await coordinator._async_check_liveness(None)
+    coordinator.async_refresh.assert_awaited_once()
+
+    data = coordinator.data
+    coordinator.async_set_updated_data(
+        replace(data, snapshot=replace(data.snapshot, shot_state="brewing"))
+    )
+    coordinator.async_refresh.reset_mock()
+    await coordinator._async_check_liveness(None)
+    coordinator.async_refresh.assert_not_awaited()
+    await coordinator._async_check_liveness(None)
+    coordinator.async_refresh.assert_awaited_once()
+
+    coordinator.async_start_liveness()
+    unsubscribe = coordinator._liveness_unsub
+    assert unsubscribe is not None
+    await coordinator.async_shutdown()
+    assert coordinator._liveness_unsub is None
+
+
+async def test_a_long_webhook_is_read_whole(hass) -> None:
+    """read(n) returns what has arrived: the body is complete only at its end."""
+    coordinator, api, _entry = _coordinator(hass)
+    runtime = OpenBrewByWeightRuntimeData(
+        hass, api, coordinator, WEBHOOK_ID, "http://home/webhook"
+    )
+    coordinator.async_process_webhook = AsyncMock()
+    payload = json.dumps(fixture("webhook_presets_changed_v1.json")).encode()
+
+    class Partial(_Request):
+        async def read(self, maximum: int = -1) -> bytes:
+            return await super().read(min(100, maximum))
+
+    response = await runtime.async_handle_webhook(hass, WEBHOOK_ID, Partial(payload))
+    assert response.status == 204
+    coordinator.async_process_webhook.assert_awaited_once()

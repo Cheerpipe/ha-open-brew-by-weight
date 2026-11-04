@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+- **Your controller can't be impersonated by discovery.** A device on your
+  network announcing itself as your controller could quietly take its place and
+  receive the integration's access key. An existing controller now moves to a
+  new address on its own only when the Web UI password is off and nothing answers
+  at the old address. Otherwise use **Reconfigure**. The setup dialogs now show
+  the address.
+- **A controller that loses power is noticed.** A light check every 5 minutes,
+  skipped during a shot, marks its entities unavailable and brings them back
+  when it returns. Updates are still pushed.
+- **Sturdier against odd answers.** Answers from the controller have a size limit,
+  redirects are refused, implausible numbers are rejected, a long webhook is read
+  whole, and a failed setup always retries.
+
 ## 0.8.3
 
 - **Your statistics stay the controller's.** The Open Brew by Weight

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import re
 from typing import Any
@@ -13,6 +14,21 @@ from aiohttp import ClientError, ClientResponse, ClientSession, ClientTimeout
 from .models import DeviceSnapshot, PresetState, ProtocolError, ShotDetail
 
 _LOGGER = logging.getLogger(__package__)
+
+# Far above anything the controller answers; a device on the network can send more.
+MAX_RESPONSE_BYTES = 256 * 1024
+
+
+async def _read_capped(response: ClientResponse) -> bytes:
+    """Read a whole answer, whatever length it claims, up to the limit."""
+    body = b""
+    while len(body) <= MAX_RESPONSE_BYTES and (
+        chunk := await response.content.read(MAX_RESPONSE_BYTES + 1 - len(body))
+    ):
+        body += chunk
+    if len(body) > MAX_RESPONSE_BYTES:
+        raise ValueError("controller response is too large")
+    return body
 
 
 class ApiError(Exception):
@@ -105,6 +121,7 @@ class OpenBrewByWeightApi:
                 self._base + path,
                 json=body,
                 headers=headers,
+                allow_redirects=False,
                 timeout=ClientTimeout(total=10),
             ) as response:
                 return await self._decode(response)
@@ -122,8 +139,8 @@ class OpenBrewByWeightApi:
     @staticmethod
     async def _decode(response: ClientResponse) -> tuple[int, dict[str, Any]]:
         try:
-            payload = await response.json(content_type=None)
-        except (ValueError, UnicodeDecodeError) as err:
+            payload = json.loads(await _read_capped(response))
+        except (ValueError, RecursionError) as err:
             if response.status >= 400:
                 raise RequestRejected("UNKNOWN", response.status) from err
             raise ProtocolError("controller response is not JSON") from err
@@ -192,7 +209,7 @@ class OpenBrewByWeightApi:
         """Read a pairing request; an approved one carries the token exactly once."""
         _, payload = await self._json("GET", f"/pair?id={pairing_id}")
         state = payload.get("state")
-        if state not in PAIRING_STATES:
+        if not isinstance(state, str) or state not in PAIRING_STATES:
             raise ProtocolError("pairing state is invalid")
         return str(state), self._token(payload) if state == "approved" else None
 

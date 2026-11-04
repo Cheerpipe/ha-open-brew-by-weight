@@ -9,6 +9,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 from custom_components.open_brew_by_weight.api import (
+    MAX_RESPONSE_BYTES,
     AuthRequired,
     CannotConnect,
     IncompatibleApi,
@@ -21,12 +22,24 @@ from custom_components.open_brew_by_weight.models import ProtocolError
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
+class Body:
+    """An aiohttp stream double: each read returns what has arrived, then nothing."""
+
+    def __init__(self, data: bytes) -> None:
+        self.data = data
+
+    async def read(self, maximum: int = -1) -> bytes:
+        size = len(self.data) if maximum < 0 else maximum
+        piece, self.data = self.data[:size], self.data[size:]
+        return piece
+
+
 class Response:
     """Minimal aiohttp response double."""
 
-    def __init__(self, status: int, payload: dict) -> None:
+    def __init__(self, status: int, payload: object) -> None:
         self.status = status
-        self.json = AsyncMock(return_value=payload)
+        self.content = Body(payload if isinstance(payload, bytes) else json.dumps(payload).encode())
 
 
 class Request:
@@ -111,10 +124,12 @@ async def test_transport_and_response_validation() -> None:
     with pytest.raises(CannotConnect):
         await OpenBrewByWeightApi(BrokenSession(), "controller").async_snapshot()
 
-    response = Response(200, {})
-    response.json.side_effect = ValueError
     with pytest.raises(ProtocolError, match="not JSON"):
-        await OpenBrewByWeightApi._decode(response)
+        await OpenBrewByWeightApi._decode(Response(200, b"<html>"))
+    with pytest.raises(ProtocolError, match="not JSON"):
+        await OpenBrewByWeightApi._decode(Response(200, b"[" * 200000))
+    with pytest.raises(ProtocolError, match="not JSON"):
+        await OpenBrewByWeightApi._decode(Response(200, b" " * (MAX_RESPONSE_BYTES + 1)))
     with pytest.raises(ProtocolError, match="object"):
         await OpenBrewByWeightApi._decode(Response(200, []))
     with pytest.raises(RequestRejected) as raised:
@@ -257,8 +272,7 @@ async def test_auth_required_reads_info(response: Response, required: bool) -> N
 
 async def test_auth_required_handles_old_firmware_and_errors() -> None:
     """Firmware without /info answers 404, sometimes without JSON."""
-    not_json = Response(404, {})
-    not_json.json.side_effect = ValueError
+    not_json = Response(404, b"<html>")
     api = OpenBrewByWeightApi(Session(not_json), "controller")
     assert await api.async_auth_required() is False
     with pytest.raises(RequestRejected):
@@ -333,3 +347,16 @@ async def test_pairing_start_and_state() -> None:
         ).async_start_pairing()
         is None
     )
+
+
+async def test_redirects_are_not_followed() -> None:
+    """A redirect would carry a request, password included, to another address."""
+    session = Session(Response(200, fixture("integration_snapshot.json")))
+    await OpenBrewByWeightApi(session, "controller").async_snapshot()
+    assert session.calls[0][-1]["allow_redirects"] is False
+
+
+async def test_a_pairing_state_of_the_wrong_type_is_a_protocol_error() -> None:
+    api = OpenBrewByWeightApi(Session(Response(200, {"state": ["pending"]})), "controller")
+    with pytest.raises(ProtocolError, match="pairing state"):
+        await api.async_pairing_state(1)
