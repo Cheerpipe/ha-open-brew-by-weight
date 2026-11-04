@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.5
 
 - **The preset and last shot cards draw again on current firmware.** Since
   transition firmness became a slider on the controller, the preset card said
