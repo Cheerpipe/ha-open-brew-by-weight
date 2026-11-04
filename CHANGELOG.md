@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- **The preset and last shot cards draw again on current firmware.** Since
+  transition firmness became a slider on the controller, the preset card said
+  "This preset can't be drawn" and the last shot card lost its preset charts.
+  Both now draw any firmness, exactly as the controller's Web UI does, and still
+  work with older firmware.
+
 ## 0.8.4
 
 - **Your controller can't be impersonated by discovery.** A device on your

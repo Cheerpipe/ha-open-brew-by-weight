@@ -55,8 +55,8 @@ def preset(pid: int, name: str, goal: float, dose: float, arrivals: list[float],
         "slowRampS": 5.0,
         "fastCurve": "even",
         "slowCurve": "even",
-        "fastCurveHardness": "soft",
-        "slowCurveHardness": "soft",
+        "fastCurveHardness": 0.0,
+        "slowCurveHardness": 0.0,
         "shotStats": {
             "n": len(arrivals),
             "total": len(arrivals),
@@ -80,7 +80,7 @@ PRESETS = [
     preset(1, "Double · Adaptive", 36.0, 18.0, [28.4, 29.6, 30.2, 31.1, 32.0, 33.5, 24.8], **ADAPTIVE),
     preset(2, "Single · Adaptive", 18.0, 9.0, [27.9, 30.5, 31.4], fastMarginG=3.0, slowMarginG=1.5, **ADAPTIVE),
     preset(3, "Ristretto", 27.0, 18.0, [22.1, 23.0], fastBeforeS=20.0, slowAfterS=28.0, operationalWallMs=40000,
-           fastRampS=3.0, fastCurve="late", fastCurveHardness="medium", slowRampS=8.0, slowCurve="early"),
+           fastRampS=3.0, fastCurve="late", fastCurveHardness=50.0, slowRampS=8.0, slowCurve="early"),
     preset(255, "Manual", 36.0, 18.0, [], brewByWeight=False),
 ]
 

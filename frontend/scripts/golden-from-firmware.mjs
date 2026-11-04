@@ -93,6 +93,8 @@ const cases = {
     slowCurve: "early",
     slowCurveHardness: "medium",
   },
+  continuous: { ...base, fastCurve: "late", fastCurveHardness: 25.5, slowCurve: "early", slowCurveHardness: 72 },
+  legacyLevels: { ...base, fastCurveHardness: "soft", slowCurveHardness: "soft" },
 };
 const out = { models: {}, cutLine: {}, graphs: {} };
 for (const [name, preset] of Object.entries(cases)) {

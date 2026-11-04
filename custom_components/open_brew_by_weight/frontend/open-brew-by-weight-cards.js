@@ -868,12 +868,16 @@ function je(e, t) {
 		"even",
 		"early",
 		"late"
-	].indexOf(e ?? ""), r = [
+	].indexOf(e ?? "");
+	if (n < 0) return NaN;
+	let r = Number(t);
+	if (Number.isFinite(r)) return n * 3 + Math.min(2, Math.max(0, r / 50));
+	let i = [
 		"soft",
 		"medium",
 		"hard"
-	].indexOf(t ?? "");
-	return n < 0 || r < 0 ? NaN : n * 3 + r;
+	].indexOf(String(t));
+	return i < 0 ? NaN : n * 3 + i;
 }
 var Me = [
 	[2, 2],
@@ -887,14 +891,24 @@ var Me = [
 	[6, 2]
 ];
 function Ne(e, t) {
-	let [n, r] = Me[e], i = n + r - 1, a = 0, o = 1;
-	for (let e = 0; e <= i; e++) e >= n && (a += o * t ** e * (1 - t) ** (i - e)), o = o * (i - e) / (e + 1);
-	return a;
+	let n = Math.floor(e), r = e - n;
+	if (r > 0) {
+		let e = Ne(n, t);
+		return e + (Ne(n + 1, t) - e) * r;
+	}
+	let [i, a] = Me[e], o = i + a - 1, s = 0, c = 1;
+	for (let e = 0; e <= o; e++) e >= i && (s += c * t ** e * (1 - t) ** (o - e)), c = c * (o - e) / (e + 1);
+	return s;
 }
 function Pe(e, t, n, r, i) {
-	let [a, o] = Me[r], s = a + o - 1, c = BigInt(0), l = BigInt(1);
-	for (let e = 0; e <= s; e++) e >= a === i && (c += l * BigInt(t) ** BigInt(e) * BigInt(n - t) ** BigInt(s - e)), l = l * BigInt(s - e) / BigInt(e + 1);
-	return Number(BigInt(e) * c / BigInt(n) ** BigInt(s));
+	let a = Math.floor(r), o = Math.round((r - a) * 100);
+	if (o > 0) {
+		let r = Pe(e, t, n, a, i), s = Pe(e, t, n, a + 1, i);
+		return Math.floor((r * (100 - o) + s * o + 50) / 100);
+	}
+	let [s, c] = Me[r], l = s + c - 1, u = BigInt(0), d = BigInt(1);
+	for (let e = 0; e <= l; e++) e >= s === i && (u += d * BigInt(t) ** BigInt(e) * BigInt(n - t) ** BigInt(l - e)), d = d * BigInt(l - e) / BigInt(e + 1);
+	return Number(BigInt(e) * u / BigInt(n) ** BigInt(l));
 }
 function Fe(e, t) {
 	let n = (e) => Math.round(e * 1e3), r = (e) => Math.round(e * 10), i = n(Math.max(t.prot, Math.min(t.wall, e))), a = r(t.goal), o = n(Math.max(t.prot, t.t1 - t.dFast)), s = n(t.t1), c = n(t.t2), l = n(Math.min(t.wall, t.t2 + t.dSlow));
