@@ -428,10 +428,62 @@ async def test_zeroconf_flow_updates_existing_entry_host(hass) -> None:
     existing.add_to_hass(hass)
     api = api_mock()
     _configure_api(api)
+    # The new address answers; the old one is gone.
+    api.async_snapshot.side_effect = [coordinator_data().snapshot, CannotConnect("gone")]
     result = await _discover(hass, api)
     assert result["type"] is FlowResultType.ABORT
     assert result["reason"] == "already_configured"
     assert existing.data[CONF_HOST] == "192.168.1.8"
+
+
+async def test_zeroconf_keeps_the_host_while_the_controller_answers_there(hass) -> None:
+    """Anyone can announce a controller's id; the real one still answering settles it."""
+    existing = config_entry()
+    existing.add_to_hass(hass)
+    api = api_mock()
+    _configure_api(api)
+    result = await _discover(hass, api)
+    assert result["reason"] == "already_configured"
+    assert existing.data[CONF_HOST] == "controller.local"
+
+
+async def test_zeroconf_keeps_the_host_while_the_old_address_asks_for_a_login(hass) -> None:
+    existing = config_entry()
+    existing.add_to_hass(hass)
+    api = api_mock()
+    _configure_api(api)
+    api.async_auth_required = AsyncMock(side_effect=[False, True])
+    result = await _discover(hass, api)
+    assert result["reason"] == "already_configured"
+    assert existing.data[CONF_HOST] == "controller.local"
+
+
+async def test_zeroconf_never_moves_an_entry_holding_a_token(hass) -> None:
+    """The move would hand the token to whoever announced the controller's id."""
+    existing = config_entry(token="a" * 32)
+    existing.add_to_hass(hass)
+    api = api_mock()
+    _configure_api(api)
+    api.async_snapshot.side_effect = [coordinator_data().snapshot, CannotConnect("gone")]
+    result = await _discover(hass, api)
+    assert result["reason"] == "already_configured"
+    assert existing.data[CONF_HOST] == "controller.local"
+
+
+async def test_discovery_dialog_shows_the_address_and_plain_name(hass) -> None:
+    """The name renders as Markdown and anyone can choose it; the address tells them apart."""
+    api = api_mock()
+    _configure_api(api)
+    info = _discovery_info()
+    info.name = "[Cafe](http://evil) **Bar**._http._tcp.local."
+    with _discovery_patches(api):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_ZEROCONF}, data=info
+        )
+    assert result["description_placeholders"] == {
+        "name": "Cafehttpevil Bar",
+        "host": "192.168.1.8",
+    }
 
 
 async def test_zeroconf_flow_takeover_still_requires_confirmation(hass) -> None:
@@ -519,7 +571,7 @@ async def test_auth_password_stores_only_the_token(hass) -> None:
     api = _auth_api()
     result = await _auth_form(hass, api)
     assert result["step_id"] == "auth"
-    assert result["description_placeholders"] == {"code": "4821"}
+    assert result["description_placeholders"]["code"] == "4821"
     pairing = _pairing_task(hass, result)
     result = await _confirm(hass, api, result, {CONF_PASSWORD: "secret-password"})
     assert result["type"] is FlowResultType.CREATE_ENTRY
@@ -615,7 +667,7 @@ async def test_auth_password_errors_keep_pairing_open(
     result = await _auth_form(hass, api)
     result = await _confirm(hass, api, result, {CONF_PASSWORD: "wrong"})
     assert result["errors"] == {"base": error}
-    assert result["description_placeholders"] == {"code": "4821"}
+    assert result["description_placeholders"]["code"] == "4821"
     api.async_start_pairing.assert_awaited_once()
     hass.config_entries.flow.async_abort(result["flow_id"])
 
@@ -627,12 +679,12 @@ async def test_auth_busy_pairing_retries_on_submit(hass) -> None:
     api.async_start_pairing.side_effect = [busy, busy, (9, "1357", 120)]
     result = await _auth_form(hass, api)
     assert result["errors"] == {"base": "pairing_busy"}
-    assert result["description_placeholders"] == {"code": "----"}
+    assert result["description_placeholders"]["code"] == "----"
     result = await _confirm(hass, api, result, {})
     assert result["errors"] == {"base": "pairing_busy"}
     result = await _confirm(hass, api, result, {})
     assert result["errors"] == {}
-    assert result["description_placeholders"] == {"code": "1357"}
+    assert result["description_placeholders"]["code"] == "1357"
     hass.config_entries.flow.async_abort(result["flow_id"])
 
 
