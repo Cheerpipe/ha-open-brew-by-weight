@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.6
+
+- **Nothing changes in Home Assistant.** This release keeps the integration's
+  test data in step with the controller's firmware, which renamed a preset
+  field the integration does not use. Update whenever it suits you.
+
 ## 0.8.5
 
 - **The preset and last shot cards draw again on current firmware.** Since
