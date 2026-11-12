@@ -50,7 +50,7 @@ you.
 | `show_selector` | `true` | A dropdown that changes the active preset. Only shown while following the active preset; it's unavailable while a shot is running. |
 | `show_example` | `true` | The example shot you can drag. |
 | `show_readout` | `true` | The line under the chart that reads the example shot. |
-| `show_arrivals` | `true` | Dots for when your recent shots reached the target. |
+| `show_arrivals` | `true` | Dots on the cut line where your recent shots stopped. |
 | `show_legend` | `true` | The legend. |
 | `show_note` | `true` | The note on how the typical pace is drawn. |
 

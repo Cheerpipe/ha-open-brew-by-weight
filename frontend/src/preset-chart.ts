@@ -371,7 +371,8 @@ export function presetGeometry(
     maxX: X(m.wall),
     windowEdges: `M${X(m.t1).toFixed(1)} ${T}V${B}M${X(m.t2).toFixed(1)} ${T}V${B}`,
     hatch: compact ? null : { x: L, y: T, width: X(m.prot) - L, height: B - T },
-    arrivals: arrivals.filter((t) => t <= tMax).map((t) => ({ x: X(t), y: Y(m.goal) })),
+    // Past shots were cut on the line, so each sits where it ended, not on the target.
+    arrivals: arrivals.filter((t) => t <= tMax).map((t) => ({ x: X(t), y: Y(cutLine(t, m)) })),
     pace: (ta, end) => S + paceTo(ta, end),
     noCutLabel: !compact && X(m.prot) - L >= 96,
     targetAbove: compact || Y(m.goal) - 4 - T >= 16,
