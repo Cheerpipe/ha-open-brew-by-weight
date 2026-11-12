@@ -1007,7 +1007,7 @@ function ze(e, t, n = {}) {
 		},
 		arrivals: r.filter((e) => e <= m).map((t) => ({
 			x: h(t),
-			y: g(e.goal)
+			y: g(Fe(t, e))
 		})),
 		pace: (e, t) => M + k(e, t),
 		noCutLabel: !i && h(e.prot) - 34 >= 96,
