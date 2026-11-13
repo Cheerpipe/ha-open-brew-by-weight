@@ -44,12 +44,12 @@ at its target weight reads *Target reached*.
 | Target reached | The shot hit its target weight and stopped. |
 | Fast-shot maximum weight / Fast-shot minimum time | A fast shot was allowed to run a little longer, and it ended at that extended limit. |
 | Slow-shot maximum time / Slow-shot minimum weight | A slow shot was cut short at its limit. |
-| Automatic to manual | The scale dropped out and the scale-loss backup took over. |
+| Scale-loss backup | The scale dropped out and the scale-loss backup finished the shot by time. |
 | Cup removed | Cup protection stopped the shot when the cup left the scale. |
-| Touch fallback | Touch protection was holding the shot, and sustained weight ended it. |
+| Sustained weight | Touch protection was holding the shot, and sustained weight ended it. |
 | Physical control / Physical override | You stopped it at the machine. |
-| Web stop / Web heartbeat timeout | It was stopped from the Web UI, or the Web UI connection that was watching it went away. |
-| Hard time limit / Configured time limit | A safety time limit ended it. |
+| Web stop / Web connection lost | It was stopped from the Web UI, or the Web UI connection that was watching it went away. |
+| Hard limit / Max time | A safety time limit or the preset's max shot time ended it. |
 | Weight anomaly / Relay safety | The controller stopped because something looked wrong. Worth a look at the controller's log. |
 | Other | Anything else. |
 
@@ -67,7 +67,7 @@ controller's History page, whatever it was.
 | Entity | What it tells you |
 | --- | --- |
 | **Last activation** | When it happened. |
-| **Last activation type** | *Shot*, *Rinse*, *Backflush*, *Power on*, *Other*, or *No-scale guard aborted* (a shot attempt blocked because no scale was connected). |
+| **Last activation type** | *Shot*, *Rinse*, *Backflush*, *Power on*, *Other*, or *Blocked: no scale* (a shot attempt the scale guard blocked because no scale was connected). |
 | **Last activation duration** | How long the machine was active, in seconds. |
 
 *Backflush* means the controller confirmed the automatic cleaning program ran,
@@ -93,7 +93,7 @@ controller's Stats page. They're great in a history graph.
 | --- | --- |
 | **Active preset** | Choose which preset the controller uses. The list comes from the presets you've set up on the controller. |
 | **Brew by weight** | Off means shots stop by hand for now, without changing your preset. |
-| **No-scale BBW** | Watches for shots started without a usable scale and warns or blocks them, depending on how it's set up on the controller. Turning it back on restores the mode you used last. |
+| **Scale guard** | Watches for shots started without a usable scale and warns or blocks them, depending on how it's set up on the controller. Turning it back on restores the mode you used last. |
 | **Scale-loss backup** | Keep a shot under control if the scale disconnects mid-shot. |
 | **Shorten slow shots** | Cut a choking shot short at its limits. |
 | **Extend fast shots** | Let a gushing shot run a little longer so the cup isn't thin. |

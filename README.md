@@ -44,8 +44,8 @@ It runs entirely on your local network. No cloud, no account.
   the Web UI, do not change them.
 - **Preset switching.** Pick *Morning double* or *Decaf* from a dropdown, a
   dashboard button, or an automation.
-- **The same quick toggles as the Web UI header.** Brew by weight, No-scale
-  BBW, scale-loss backup, shorten slow shots, extend fast shots, avoid
+- **The same quick toggles as the Web UI header.** Brew by weight, scale
+  guard, scale-loss backup, shorten slow shots, extend fast shots, avoid
   accidental touch, and cup protection, all in sync with the controller.
 - **A safe restart button** that waits for a shot to finish before it acts.
 - **Dashboard cards.** A preset card draws how the preset stops a shot, a

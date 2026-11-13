@@ -127,7 +127,7 @@ def test_stop_details_have_sensor_labels(catalog: str) -> None:
     ]["state"]
     assert list(STOP_DETAILS) == load("wire_contracts_v1.json")["stopDetails"]
     assert set(STOP_DETAILS) == set(labels)
-    assert labels["touch_weight_fallback"] == "Touch fallback"
+    assert labels["touch_weight_fallback"] == "Sustained weight"
 
 
 def test_shot_timestamp_round_trip_and_optional_clock() -> None:

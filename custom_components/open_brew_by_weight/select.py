@@ -30,7 +30,6 @@ class ActivePresetSelect(OpenBrewByWeightEntity, SelectEntity):
     """Select a preset only after durable controller confirmation."""
 
     _attr_translation_key = "active_preset"
-    _attr_icon = "mdi:tune"
 
     def __init__(self, coordinator: OpenBrewByWeightCoordinator) -> None:
         super().__init__(coordinator, "active_preset")

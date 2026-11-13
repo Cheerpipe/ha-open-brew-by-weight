@@ -71,19 +71,17 @@ MIRRORED_DESCRIPTIONS = (
             key=f"last_shot_{key}",
             translation_key=f"last_shot_{key}",
             value_fn=_shot(value_fn),
-            icon=icon,
             device_class=device_class,
             native_unit_of_measurement=unit,
             state_class=state_class,
             options=options,
         )
-        for key, value_fn, icon, device_class, unit, state_class, options in (
+        for key, value_fn, device_class, unit, state_class, options in (
             (
                 "time",
                 lambda shot: datetime.fromtimestamp(shot.ended_at_unix_sec, tz=UTC)
                 if shot.ended_at_unix_sec
                 else None,
-                "mdi:clock-outline",
                 SensorDeviceClass.TIMESTAMP,
                 None,
                 None,
@@ -92,7 +90,6 @@ MIRRORED_DESCRIPTIONS = (
             (
                 "duration",
                 _seconds(lambda shot: shot.duration_ms),
-                "mdi:timer-outline",
                 SensorDeviceClass.DURATION,
                 UnitOfTime.SECONDS,
                 SensorStateClass.MEASUREMENT,
@@ -101,7 +98,6 @@ MIRRORED_DESCRIPTIONS = (
             (
                 "final_weight",
                 lambda shot: shot.weight_g,
-                "mdi:scale",
                 SensorDeviceClass.WEIGHT,
                 UnitOfMass.GRAMS,
                 SensorStateClass.MEASUREMENT,
@@ -110,7 +106,6 @@ MIRRORED_DESCRIPTIONS = (
             (
                 "target_weight",
                 lambda shot: shot.target_weight_g,
-                "mdi:target",
                 SensorDeviceClass.WEIGHT,
                 UnitOfMass.GRAMS,
                 SensorStateClass.MEASUREMENT,
@@ -119,7 +114,6 @@ MIRRORED_DESCRIPTIONS = (
             (
                 "average_flow",
                 lambda shot: shot.average_flow_gps,
-                "mdi:waves-arrow-right",
                 None,
                 "g/s",
                 SensorStateClass.MEASUREMENT,
@@ -128,7 +122,6 @@ MIRRORED_DESCRIPTIONS = (
             (
                 "first_drop",
                 _seconds(lambda shot: shot.first_drop_ms),
-                "mdi:water-outline",
                 SensorDeviceClass.DURATION,
                 UnitOfTime.SECONDS,
                 SensorStateClass.MEASUREMENT,
@@ -137,7 +130,6 @@ MIRRORED_DESCRIPTIONS = (
             (
                 "rating",
                 lambda shot: shot.rating if shot.rating is not None else "Unrated",
-                "mdi:star",
                 None,
                 None,
                 None,
@@ -146,7 +138,6 @@ MIRRORED_DESCRIPTIONS = (
             (
                 "type",
                 lambda shot: shot.shot_type,
-                "mdi:coffee",
                 SensorDeviceClass.ENUM,
                 None,
                 None,
@@ -155,7 +146,6 @@ MIRRORED_DESCRIPTIONS = (
             (
                 "stop_detail",
                 lambda shot: shot.stop_detail,
-                "mdi:stop-circle-outline",
                 SensorDeviceClass.ENUM,
                 None,
                 None,
@@ -164,7 +154,6 @@ MIRRORED_DESCRIPTIONS = (
             (
                 "preset",
                 lambda shot: shot.preset_name,
-                "mdi:tune-variant",
                 None,
                 None,
                 None,
@@ -183,14 +172,12 @@ MIRRORED_DESCRIPTIONS = (
                 else datetime.fromtimestamp(record.ended_at_unix_sec, tz=UTC)
             )
         ),
-        icon="mdi:history",
         device_class=SensorDeviceClass.TIMESTAMP,
     ),
     MirroredDescription(
         key="last_activation_type",
         translation_key="last_activation_type",
         value_fn=_activation(lambda record: record.type),
-        icon="mdi:gesture-tap",
         device_class=SensorDeviceClass.ENUM,
         options=list(ACTIVATION_TYPES),
     ),
@@ -198,7 +185,6 @@ MIRRORED_DESCRIPTIONS = (
         key="last_activation_duration",
         translation_key="last_activation_duration",
         value_fn=_activation(lambda record: record.duration_s),
-        icon="mdi:timer-outline",
         device_class=SensorDeviceClass.DURATION,
         native_unit_of_measurement=UnitOfTime.SECONDS,
         state_class=SensorStateClass.MEASUREMENT,
@@ -208,14 +194,12 @@ MIRRORED_DESCRIPTIONS = (
         key="stats_shot_count",
         translation_key="stats_shot_count",
         value_fn=_stats("shot_count"),
-        icon="mdi:counter",
         state_class=SensorStateClass.MEASUREMENT,
     ),
     MirroredDescription(
         key="stats_avg_duration",
         translation_key="stats_avg_duration",
         value_fn=_stats("avg_duration_s"),
-        icon="mdi:timer-outline",
         device_class=SensorDeviceClass.DURATION,
         native_unit_of_measurement=UnitOfTime.SECONDS,
         state_class=SensorStateClass.MEASUREMENT,
@@ -224,7 +208,6 @@ MIRRORED_DESCRIPTIONS = (
         key="stats_avg_yield",
         translation_key="stats_avg_yield",
         value_fn=_stats("avg_yield_g"),
-        icon="mdi:scale",
         device_class=SensorDeviceClass.WEIGHT,
         native_unit_of_measurement=UnitOfMass.GRAMS,
         state_class=SensorStateClass.MEASUREMENT,
@@ -233,7 +216,6 @@ MIRRORED_DESCRIPTIONS = (
         key="stats_avg_error",
         translation_key="stats_avg_error",
         value_fn=_stats("avg_error_pct"),
-        icon="mdi:percent",
         native_unit_of_measurement="%",
         state_class=SensorStateClass.MEASUREMENT,
     ),
@@ -241,7 +223,6 @@ MIRRORED_DESCRIPTIONS = (
         key="stats_avg_flow",
         translation_key="stats_avg_flow",
         value_fn=_stats("avg_flow_gps"),
-        icon="mdi:waves-arrow-right",
         native_unit_of_measurement="g/s",
         state_class=SensorStateClass.MEASUREMENT,
     ),
@@ -249,7 +230,6 @@ MIRRORED_DESCRIPTIONS = (
         key="stats_shots_per_day",
         translation_key="stats_shots_per_day",
         value_fn=_stats("shots_per_day"),
-        icon="mdi:calendar-clock",
         state_class=SensorStateClass.MEASUREMENT,
     ),
 )
@@ -280,7 +260,6 @@ class ControllerSensor(OpenBrewByWeightEntity, SensorEntity):
     """Controller hardware identity, read once from the initial snapshot."""
 
     _attr_translation_key = "controller"
-    _attr_icon = "mdi:chip"
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     def __init__(self, coordinator: OpenBrewByWeightCoordinator) -> None:
@@ -301,7 +280,6 @@ class MachineSensor(OpenBrewByWeightEntity, SensorEntity):
     """Espresso machine identity, read once from the initial snapshot."""
 
     _attr_translation_key = "machine"
-    _attr_icon = "mdi:coffee-maker"
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     def __init__(self, coordinator: OpenBrewByWeightCoordinator) -> None:
@@ -317,7 +295,6 @@ class IpSensor(OpenBrewByWeightEntity, SensorEntity):
     """Current controller IP; webhook pushes refresh it on DHCP change."""
 
     _attr_translation_key = "ip"
-    _attr_icon = "mdi:ip"
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     def __init__(self, coordinator: OpenBrewByWeightCoordinator) -> None:
@@ -332,7 +309,6 @@ class ShotStateSensor(OpenBrewByWeightEntity, SensorEntity):
     """Current brewing state."""
 
     _attr_translation_key = "shot_state"
-    _attr_icon = "mdi:coffee-maker"
     _attr_device_class = SensorDeviceClass.ENUM
 
     def __init__(self, coordinator: OpenBrewByWeightCoordinator) -> None:
