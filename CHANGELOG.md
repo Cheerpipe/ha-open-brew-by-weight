@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.7
+
+- **Recent shots sit where they really stopped on the preset card.** Their dots
+  always sat on the target line, although a shot stops wherever the cut line
+  stands when it gets there. Each dot is now on the cut line, where that shot
+  actually stopped, just as in the controller's Web UI.
+
 ## 0.8.6
 
 - **Nothing changes in Home Assistant.** This release keeps the integration's
