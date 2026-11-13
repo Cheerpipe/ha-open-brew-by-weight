@@ -10,7 +10,7 @@ var e = {
 	"ended.hard_limit": "Hard limit",
 	"ended.relay": "Relay safety",
 	"ended.anomaly": "Weight anomaly",
-	"ended.touch": "Touch fallback",
+	"ended.touch": "Sustained weight",
 	"field.yield_estimated": "~{0} g est.",
 	"field.recorded": " (recorded)",
 	"field.none": "None",

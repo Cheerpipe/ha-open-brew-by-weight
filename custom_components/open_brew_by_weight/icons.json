@@ -27,13 +27,13 @@
     },
     "select": {"active_preset": {"default": "mdi:tune"}},
     "switch": {
-      "brew_by_weight": {"default": "mdi:scale"},
+      "brew_by_weight": {"default": "mdi:scale-balance"},
       "no_scale_bbw": {"default": "mdi:scale-off"},
-      "auto_to_manual_guard": {"default": "mdi:swap-horizontal"},
-      "slow_extraction_guard": {"default": "mdi:speedometer-slow"},
-      "fast_extraction_guard": {"default": "mdi:speedometer"},
+      "auto_to_manual_guard": {"default": "mdi:timer-alert-outline"},
+      "slow_extraction_guard": {"default": "mdi:timer-sand"},
+      "fast_extraction_guard": {"default": "mdi:chevron-double-right"},
       "avoid_accidental_touch": {"default": "mdi:gesture-tap-button"},
-      "cup_protection": {"default": "mdi:cup-water"}
+      "cup_protection": {"default": "mdi:shield-outline"}
     },
     "button": {"restart": {"default": "mdi:restart"}}
   }

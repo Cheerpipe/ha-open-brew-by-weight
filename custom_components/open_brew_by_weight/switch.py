@@ -42,14 +42,12 @@ DESCRIPTIONS = (
         translation_key="brew_by_weight",
         api_field="brewByWeight",
         state_field="brew_by_weight",
-        icon="mdi:scale",
     ),
     QuickSettingDescription(
         key="no_scale_bbw",
         translation_key="no_scale_bbw",
         api_field="noScaleBbwMode",
         state_field="no_scale_bbw_mode",
-        icon="mdi:scale-off",
         bbw_dependent=True,
     ),
     *(
@@ -59,38 +57,32 @@ DESCRIPTIONS = (
             api_field=api_field,
             state_field=state_field,
             bbw_dependent=True,
-            icon=icon,
         )
-        for key, api_field, state_field, icon in (
+        for key, api_field, state_field in (
             (
                 "auto_to_manual_guard",
                 "autoToManualGuardEnabled",
                 "auto_to_manual_guard_enabled",
-                "mdi:swap-horizontal",
             ),
             (
                 "slow_extraction_guard",
                 "slowExtractionGuardEnabled",
                 "slow_extraction_guard_enabled",
-                "mdi:speedometer-slow",
             ),
             (
                 "fast_extraction_guard",
                 "fastExtractionGuardEnabled",
                 "fast_extraction_guard_enabled",
-                "mdi:speedometer",
             ),
             (
                 "avoid_accidental_touch",
                 "avoidAccidentalTouchEnabled",
                 "avoid_accidental_touch_enabled",
-                "mdi:gesture-tap-button",
             ),
             (
                 "cup_protection",
                 "cupProtectionEnabled",
                 "cup_protection_enabled",
-                "mdi:cup-water",
             ),
         )
     ),

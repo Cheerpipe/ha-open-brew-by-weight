@@ -19,8 +19,7 @@ describe("shot fields", () => {
       expect(cut.s).toBe(fields.cut.s ?? null);
       expect(cut.g).toBe(fields.cut.g ?? null);
       expect(cut.drip).toBe(fields.cut.drip ?? null);
-      // The Web UI says "Cup"; the card spells out "Cup removed".
-      expect(shotEnded(t, input.stopDetail, input.verdict)).toBe(fields.ended === "Cup" ? "Cup removed" : fields.ended);
+      expect(shotEnded(t, input.stopDetail, input.verdict)).toBe(fields.ended);
     });
   }
 
