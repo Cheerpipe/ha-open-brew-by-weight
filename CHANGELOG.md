@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.8.8
+
+- **Guards and stop reasons look and read as on the controller.** The
+  **No-scale BBW** switch is now **Scale guard**, the name the controller's
+  Web UI uses. Only its display name changes: your entity, dashboards and
+  automations keep working. **Last shot stop detail** now says *Scale-loss
+  backup*, *Sustained weight*, *Hard limit*, *Max time* and *Web connection
+  lost*, and **Last activation type** says *Blocked: no scale*. The switches
+  for brew by weight, fast and slow shots, the scale-loss backup and cup
+  protection have new icons that match the controller's.
+- **The last shot card says how a shot ended in the controller's words.** A
+  shot that touch protection held and sustained weight ended now shows
+  *Sustained weight* instead of *Touch fallback*.
+
 ## 0.8.7
 
 - **Recent shots sit where they really stopped on the preset card.** Their dots
