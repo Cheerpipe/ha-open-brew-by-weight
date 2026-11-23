@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.9.0
+
+- **Three new Stats cards.** **Shot time**, **Shot consistency** and **Cut
+  accuracy** bring the charts of the controller's Stats page to your
+  dashboard, drawn exactly as the Web UI draws them, with the same figures and
+  legends. Each follows a preset and a number of recent shots you choose, and
+  can let viewers pick another one from the card. See
+  [Dashboard cards](docs/cards.md#stats-cards).
+- **Your whole history, with the companion.** When an Open Brew by Weight
+  Companion keeps your shot archive, the Stats cards read it there and also
+  offer the last 500 and 1,000 shots. Home Assistant finds the companion
+  through the controller and trusts it the first time; nothing to set up.
+- **Pills and chips look like the Web UI's.** The bubble you see while dragging
+  the preset card's example shot is outlined in the stop line's red and fits
+  its text, and the last shot's verdict uses the Web UI's capsule with a dot.
+  The preset dropdown's arrow no longer sits against its border.
+- **Needs current firmware.** The Stats cards need controller firmware that
+  shares its Stats charts; with older firmware they ask you to update. Their
+  companion path needs a companion that accepts Home Assistant's key when the
+  Web UI password is on; with an older one, they show the controller's shots.
+
 ## 0.8.9
 
 - **Nothing changes in Home Assistant.** This release keeps the integration's
