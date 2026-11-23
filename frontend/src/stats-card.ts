@@ -303,14 +303,11 @@ abstract class OpenBrewByWeightStatsCard extends OpenBrewByWeightCard<StatsCardC
     return this._cursor!;
   }
 
-  /** The pill beside the cursor, left of it unless that would leave the plot. */
+  /** The cursor pill, shown while a pointer holds the cursor. */
   protected _pill(text: string, xPct: number, yFrac: number) {
     if (!this._held) return nothing;
-    const x = (xPct / 100) * this._plot.w,
-      y = yFrac * this._plot.h,
-      pw = this._measure(text, 11, 600) + 16;
-    return svg`<g class="pill" transform=${`translate(${x - 11 - pw < 1 ? x + 11 : x - 11 - pw} ${y})`}>
-      <rect y="-9" rx="9" height="18" width=${pw}/><text class="axis-label strong" x="8" y="4">${text}</text></g>`;
+    const { w, h } = this._plot;
+    return this._pillAt(text, (xPct / 100) * w, yFrac * h, w, h);
   }
 
   /**
@@ -522,6 +519,7 @@ abstract class OpenBrewByWeightStatsCard extends OpenBrewByWeightCard<StatsCardC
           max-width: 100%;
           font-size: 0.66rem;
           white-space: normal;
+          hyphens: auto;
           overflow-wrap: break-word;
         }
         :where(.zones b) {

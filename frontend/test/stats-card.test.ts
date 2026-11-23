@@ -3,6 +3,7 @@ import presets from "../../tests/fixtures/integration_presets.json";
 import charts from "./fixtures/stats-charts.json";
 import golden from "./fixtures/stats-golden.json";
 import type { StatsData } from "../src/data";
+import { pillLayout } from "../src/base-card";
 import { chartPreset, densityTicks, layoutTicks, windowChoices, type Density, type StatsChart } from "../src/stats-chart";
 import "../src/index";
 
@@ -132,6 +133,23 @@ describe("stats cards", () => {
     expect(chartPreset(9, 7, header)).toBe(0);
     expect(chartPreset(9, 7, undefined)).toBe(9);
     expect(chartPreset(0, 2, header)).toBe(0);
+  });
+
+  it("keeps the cursor pill inside narrow charts, as the Web UI does", () => {
+    const width = (text: string) => text.length * 6;
+    // Beside the handle while it fits, left of it unless that leaves the chart.
+    expect(pillLayout("Shot 3 · 30.1 s · +1 s", 300, 20, 400, 80, width)).toMatchObject({ lines: ["Shot 3 · 30.1 s · +1 s"], h: 9, px: 300 - 11 - 148, py: 20 });
+    expect(pillLayout("Shot 3 · 30.1 s · +1 s", 5, 20, 400, 80, width).px).toBe(16);
+    // Too wide for either side: the reading moves to a second line.
+    const text = "Shot 6 · Single · Adaptive · 17.9 g of 18.0 g · −0.1 g";
+    const two = pillLayout(text, 150, 60, 300, 80, width);
+    expect(two.lines).toEqual(["Shot 6 · Single · Adaptive", "17.9 g of 18.0 g · −0.1 g"]);
+    expect(two.h).toBe(17);
+    // Still too wide: above the handle in the lower half, centred and within the chart.
+    expect([two.px, two.py]).toEqual([150 - two.pw / 2, 60 - 17 - 12]);
+    // Near the right edge of a narrow chart it stays inside, below a handle in the upper half.
+    const edge = pillLayout(text, 170, 10, 180, 80, width);
+    expect([edge.px + edge.pw, edge.py]).toEqual([179, 10 + 17 + 12]);
   });
 
   it("keeps ticks inside the axis and clear of each other, by priority", () => {

@@ -1,4 +1,4 @@
-import { LitElement, type PropertyValues } from "lit";
+import { LitElement, svg, type PropertyValues } from "lit";
 import { followCardData, type CardDataState } from "./data";
 import type { HomeAssistant } from "./ha";
 import { localizer, type Localize } from "./localize";
@@ -17,6 +17,39 @@ export function textWidth(text: string, font: string) {
   if (!canvas) return text.length * 6.5;
   canvas.font = font;
   return canvas.measureText(text).width;
+}
+
+/**
+ * Where a cursor pill goes, as the Web UI's placePill: beside the handle
+ * (left of it unless that leaves the chart) while it fits; too wide for
+ * either side of a narrow chart, its last two parts (the reading) move to a
+ * second line; still too wide, it sits above or below the handle, on the
+ * roomier side, kept within the chart's width W (and height H).
+ */
+export function pillLayout(
+  text: string,
+  x: number,
+  y: number,
+  W: number,
+  H: number,
+  measure: (text: string) => number,
+) {
+  const parts = text.split(" · "),
+    beside = (width: number) => !W || width + 28 <= Math.max(x, W - x);
+  let lines = [text],
+    width = measure(text),
+    h = 9;
+  if (!beside(width) && parts.length > 1) {
+    const k = Math.max(1, parts.length - 2);
+    lines = [parts.slice(0, k).join(" · "), parts.slice(k).join(" · ")];
+    width = Math.max(...lines.map(measure));
+    h = 17;
+  }
+  const pw = width + 16,
+    [px, py] = beside(width)
+      ? [x - 11 - pw < 1 ? x + 11 : x - 11 - pw, y]
+      : [Math.max(1, Math.min(x - pw / 2, W - pw - 1)), y < H / 2 ? y + h + 12 : y - h - 12];
+  return { lines, pw, h, px, py };
 }
 
 /**
@@ -72,6 +105,18 @@ export abstract class OpenBrewByWeightCard<C extends { device_id?: string }> ext
   /** A label's width in px in this card's font. */
   protected _measure(text: string, px: number, weight = 400) {
     return textWidth(text, `${weight} ${px}px ${getComputedStyle(this).fontFamily || "sans-serif"}`);
+  }
+
+  /** The cursor pill at (x, y) on a chart W by H, in the chart's own units. */
+  protected _pillAt(text: string, x: number, y: number, W: number, H: number) {
+    const p = pillLayout(text, x, y, W, H, (line) => this._measure(line, 11, 600));
+    return svg`<g class="pill" transform=${`translate(${p.px} ${p.py})`}>
+      <rect y=${-p.h} rx="9" height=${2 * p.h} width=${p.pw}/>
+      <text class="axis-label strong" x="8" y="4">${
+        p.lines.length === 1
+          ? p.lines[0]
+          : p.lines.map((line, i) => svg`<tspan x="8" dy=${i ? 16 : -9}>${line}</tspan>`)
+      }</text></g>`;
   }
 
   protected get t(): Localize {

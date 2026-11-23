@@ -171,8 +171,7 @@ export class OpenBrewByWeightPresetCard extends OpenBrewByWeightCard<Resolved> {
         svg`<text class=${`axis-label ${cls}`} x=${x.toFixed(1)} y=${y.toFixed(1)} text-anchor=${anchor}>${text}</text>`,
       hx = g.X(reading.stop),
       hy = g.Y(reading.weight),
-      pillText = t("graph.pill", ...values),
-      pw = this._measure(pillText, 11, 600) + 16;
+      pillText = t("graph.pill", ...values);
     return html`
       <div
         class="chart ${this._held ? "held" : ""}"
@@ -223,11 +222,7 @@ export class OpenBrewByWeightPresetCard extends OpenBrewByWeightCard<Resolved> {
                 <path class="scrub-guide" d=${`M${hx.toFixed(1)} ${g.T}V${g.B}`}/>
                 <path class="example-shot" part="example-shot" d=${g.pace(reading.arrival, reading.stop)}/>
                 <circle class="scrub-handle" part="scrub-handle" cx=${hx.toFixed(2)} cy=${hy.toFixed(2)} r="5"/>
-                ${this._held
-                  ? svg`<g class="pill" transform=${`translate(${hx - 11 - pw < 1 ? hx + 11 : hx - 11 - pw} ${hy})`}>
-                      <rect y="-9" rx="9" height="18" width=${pw}/>
-                      <text class="axis-label strong" x="8" y="4">${pillText}</text></g>`
-                  : nothing}
+                ${this._held ? this._pillAt(pillText, hx, hy, g.width, g.height) : nothing}
               </g>`
             : nothing}
         </svg>
