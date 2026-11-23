@@ -159,7 +159,8 @@ class Controller:
             "delayS": 12.0, "wallS": 50.0, **{k: p[k] for k in (
                 "fastRampS", "slowRampS", "fastCurve", "slowCurve", "fastCurveHardness", "slowCurveHardness")},
             "dripDelayS": 2.0,
-            "actualWeightSource": "post_drip", "rating": 4,
+            "actualWeightSource": "post_drip", "rating": 4, "badReason": None, "number": self.shot_id,
+            "dripNote": 0,
         }
         curve = {
             "wD": encode(points), "wBreakBefore": [], "wHeld": [], "wTruncated": False,
