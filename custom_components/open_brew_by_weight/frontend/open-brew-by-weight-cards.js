@@ -394,7 +394,7 @@ function o(e) {
 		});
 	}
 }
-// ../../../ha-open-brew-by-weight/frontend/node_modules/@lit/reactive-element/css-tag.js
+// node_modules/@lit/reactive-element/css-tag.js
 var s = globalThis, c = s.ShadowRoot && (s.ShadyCSS === void 0 || s.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, l = Symbol(), u = /* @__PURE__ */ new WeakMap(), d = class {
 	constructor(e, t, n) {
 		if (this._$cssResult$ = !0, n !== l) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
@@ -648,7 +648,7 @@ var A = class extends HTMLElement {
 	firstUpdated(e) {}
 };
 A.elementStyles = [], A.shadowRootOptions = { mode: "open" }, A[E("elementProperties")] = /* @__PURE__ */ new Map(), A[E("finalized")] = /* @__PURE__ */ new Map(), T?.({ ReactiveElement: A }), (S.reactiveElementVersions ??= []).push("2.1.2");
-// ../../../ha-open-brew-by-weight/frontend/node_modules/lit-html/lit-html.js
+// node_modules/lit-html/lit-html.js
 var j = globalThis, M = (e) => e, N = j.trustedTypes, P = N ? N.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, F = "$lit$", I = `lit$${Math.random().toFixed(9).slice(2)}$`, ee = "?" + I, te = `<${ee}>`, L = document, R = () => L.createComment(""), z = (e) => e === null || typeof e != "object" && typeof e != "function", ne = Array.isArray, re = (e) => ne(e) || typeof e?.[Symbol.iterator] == "function", ie = "[ 	\n\f\r]", ae = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, oe = /-->/g, se = />/g, B = RegExp(`>|${ie}(?:([^\\s"'>=/]+)(${ie}*=${ie}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), ce = /'/g, le = /"/g, ue = /^(?:script|style|textarea|title)$/i, de = (e) => (t, ...n) => ({
 	_$litType$: e,
 	strings: t,
