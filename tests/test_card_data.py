@@ -253,6 +253,111 @@ async def test_websocket_feed(hass, hass_ws_client) -> None:
     await coordinator.async_shutdown()
 
 
+async def test_api_reads_the_stats_charts() -> None:
+    """The client asks for one window and preset and keeps the header."""
+    payload = fixture("integration_stats.json")
+    session = Session(Response(200, payload))
+    charts = await OpenBrewByWeightApi(session, "controller").async_stats_charts(25, 1)
+    assert charts == {"good": payload["good"], "stats": payload["stats"]}
+    assert session.calls[0][0] == (
+        "GET",
+        "http://controller/api/v1/integration/stats?window=25&preset=1",
+    )
+    for broken in ({**payload, "good": None}, {**payload, "stats": []}):
+        with pytest.raises(ProtocolError):
+            await OpenBrewByWeightApi(Session(Response(200, broken)), "c").async_stats_charts(10, 0)
+
+
+async def test_stats_charts_are_read_once_per_shot(hass) -> None:
+    """Each window and preset is read once per shot-log change, never mid-shot."""
+    coordinator, api = _coordinator(hass)
+    charts = {"good": 64, "stats": fixture("integration_stats.json")["stats"]}
+    api.async_stats_charts.return_value = charts
+    assert coordinator.stats_chart(25, 1) is None
+    assert coordinator.stats_chart(25, 1) is None  # one read in flight
+    await hass.async_block_till_done()
+    assert coordinator.stats_chart(25, 1) == {**charts, "source": "controller"}
+    api.async_stats_charts.assert_awaited_once_with(25, 1)
+
+    # A moved shot history keeps the held header while the new one is read.
+    moved = replace(coordinator.data.snapshot, shot_epoch=58)
+    coordinator.async_set_updated_data(replace(coordinator.data, snapshot=moved))
+    assert coordinator.stats_chart(25, 1) == {**charts, "source": "controller"}
+    await hass.async_block_till_done()
+    assert api.async_stats_charts.await_count == 2
+    # Older firmware has no epoch: a new last shot moves it instead.
+    older_fw = replace(coordinator.data.snapshot, shot_epoch=None)
+    newer = replace(coordinator.data.last_shot, shot_id=2000)
+    coordinator.async_set_updated_data(
+        replace(coordinator.data, snapshot=older_fw, last_shot=newer)
+    )
+    coordinator.stats_chart(25, 1)
+    await hass.async_block_till_done()
+    assert api.async_stats_charts.await_count == 3
+    coordinator.stats_chart(25, 1)
+    await hass.async_block_till_done()
+    assert api.async_stats_charts.await_count == 3
+
+    # During a shot nothing is read; a failed read is retried on the next update.
+    brewing = replace(coordinator.data.snapshot, shot_state="brewing")
+    coordinator.async_set_updated_data(replace(coordinator.data, snapshot=brewing))
+    assert coordinator.stats_chart(10, 0) is None
+    await hass.async_block_till_done()
+    assert api.async_stats_charts.await_count == 3
+    idle = replace(brewing, shot_state="idle")
+    coordinator.async_set_updated_data(replace(coordinator.data, snapshot=idle))
+    api.async_stats_charts.side_effect = RuntimeError("busy")
+    assert coordinator.stats_chart(10, 0) is None
+    await hass.async_block_till_done()
+    api.async_stats_charts.side_effect = None
+    coordinator.stats_chart(10, 0)
+    await hass.async_block_till_done()
+    assert coordinator.stats_chart(10, 0) == {**charts, "source": "controller"}
+
+    older = replace(idle, capabilities=idle.capabilities - {"stats_charts_v1"})
+    coordinator.async_set_updated_data(replace(coordinator.data, snapshot=older))
+    assert coordinator.stats_chart(10, 0) is None
+    await coordinator.async_shutdown()
+
+
+async def test_stats_websocket_feed(hass, hass_ws_client) -> None:
+    """A Stats card gets its header once read, and validation refuses odd windows."""
+    assert await async_setup_component(hass, "websocket_api", {})
+    with patch("custom_components.open_brew_by_weight.async_register_cards"):
+        assert await async_setup(hass, {})
+    coordinator, api = _coordinator(hass)
+    charts = {"good": 64, "stats": fixture("integration_stats.json")["stats"]}
+    api.async_stats_charts.return_value = charts
+    entry = config_entry()
+    entry.add_to_hass(hass)
+    entry.mock_state(hass, ConfigEntryState.LOADED)
+    entry.runtime_data = MagicMock(coordinator=coordinator)
+    coordinator.config_entry = entry
+    device = dr.async_get(hass).async_get_or_create(
+        config_entry_id=entry.entry_id, identifiers={(DOMAIN, "AA:BB:CC:DD:EE:FF")}
+    )
+    client = await hass_ws_client(hass)
+    ask = {"type": f"{DOMAIN}/stats/subscribe", "device_id": device.id, "preset": 1}
+
+    await client.send_json({"id": 1, **ask, "window": 20})
+    assert (await client.receive_json())["error"]["code"] == "invalid_format"
+    await client.send_json({"id": 2, **ask, "device_id": "nope", "window": 25})
+    assert (await client.receive_json())["error"]["code"] == "not_found"
+
+    await client.send_json({"id": 3, **ask, "window": 25})
+    assert (await client.receive_json())["success"]
+    assert (await client.receive_json())["event"] == {
+        "available": True,
+        "supported": True,
+        "chart": None,
+    }
+    assert (await client.receive_json())["event"]["chart"] == {**charts, "source": "controller"}
+    api.async_stats_charts.assert_awaited_once_with(25, 1)
+    await client.send_json({"id": 4, "type": "unsubscribe_events", "subscription": 3})
+    assert (await client.receive_json())["success"]
+    await coordinator.async_shutdown()
+
+
 async def test_cards_are_served_to_every_dashboard(hass) -> None:
     """The bundled module is served and loaded with a content-hash version."""
     assert CARDS_FILE.is_file()

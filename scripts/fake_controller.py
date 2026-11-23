@@ -28,6 +28,12 @@ from urllib.parse import urlsplit, urlunsplit
 from aiohttp import ClientSession, web
 
 FIXTURES = Path(__file__).resolve().parent.parent / "tests" / "fixtures"
+# Stats headers the firmware's own algorithm built over realistic shots, by
+# window and preset (2 Double, 1 Single there; 1 and 2 here).
+STATS = json.loads(
+    (FIXTURES.parent.parent / "frontend" / "test" / "fixtures" / "stats-charts.json").read_text()
+)
+STATS_IDS = {0: 0, 1: 2, 2: 1}
 DEVICE_ID = "AA:BB:CC:DD:EE:FF"
 BOOT_ID = 30
 
@@ -126,8 +132,10 @@ def encode(points: list[tuple[int, int]]) -> str:
 class Controller:
     """Mutable controller state behind the routes."""
 
-    def __init__(self, callback_host: str | None) -> None:
+    def __init__(self, callback_host: str | None, companion: str | None = None) -> None:
         self.callback_host = callback_host
+        self.companion = companion
+        self.shot_epoch = 57
         self.revision = 19
         self.active = 1
         self.request_id = 0
@@ -184,11 +192,28 @@ class Controller:
         base.update(
             apiVersion=2, minimumClientApiVersion=2, firmwareVersion="1.0.0", bootId=BOOT_ID,
             activePresetId=self.active, presetRevision=self.revision, lastShot=self.last_shot(),
-            ip="127.0.0.1", mdnsHost="obbw-demo",
+            ip="127.0.0.1", mdnsHost="obbw-demo", shotEpoch=self.shot_epoch,
+            companion=None if self.companion is None else {"address": self.companion},
         )
         base.pop("lastGoodShot", None)
         base["quickSettings"].update(revision=self.revision, activePresetId=self.active)
         return base
+
+    def stats(self, window: int, preset: int) -> dict[str, Any] | None:
+        """The fixture header for a window and preset, in this controller's preset ids."""
+        found = STATS.get(f"{window}:{STATS_IDS.get(preset, -1)}")
+        if found is None:
+            return None
+        back = {v: k for k, v in STATS_IDS.items()}
+        names = {p["id"]: p["name"] for p in PRESETS}
+        header = json.loads(json.dumps(found["stats"]))
+        header["preset"] = preset
+        header["facets"]["presets"] = [[back[i], names[back[i]]] for i, _ in header["facets"]["presets"]]
+        for series in (header["cons"], header.get("cut", {})):
+            if "p" in series:
+                p = series["p"]
+                series["p"] = [back[i] for i in p] if isinstance(p, list) else back[p]
+        return {"apiVersion": 1, "good": found["good"], "stats": header}
 
     def presets(self) -> dict[str, Any]:
         return {"apiVersion": 1, "revision": self.revision, "activeId": self.active, "items": PRESETS}
@@ -202,10 +227,11 @@ class Controller:
         return urlunsplit(url._replace(netloc=self.callback_host)) if self.callback_host else self.webhook["url"]
 
     async def send(self, event: str, **data: Any) -> None:
+        # The envelope last: a shot's own uptimeMs must not make the event look older.
         body = {
-            "schemaVersion": 1, "event": event, "deviceId": DEVICE_ID, "bootId": BOOT_ID,
+            **data, "schemaVersion": 1, "event": event, "deviceId": DEVICE_ID, "bootId": BOOT_ID,
             "cycleId": 0, "uptimeMs": int(time.monotonic() * 1000), "timestamp": int(time.time()),
-            "sentAtUptimeMs": int(time.monotonic() * 1000), **data,
+            "sentAtUptimeMs": int(time.monotonic() * 1000),
         }
         async with ClientSession() as session, session.post(self.callback(), json=body) as response:
             print(f"webhook {event} -> {response.status}")
@@ -226,6 +252,15 @@ def app(controller: Controller) -> web.Application:
 
     async def last(_: web.Request) -> web.Response:
         return json_response({"apiVersion": 1, "cols": controller.cols, "shot": controller.last_row()})
+
+    async def stats(request: web.Request) -> web.Response:
+        try:
+            found = controller.stats(int(request.query["window"]), int(request.query["preset"]))
+        except KeyError, ValueError:
+            found = None
+        if found is None:
+            return json_response({"error": "INVALID_REQUEST", "reason": "STATS_QUERY_INVALID"}, 400)
+        return json_response(found)
 
     async def request_state(_: web.Request) -> web.Response:
         return json_response({"apiVersion": 1, "requestId": controller.request_id, "state": "PERSISTED"})
@@ -254,6 +289,7 @@ def app(controller: Controller) -> web.Application:
     async def new_shot(_: web.Request) -> web.Response:
         """Not part of the API: pretend a shot just ended."""
         controller.shot_id += 1
+        controller.shot_epoch += 1
         controller.ended = int(time.time())
         await controller.send("end", **controller.last_shot())
         return json_response({"shotId": controller.shot_id})
@@ -266,6 +302,7 @@ def app(controller: Controller) -> web.Application:
             web.get(base + "/info", info),
             web.get(base + "/presets", presets),
             web.get(base + "/shots/last", last),
+            web.get(base + "/stats", stats),
             web.get(base + "/request", request_state),
             web.get(base + "/webhook", get_webhook),
             web.put(base + "/webhook", put_webhook),
@@ -282,5 +319,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--port", type=int, default=8099)
     parser.add_argument("--callback-host", help="host:port that reaches Home Assistant from here")
+    parser.add_argument("--companion", help="IP address of a companion keeping the shot archive")
     args = parser.parse_args()
-    web.run_app(app(Controller(args.callback_host)), port=args.port)
+    web.run_app(app(Controller(args.callback_host, args.companion)), port=args.port)

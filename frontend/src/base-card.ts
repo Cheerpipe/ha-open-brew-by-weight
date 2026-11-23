@@ -4,6 +4,21 @@ import type { HomeAssistant } from "./ha";
 import { localizer, type Localize } from "./localize";
 import { nameCards } from "./registry";
 
+let canvas: CanvasRenderingContext2D | null | undefined;
+
+/** A label's width in px in a CSS font, estimated where there is no canvas. */
+export function textWidth(text: string, font: string) {
+  if (canvas === undefined)
+    try {
+      canvas = document.createElement("canvas").getContext("2d");
+    } catch {
+      canvas = null;
+    }
+  if (!canvas) return text.length * 6.5;
+  canvas.font = font;
+  return canvas.measureText(text).width;
+}
+
 /**
  * What every card shares: it follows one device's card data, measures the
  * width it draws in, and follows Home Assistant's dark mode. Unknown config
@@ -52,6 +67,11 @@ export abstract class OpenBrewByWeightCard<C extends { device_id?: string }> ext
     this._stop = undefined;
     this._resize?.disconnect();
     this._resize = undefined;
+  }
+
+  /** A label's width in px in this card's font. */
+  protected _measure(text: string, px: number, weight = 400) {
+    return textWidth(text, `${weight} ${px}px ${getComputedStyle(this).fontFamily || "sans-serif"}`);
   }
 
   protected get t(): Localize {

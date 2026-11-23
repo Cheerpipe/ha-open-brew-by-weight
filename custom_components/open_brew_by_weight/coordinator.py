@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+import functools
+import ssl
 from collections import deque
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, replace
@@ -12,12 +14,14 @@ from typing import Any
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed
-from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.helpers import issue_registry as ir
+from homeassistant.helpers.event import async_call_later, async_track_time_interval
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import AuthRequired, CannotConnect, OpenBrewByWeightApi
+from .api import AuthRequired, CannotConnect, CompanionUntrusted, OpenBrewByWeightApi
 from .const import (
+    COMPANION_RETRY_S,
     DOMAIN,
     LIVENESS_INTERVAL,
     QUICK_SETTINGS_COALESCE_S,
@@ -88,6 +92,15 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
         self._required_boot_id: int | None = None
         self._liveness_unsub: CALLBACK_TYPE | None = None
         self._liveness_waited = False
+        # Stats chart headers by (window, preset), each with the shot log
+        # version it was read at, and the ones being read.
+        self._charts: dict[tuple[int, int], tuple[object, dict[str, Any]]] = {}
+        self._charts_reading: set[tuple[int, int]] = set()
+        self._charts_retry: CALLBACK_TYPE | None = None
+        # The companion's certificate authority, trusted on first use, by address.
+        self._companion_ca: tuple[str, str] | None = None
+        self._companion_ssl: tuple[str, ssl.SSLContext] | None = None
+        self._companion_warned: str | None = None
 
     @callback
     def async_start_liveness(self) -> None:
@@ -124,6 +137,11 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
             )
             if stored.get("shot_detail") is not None:
                 self._stored_detail = ShotDetail.from_dict(stored["shot_detail"])
+            ca = stored.get("companion_ca")
+            if isinstance(ca, dict) and isinstance(ca.get("address"), str) and isinstance(
+                ca.get("pem"), str
+            ):
+                self._companion_ca = (ca["address"], ca["pem"])
         except KeyError, TypeError, ValueError:
             self._stored_last = self._stored_activation = self._stored_detail = None
 
@@ -197,6 +215,135 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
             return None if stats is None else ShotStats.from_dict(stats)
         except ProtocolError:
             return None
+
+    def _charts_version(self) -> object:
+        """What the Stats header follows: the shot history, the presets, and where it is read."""
+        data = self.data
+        snapshot = data.snapshot
+        history = (
+            snapshot.shot_epoch
+            if snapshot.shot_epoch is not None
+            else (data.last_shot and data.last_shot.shot_id, data.stats)
+        )
+        return (history, data.presets.revision, snapshot.companion_address)
+
+    @callback
+    def stats_chart(self, window: int, preset: int) -> dict[str, Any] | None:
+        """The Stats header a card shows, read again once the shot history moved.
+
+        A companion keeping the shot archive answers over the whole history, as
+        the Web UI opened through it does; the controller answers otherwise, or
+        when the companion cannot. Each header is read once per change and
+        never during a shot; until the new one arrives the card keeps the
+        previous one. A failed read is retried on the next update.
+        """
+        snapshot = None if self.data is None else self.data.snapshot
+        if snapshot is None or not (
+            "stats_charts_v1" in snapshot.capabilities or snapshot.companion_address
+        ):
+            return None
+        key, version = (window, preset), self._charts_version()
+        held = self._charts.get(key)
+        if (
+            (held is None or held[0] != version)
+            and key not in self._charts_reading
+            and snapshot.shot_state != "brewing"
+            and self.config_entry is not None
+        ):
+            self._charts_reading.add(key)
+            # Not eager: the caller is sending the held header right now.
+            self.config_entry.async_create_background_task(
+                self.hass,
+                self._async_read_chart(key, version),
+                f"{DOMAIN} stats {key}",
+                eager_start=False,
+            )
+        return None if held is None else held[1]
+
+    async def _async_read_chart(self, key: tuple[int, int], version: object) -> None:
+        window, preset = key
+        snapshot = self.data.snapshot
+        chart, behind = None, False
+        try:
+            if snapshot.companion_address and snapshot.shot_epoch is not None:
+                chart, behind = await self._async_companion_chart(
+                    snapshot.companion_address, window, preset, snapshot.shot_epoch
+                )
+            if chart is None and "stats_charts_v1" in snapshot.capabilities:
+                # The controller covers its newest 100 shots at most.
+                read = await self.api.async_stats_charts(min(window, 100), preset)
+                chart = {**read, "source": "controller"}
+        except Exception as err:
+            self.logger.debug("Stats charts %s not read: %s", key, err)
+            return
+        finally:
+            self._charts_reading.discard(key)
+        if chart is None:
+            return
+        # A companion still copying the newest shot is asked again shortly.
+        self._charts[key] = (None if behind else version, chart)
+        if behind and self._charts_retry is None:
+            self._charts_retry = async_call_later(
+                self.hass, COMPANION_RETRY_S, self._retry_charts
+            )
+        self.async_update_listeners()
+
+    @callback
+    def _retry_charts(self, _now: datetime) -> None:
+        self._charts_retry = None
+        self.async_update_listeners()
+
+    async def _async_companion_chart(
+        self, address: str, window: int, preset: int, epoch: int
+    ) -> tuple[dict[str, Any] | None, bool]:
+        """The companion's header and whether its copy is still behind, or None to fall back."""
+        try:
+            context = await self._async_companion_context(address)
+            read = await self.api.async_companion_stats(address, context, window, preset, epoch)
+        except CompanionUntrusted as err:
+            if self.config_entry is not None and self._companion_warned != address:
+                self._companion_warned = address
+                self.logger.warning(
+                    "Companion at %s no longer matches the certificate Home Assistant "
+                    "trusted; reading Stats from the controller: %s", address, err,
+                )
+                ir.async_create_issue(
+                    self.hass,
+                    DOMAIN,
+                    f"companion_untrusted_{self.config_entry.entry_id}",
+                    is_fixable=True,
+                    severity=ir.IssueSeverity.WARNING,
+                    translation_key="companion_untrusted",
+                    translation_placeholders={"address": address},
+                    data={"entry_id": self.config_entry.entry_id},
+                )
+            return None, False
+        except Exception as err:
+            self.logger.debug("Companion Stats at %s not read: %s", address, err)
+            return None, False
+        chart = {"good": read["good"], "stats": read["stats"], "source": "companion"}
+        return chart, read["epoch"] != epoch
+
+    async def _async_companion_context(self, address: str) -> ssl.SSLContext:
+        """Trust the companion's certificate authority, read once per address."""
+        if self._companion_ca is None or self._companion_ca[0] != address:
+            self._companion_ca = (address, await self.api.async_companion_ca(address))
+            self._store.async_delay_save(self._storage_data, 1)
+        pem = self._companion_ca[1]
+        if self._companion_ssl is None or self._companion_ssl[0] != pem:
+            context = await self.hass.async_add_executor_job(
+                functools.partial(ssl.create_default_context, cadata=pem)
+            )
+            self._companion_ssl = (pem, context)
+        return self._companion_ssl[1]
+
+    @callback
+    def async_trust_companion_again(self) -> None:
+        """Forget the trusted authority: the next read trusts the companion's current one."""
+        self._companion_ca = self._companion_ssl = self._companion_warned = None
+        self._charts.clear()
+        self._store.async_delay_save(self._storage_data, 1)
+        self.async_update_listeners()
 
     def expect_test(self, correlation_id: str) -> asyncio.Future[None]:
         """Create the waiter before requesting a test callback."""
@@ -341,6 +488,9 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
 
     async def async_shutdown(self) -> None:
         """Cancel entry-owned finite recovery work."""
+        if self._charts_retry is not None:
+            self._charts_retry()
+            self._charts_retry = None
         if self._liveness_unsub is not None:
             self._liveness_unsub()
             self._liveness_unsub = None
@@ -525,4 +675,7 @@ class OpenBrewByWeightCoordinator(DataUpdateCoordinator[CoordinatorData]):
             "shot_detail": None
             if self._stored_detail is None
             else self._stored_detail.to_dict(),
+            "companion_ca": None
+            if self._companion_ca is None
+            else {"address": self._companion_ca[0], "pem": self._companion_ca[1]},
         }

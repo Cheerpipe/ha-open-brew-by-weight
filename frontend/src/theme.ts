@@ -18,6 +18,9 @@ export const themeStyles = css`
     --_d-band-win: 0.26;
     --_d-shot: #0e7490;
     --_d-flow: #7a7a7a;
+    --_d-mid: #e8a317;
+    --_d-fair: #7b4a09;
+    --_d-poor: #a83b21;
   }
   :host([dark]) {
     --_d-fast: #ff6b4a;
@@ -29,6 +32,9 @@ export const themeStyles = css`
     --_d-band-win: 0.32;
     --_d-shot: #38bdf8;
     --_d-flow: #b8b8b8;
+    --_d-mid: #f2c14e;
+    --_d-fair: #edc17d;
+    --_d-poor: #c45c38;
   }
   /* Resolved where UIX and card-mod styles (on ha-card) already apply. */
   :where(.body) {
@@ -50,6 +56,9 @@ export const themeStyles = css`
     --_shot: var(--obbw-shot-line-color, var(--_d-shot));
     --_flow: var(--obbw-flow-color, var(--_d-flow));
     --_weight: var(--obbw-weight-color, var(--_ok));
+    --_mid: var(--obbw-mid-color, var(--_d-mid));
+    --_fair: var(--obbw-fair-color, var(--_d-fair));
+    --_poor: var(--obbw-poor-color, var(--_d-poor));
     font-family: var(--obbw-font-family, inherit);
   }
 
@@ -190,7 +199,7 @@ export const themeStyles = css`
   }
   :where(.pill rect) {
     fill: var(--_surface);
-    stroke: var(--obbw-pill-border-color, var(--primary-color, #a83b21));
+    stroke: var(--obbw-pill-border-color, var(--_cut));
     stroke-width: 1.5;
   }
   :where(.pill text) {
@@ -310,25 +319,45 @@ export const cardStyles = css`
     font-size: 12px;
     color: var(--obbw-subtitle-color, var(--_muted));
   }
+  /* A native select with the chevron drawn clear of the rounded border. */
   :where(.selector) {
     max-width: 50%;
-    padding: 4px 8px;
+    padding: 4px 30px 4px 10px;
     border: 1px solid var(--obbw-selector-border-color, var(--divider-color, #dadada));
     border-radius: var(--obbw-selector-radius, 8px);
-    background: var(--obbw-selector-background, var(--_surface));
+    appearance: none;
+    background:
+      linear-gradient(45deg, transparent 50%, var(--_muted) 50%) right 16px center / 5px 5px no-repeat,
+      linear-gradient(135deg, var(--_muted) 50%, transparent 50%) right 11px center / 5px 5px no-repeat,
+      var(--obbw-selector-background, var(--_surface));
     color: var(--_fg);
     font: inherit;
     font-size: 13px;
+    text-overflow: ellipsis;
+    cursor: pointer;
   }
+  /* The verdict pill of the Web UI's shot cards: a tinted capsule with a dot. */
   :where(.chip) {
     flex: none;
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 2rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     --_c: var(--_ok);
-    color: color-mix(in srgb, var(--_c) 70%, var(--_fg));
-    background: color-mix(in srgb, var(--_c) 18%, var(--_surface));
+    color: color-mix(in srgb, var(--_c) 80%, var(--_fg));
+    background: color-mix(in srgb, var(--_c) 13%, var(--_surface));
+  }
+  :where(.chip)::before {
+    content: "";
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--_c);
   }
   :where(.chip.fast) {
     --_c: var(--_fast);

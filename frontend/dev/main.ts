@@ -3,7 +3,8 @@
 import "../src/index";
 import presets from "../../tests/fixtures/integration_presets.json";
 import last from "../../tests/fixtures/integration_last_shot.json";
-import type { CardData } from "../src/data";
+import stats from "../test/fixtures/stats-charts.json";
+import type { CardData, StatsData } from "../src/data";
 
 const data: CardData = {
   available: true,
@@ -26,8 +27,13 @@ const hass = (dark: boolean) => ({
   },
   states: {},
   connection: {
-    subscribeMessage: async (callback: (m: CardData) => void) => {
-      setTimeout(() => callback(data));
+    subscribeMessage: async (callback: (m: CardData | StatsData) => void, message: Record<string, unknown>) => {
+      // A Stats window and preset: the fixture's when it has one, else a stand-in labelled for it.
+      const chart = (stats as Record<string, StatsData["chart"]>)[`${message.window}:${message.preset}`] ?? {
+        ...stats["25:2"],
+        stats: { ...stats["25:2"].stats, preset: message.preset as number },
+      };
+      setTimeout(() => callback(message.type === "open_brew_by_weight/stats/subscribe" ? { available: true, supported: true, chart } : data));
       return async () => {};
     },
   },
@@ -35,6 +41,12 @@ const hass = (dark: boolean) => ({
 });
 
 const configs: Record<string, unknown>[] = [
+  { type: "custom:open-brew-by-weight-shot-time-card", device_id: "dev", shots: 25 },
+  { type: "custom:open-brew-by-weight-shot-consistency-card", device_id: "dev", shots: 25 },
+  { type: "custom:open-brew-by-weight-cut-accuracy-card", device_id: "dev", shots: 25 },
+  { type: "custom:open-brew-by-weight-shot-time-card", device_id: "dev", preset: "all", shots: 50, show_preset_selector: false, show_shots_selector: false },
+  { type: "custom:open-brew-by-weight-shot-consistency-card", device_id: "dev", preset: "all", shots: 50, band: "ewma" },
+  { type: "custom:open-brew-by-weight-cut-accuracy-card", device_id: "dev", preset: 1, shots: 100, band: "ewma", show_header: false },
   { type: "custom:open-brew-by-weight-shot-card", device_id: "dev" },
   { type: "custom:open-brew-by-weight-shot-card", device_id: "dev", title: "Compact", hero: ["yield"], fields: ["goal", "error", "first_drop", "ended", "rating"], columns: 3 },
   { type: "custom:open-brew-by-weight-shot-chart-card", device_id: "dev" },

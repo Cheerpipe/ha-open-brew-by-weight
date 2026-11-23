@@ -40,6 +40,9 @@ describe("card picker names", () => {
       "Open Brew by Weight preset",
       "Open Brew by Weight last shot",
       "Open Brew by Weight shot details",
+      "Open Brew by Weight shot time",
+      "Open Brew by Weight shot consistency",
+      "Open Brew by Weight cut accuracy",
     ]);
     document.documentElement.lang = "";
   });

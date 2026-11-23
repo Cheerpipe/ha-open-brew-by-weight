@@ -49,8 +49,10 @@ It runs entirely on your local network. No cloud, no account.
   accidental touch, and cup protection, all in sync with the controller.
 - **A safe restart button** that waits for a shot to finish before it acts.
 - **Dashboard cards.** A preset card draws how the preset stops a shot, a
-  last shot card charts the shot over its preset or as weight and flow, and a
-  shot details card lists every number of the shot, just like the
+  last shot card charts the shot over its preset or as weight and flow, a
+  shot details card lists every number of the shot, and three Stats cards
+  chart your shot time, consistency and cut accuracy (over your whole history
+  when a companion keeps it), just like the
   controller's Web UI. Every color in them can be restyled. See
   [Dashboard cards](docs/cards.md).
 

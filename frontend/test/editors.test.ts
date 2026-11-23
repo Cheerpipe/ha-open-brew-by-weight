@@ -11,6 +11,7 @@ describe("card editors", () => {
     ["open-brew-by-weight-preset-card-editor", {}],
     ["open-brew-by-weight-shot-chart-card-editor", {}],
     ["open-brew-by-weight-shot-card-editor", {}],
+    ["open-brew-by-weight-stats-card-editor", {}],
   ] as const) {
     it(`${tag} labels every entry ha-form asks about`, async () => {
       const editor = document.createElement(tag) as HTMLElement & {

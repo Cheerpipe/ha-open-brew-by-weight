@@ -6,6 +6,9 @@ const CARDS = [
   ["open-brew-by-weight-preset-card", "preset"],
   ["open-brew-by-weight-shot-chart-card", "shot"],
   ["open-brew-by-weight-shot-card", "details"],
+  ["open-brew-by-weight-shot-time-card", "time"],
+  ["open-brew-by-weight-shot-consistency-card", "consistency"],
+  ["open-brew-by-weight-cut-accuracy-card", "cut"],
 ] as const;
 const DOCS = "https://github.com/Cheerpipe/ha-open-brew-by-weight/blob/main/docs/cards.md";
 let named: string | undefined;

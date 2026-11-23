@@ -172,7 +172,7 @@ export class OpenBrewByWeightPresetCard extends OpenBrewByWeightCard<Resolved> {
       hx = g.X(reading.stop),
       hy = g.Y(reading.weight),
       pillText = t("graph.pill", ...values),
-      pw = pillText.length * 6.5 + 16;
+      pw = this._measure(pillText, 11, 600) + 16;
     return html`
       <div
         class="chart ${this._held ? "held" : ""}"

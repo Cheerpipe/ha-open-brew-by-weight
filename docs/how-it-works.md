@@ -21,6 +21,12 @@ gives it to the controller. From then on:
   controller's preset and shot charts. It reads the curve once per new shot
   (again only if you rate that shot), remembers it across restarts, and
   re-reads the preset settings when a preset changes;
+- while a dashboard shows a Stats card, Home Assistant reads the Stats charts
+  that card needs once after each change to your shot history, never during a
+  shot, and shares them between every card that shows the same preset and
+  number of shots. When a companion keeps your shot archive, it reads them from
+  the companion over HTTPS instead, which covers your whole history and spares
+  the controller;
 - every message carries a revision number. If Home Assistant notices it missed
   one, it re-reads everything once to catch up.
 

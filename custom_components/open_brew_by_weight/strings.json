@@ -134,6 +134,17 @@
     "webhook_rollback_failed": {
       "title": "Controller callback needs attention",
       "description": "Home Assistant could not verify the new callback or restore the previous one. Open the integration's reconfigure flow and save the current settings again."
+    },
+    "companion_untrusted": {
+      "title": "Companion certificate changed",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Trust the companion again?",
+            "description": "The companion at {address} now presents a certificate Home Assistant did not trust before, so the Stats cards show the controller's newest 100 shots instead of your whole history. This is expected after the companion moved to another address or was set up again; if you did that, confirm to trust its new certificate. If you did not, leave this open and check your network."
+          }
+        }
+      }
     }
   }
 }

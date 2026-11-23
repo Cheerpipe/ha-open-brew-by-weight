@@ -66,7 +66,16 @@ UIX installed and a login that needs no password. Retake them with
 `test/fixtures/preset-golden.json` pins it to the firmware's own output. After
 the firmware changes its charts, regenerate it with
 `node scripts/golden-from-firmware.mjs <path to the firmware repository>` and
-port the difference.
+port the difference. The Stats cards work the same way:
+`test/fixtures/stats-golden.json` is what the firmware's own `stats.js` draws
+for `test/fixtures/stats-charts.json`; regenerate it with
+`node scripts/stats-golden-from-firmware.mjs <path to the firmware repository>`.
+
+Every change to a chart in the controller's Web UI (its drawing, colors,
+figures, legends or texts) needs the matching change to the card that copies
+it here, in the same piece of work, so the cards never drift from the Web UI.
+`scripts/fake_controller.py --companion <IP>` also announces a companion at
+that address, for trying the Stats cards' companion path.
 
 ## Controller fixtures
 

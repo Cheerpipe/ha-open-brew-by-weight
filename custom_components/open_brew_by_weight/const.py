@@ -19,6 +19,8 @@ REQUIRED_CAPABILITIES = frozenset(
 )
 RECOVERY_DELAYS = (5, 10, 20, 40, 60)
 LIVENESS_INTERVAL = timedelta(minutes=5)
+# A companion still copying the newest shot is asked again after this long.
+COMPANION_RETRY_S = 15
 # Switch changes requested within this window travel as one controller patch.
 QUICK_SETTINGS_COALESCE_S = 0.05
 PAIRING_POLL_INTERVAL = 1

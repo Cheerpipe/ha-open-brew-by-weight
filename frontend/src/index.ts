@@ -7,6 +7,12 @@ import { OpenBrewByWeightShotCard } from "./shot-card";
 import { OpenBrewByWeightShotCardEditor } from "./shot-card-editor";
 import { OpenBrewByWeightShotChartCard } from "./shot-chart-card";
 import { OpenBrewByWeightShotChartCardEditor } from "./shot-chart-card-editor";
+import {
+  OpenBrewByWeightCutAccuracyCard,
+  OpenBrewByWeightShotConsistencyCard,
+  OpenBrewByWeightShotTimeCard,
+} from "./stats-card";
+import { OpenBrewByWeightStatsCardEditor } from "./stats-card-editor";
 
 const elements: [string, CustomElementConstructor][] = [
   ["open-brew-by-weight-preset-card", OpenBrewByWeightPresetCard],
@@ -15,6 +21,10 @@ const elements: [string, CustomElementConstructor][] = [
   ["open-brew-by-weight-shot-chart-card-editor", OpenBrewByWeightShotChartCardEditor],
   ["open-brew-by-weight-shot-card", OpenBrewByWeightShotCard],
   ["open-brew-by-weight-shot-card-editor", OpenBrewByWeightShotCardEditor],
+  ["open-brew-by-weight-shot-time-card", OpenBrewByWeightShotTimeCard],
+  ["open-brew-by-weight-shot-consistency-card", OpenBrewByWeightShotConsistencyCard],
+  ["open-brew-by-weight-cut-accuracy-card", OpenBrewByWeightCutAccuracyCard],
+  ["open-brew-by-weight-stats-card-editor", OpenBrewByWeightStatsCardEditor],
 ];
 const define = () => {
   for (const [name, element] of elements)

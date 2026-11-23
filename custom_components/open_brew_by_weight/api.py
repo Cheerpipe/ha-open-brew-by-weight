@@ -9,7 +9,14 @@ import re
 from typing import Any
 from urllib.parse import urlsplit
 
-from aiohttp import ClientError, ClientResponse, ClientSession, ClientTimeout
+from aiohttp import (
+    ClientConnectorCertificateError,
+    ClientError,
+    ClientResponse,
+    ClientSession,
+    ClientTimeout,
+)
+from yarl import URL
 
 from .models import DeviceSnapshot, PresetState, ProtocolError, ShotDetail
 
@@ -43,6 +50,10 @@ class IncompatibleApi(ApiError):
     """The controller API is not compatible."""
 
 
+class CompanionUntrusted(ApiError):
+    """The companion's HTTPS certificate no longer chains to the authority HA trusted."""
+
+
 class RequestRejected(ApiError):
     """A mutation was rejected with a stable controller code."""
 
@@ -60,6 +71,10 @@ TOKEN_PATTERN = re.compile(r"^[0-9a-f]{32}$")
 PAIRING_STATES = frozenset({"pending", "approved", "denied", "expired", "unknown"})
 # Expected while the controller is briefly busy; the caller asks again later.
 TRANSIENT_CODES = frozenset({"SHOT_CURVE_BUSY"})
+# The companion offers its certificate authority in clear and its archive over HTTPS only.
+COMPANION_CA_PATH = "/openbrewbyweight-ca.crt"
+COMPANION_STATS_PATH = "/__companion/archive/stats"
+MAX_CA_BYTES = 16 * 1024
 
 
 def describe_error(err: BaseException) -> str:
@@ -235,6 +250,65 @@ class OpenBrewByWeightApi:
         """Read one bounded shots page carrying the firmware stats aggregate."""
         _, payload = await self._json("GET", "/shots?limit=1")
         return payload if isinstance(payload, dict) else {}
+
+    async def async_stats_charts(self, window: int, preset: int) -> dict[str, Any]:
+        """Read the Web UI Stats header for one window and chart preset."""
+        _, payload = await self._json("GET", f"/stats?window={window}&preset={preset}")
+        if not isinstance(payload.get("good"), int) or not isinstance(payload.get("stats"), dict):
+            raise ProtocolError("stats charts response is invalid")
+        return {"good": payload["good"], "stats": payload["stats"]}
+
+    async def async_companion_ca(self, address: str) -> str:
+        """The companion's certificate authority, read once in clear to trust its HTTPS."""
+        try:
+            async with self._session.request(
+                "GET",
+                URL.build(scheme="http", host=address, path=COMPANION_CA_PATH),
+                allow_redirects=False,
+                timeout=ClientTimeout(total=10),
+            ) as response:
+                status, body = response.status, await _read_capped(response)
+        except (TimeoutError, ClientError, ValueError) as err:
+            raise CannotConnect(describe_error(err)) from err
+        text = body.decode("ascii", "replace")
+        if status != 200 or len(body) > MAX_CA_BYTES or "-----BEGIN CERTIFICATE-----" not in text:
+            raise ProtocolError("companion certificate authority is invalid")
+        return text
+
+    async def async_companion_stats(
+        self, address: str, ssl_context: Any, window: int, preset: int, epoch: int
+    ) -> dict[str, Any]:
+        """Read the companion's whole-history Stats header once its copy reached `epoch`."""
+        headers = {"Accept": "application/json"}
+        if self.token:
+            headers["Authorization"] = f"Bearer {self.token}"
+        url = URL.build(
+            scheme="https",
+            host=address,
+            path=COMPANION_STATS_PATH,
+            query={"window": window, "active": preset, "epoch": epoch},
+        )
+        try:
+            async with self._session.request(
+                "GET",
+                url,
+                headers=headers,
+                ssl=ssl_context,
+                allow_redirects=False,
+                # The companion waits a few seconds for its copy to catch up.
+                timeout=ClientTimeout(total=15),
+            ) as response:
+                _, payload = await self._decode(response)
+        except ClientConnectorCertificateError as err:
+            raise CompanionUntrusted(describe_error(err)) from err
+        except (TimeoutError, ClientError) as err:
+            raise CannotConnect(describe_error(err)) from err
+        good, stats, synced = payload.get("good"), payload.get("stats"), payload.get("epoch")
+        if not all(isinstance(v, int) and not isinstance(v, bool) for v in (good, synced)) or (
+            not isinstance(stats, dict)
+        ):
+            raise ProtocolError("companion stats response is invalid")
+        return {"good": good, "stats": stats, "epoch": synced}
 
     async def async_webhook_config(self) -> dict[str, Any]:
         _, payload = await self._json("GET", "/webhook")

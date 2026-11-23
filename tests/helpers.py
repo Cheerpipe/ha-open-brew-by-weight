@@ -64,6 +64,7 @@ def api_mock() -> MagicMock:
         "async_apply_webhook_config",
         "async_shots_page",
         "async_last_shot",
+        "async_stats_charts",
         "async_auth_required",
         "async_exchange_password",
         "async_start_pairing",

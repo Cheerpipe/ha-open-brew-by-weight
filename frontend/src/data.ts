@@ -1,5 +1,6 @@
 import type { PresetRender } from "./preset-chart";
 import { DOMAIN, type HomeAssistant } from "./ha";
+import type { StatsChart } from "./stats-chart";
 
 /** What the integration's open_brew_by_weight/subscribe command sends. */
 export interface CardData {
@@ -10,22 +11,42 @@ export interface CardData {
   lastShot: Record<string, unknown> | null;
 }
 
-export type CardDataState =
-  | { status: "loading" }
-  | { status: "not_found" }
-  | { status: "ready"; data: CardData };
+/** What the integration's open_brew_by_weight/stats/subscribe command sends. */
+export interface StatsData {
+  available: boolean;
+  /** False before the controller firmware serves the Stats charts. */
+  supported: boolean;
+  /** Null until the integration has read this window and preset. */
+  chart: StatsChart | null;
+}
+
+export type FollowState<T> = { status: "loading" } | { status: "not_found" } | { status: "ready"; data: T };
+export type CardDataState = FollowState<CardData>;
 
 const RESUBSCRIBE_MS = 2000;
 
-/**
- * Follow one device's card data. The integration sends it at once and after
- * every change; a reloaded entry asks for a new subscription. Returns a stop
- * function.
- */
-export function followCardData(
+/** Follow one device's card data: its presets and last shot. */
+export const followCardData = (hass: HomeAssistant, deviceId: string, onState: (state: CardDataState) => void) =>
+  follow<CardData>(hass, { type: `${DOMAIN}/subscribe`, device_id: deviceId }, onState);
+
+/** Follow one window and chart preset of a device's Stats charts. */
+export const followStats = (
   hass: HomeAssistant,
   deviceId: string,
-  onState: (state: CardDataState) => void,
+  window: number,
+  preset: number,
+  onState: (state: FollowState<StatsData>) => void,
+) => follow<StatsData>(hass, { type: `${DOMAIN}/stats/subscribe`, device_id: deviceId, window, preset }, onState);
+
+/**
+ * Follow one integration subscription. The integration sends its data at once
+ * and after every change; a reloaded entry asks for a new subscription.
+ * Returns a stop function.
+ */
+function follow<T>(
+  hass: HomeAssistant,
+  message: Record<string, unknown>,
+  onState: (state: FollowState<T>) => void,
 ): () => void {
   let stopped = false,
     unsubscribe: (() => Promise<void>) | undefined,
@@ -33,16 +54,16 @@ export function followCardData(
   const start = () => {
     retry = undefined;
     hass.connection
-      .subscribeMessage<CardData | { unloaded: true }>(
-        (message) => {
-          if ("unloaded" in message) {
+      .subscribeMessage<T | { unloaded: true }>(
+        (event) => {
+          if (typeof event === "object" && event !== null && "unloaded" in event) {
             void unsubscribe?.();
             unsubscribe = undefined;
             onState({ status: "loading" });
             if (!stopped) retry = setTimeout(start, RESUBSCRIBE_MS);
-          } else onState({ status: "ready", data: message });
+          } else onState({ status: "ready", data: event as T });
         },
-        { type: `${DOMAIN}/subscribe`, device_id: deviceId },
+        message,
       )
       .then(
         (stop) => {

@@ -474,6 +474,10 @@ class DeviceSnapshot:
     mdns_host: str | None = None
     wifi_mac: str | None = None
     bluetooth_mac: str | None = None
+    # Changes with every stored, rated or deleted shot; None on older firmware.
+    shot_epoch: int | None = None
+    # The paired companion keeping the shot archive, by IP address.
+    companion_address: str | None = None
 
     @classmethod
     def from_dict(cls, value: Any) -> Self:
@@ -538,7 +542,21 @@ class DeviceSnapshot:
             mdns_host=_optional_mdns_host(data.get("mdnsHost")),
             wifi_mac=_optional_mac(data.get("wifiMac")),
             bluetooth_mac=_optional_mac(data.get("bluetoothMac")),
+            shot_epoch=None
+            if data.get("shotEpoch") is None
+            else _integer(data.get("shotEpoch"), "shotEpoch"),
+            companion_address=_companion_address(data.get("companion")),
         )
+
+
+def _companion_address(value: Any) -> str | None:
+    """The archive companion's IP address, or None (an older or companion-less controller)."""
+    if value is None:
+        return None
+    address = _optional_ip(_mapping(value, "companion").get("address"))
+    if address is None:
+        raise ProtocolError("companion.address is invalid")
+    return address
 
 
 @dataclass(frozen=True, slots=True)

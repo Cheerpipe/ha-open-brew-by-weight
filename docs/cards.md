@@ -6,7 +6,8 @@ resource to add and nothing else to download. After installing or updating,
 reload your browser once so it picks up the new cards.
 
 The cards need controller firmware that shares preset settings and shot
-curves with Home Assistant. With older firmware the card asks you to update.
+curves with Home Assistant, and the Stats cards need firmware that shares its
+Stats charts too. With older firmware a card asks you to update.
 
 ## Preset card
 
@@ -191,6 +192,81 @@ columns: 3
 
 <img src="images/cards/shot-details-compact.png" alt="A compact shot details card: yield, then five fields in three columns" width="414">
 
+## Stats cards
+
+Three cards bring the charts of the controller's **Stats** page to your
+dashboard, drawn exactly as the Web UI draws them, with the same figures,
+colors and legends:
+
+- **Shot time** (`open-brew-by-weight-shot-time-card`): when your shots reach
+  their target, as a curve split into fast, on recipe and slow, with the share
+  of shots in each.
+- **Shot consistency** (`open-brew-by-weight-shot-consistency-card`): each
+  shot's time to target against its preset's average, oldest on the left,
+  with how consistent you are, the spread, and a band that follows your recent
+  shots.
+- **Cut accuracy** (`open-brew-by-weight-cut-accuracy-card`): how close each
+  automatic stop settled to its target, with bullseyes, the share within
+  0.2 g, the average miss and which way you lean. Shots a guard stopped on
+  purpose are drawn with a dashed outline and not scored.
+
+Drag along a chart, or use the arrow keys once it has focus, to read one point
+or one shot.
+
+Each card follows a preset and a number of recent shots, like the buttons
+above the charts on the Stats page. By default it follows the active preset
+and your last 10 shots; when the controller has no shots of that preset, it
+shows all presets. Viewers can pick another preset or another number of shots
+from the dropdowns in the card, and the pick is remembered in that browser.
+Turn the dropdowns off to always show what you configured; the header then
+says what the chart covers.
+
+**With the companion.** When an
+[Open Brew by Weight Companion](https://github.com/Cheerpipe/open-brew-by-weight-companion)
+keeps your shot archive, the cards read it there, over your whole history, and
+also offer the last 500 and 1,000 shots, like the Stats page opened through the
+companion. There's nothing to set up: Home Assistant learns the companion's
+address from the controller and trusts its certificate the first time. If the
+companion can't answer, the cards show the controller's own shots (up to the
+last 100) until it can. If the companion later presents a different
+certificate, for example after it moved to another address, Home Assistant
+keeps using the controller and asks you under **Settings → Repairs** whether
+to trust the new one.
+
+The charts are read again only after a new shot, never during one, so a
+dashboard full of them adds no traffic to the controller while you brew.
+
+### Add them
+
+Search for **Open Brew by Weight shot time**, **shot consistency** or **cut
+accuracy** when adding a card. In YAML:
+
+```yaml
+type: custom:open-brew-by-weight-shot-consistency-card
+device_id: 0123456789abcdef0123456789abcdef
+preset: all
+shots: 50
+```
+
+### Options
+
+| Option | Default | What it does |
+| --- | --- | --- |
+| `device_id` | | The controller to show. |
+| `preset` | `active` | The preset the chart follows: `active`, `all`, or a preset id. |
+| `shots` | `10` | How many recent shots it covers: `10`, `25`, `50`, `100`, and with the companion `500` or `1000`. With fewer shots stored, the card covers what there is. |
+| `title` | The chart's name | Replaces the title. |
+| `show_header` | `true` | The title and, when there are no dropdowns, what the chart covers. |
+| `show_shots_selector` | `true` | A dropdown to pick how many shots. |
+| `show_preset_selector` | `true` | A dropdown to pick the preset. |
+| `show_figures` | `true` | The figures above the chart. |
+| `show_legend` | `true` | The legend. |
+| `band` | `range` | Consistency and cut accuracy only: the band behind the bars, `range` (the spread of the last five shots) or `ewma` (the recent average and reach, newest shots counting most). |
+
+The cards use the space you give them: in a sections dashboard, give one more
+rows and the chart grows taller; in a narrow column the dropdowns move under
+the title and the figures wrap.
+
 ## Styling the cards
 
 Every color and line in the cards can be changed with
@@ -300,7 +376,9 @@ my_theme:
 | `--obbw-title-color`, `--obbw-subtitle-color` | The header. |
 | `--obbw-readout-color`, `--obbw-legend-color`, `--obbw-note-color` | Text under the chart. |
 | `--obbw-selector-background`, `--obbw-selector-border-color`, `--obbw-selector-radius` | The preset dropdown. |
-| `--obbw-pill-border-color` | The bubble shown while dragging. |
+| `--obbw-pill-border-color` | The bubble shown while dragging the example shot (defaults to the stop line's color). |
+| `--obbw-mid-color` | Stats: shots that landed a little off (amber), between green and red. |
+| `--obbw-fair-color`, `--obbw-poor-color` | Stats: the consistency verdict when it is *Fairly consistent* or *Varies a lot*. |
 | `--obbw-shot-line-color` | The last shot over its preset, its stop and final-weight dots. |
 | `--obbw-weight-color` | Weight while on recipe (defaults to the on-recipe color). |
 | `--obbw-flow-color` | The flow rate line and its fill. |
@@ -343,11 +421,16 @@ my_theme:
 | `.recent-shot`, `.no-cut`, `.grid-line`, `.axis-label`, `.axis-label.hold` | Marks, axes, and the *Up to* and *Down to* labels. |
 | `.scrub`, `.example-shot`, `.scrub-handle` | The example shot. |
 | `.readout`, `.legend`, `.note`, `.message` | Text under the chart, and status messages. |
-| `.chip`, `.chip.on_recipe`, `.chip.fast`, `.chip.slow`, `.chip.manual` | How the last shot ended. |
+| `.chip`, `.chip.on_recipe`, `.chip.fast`, `.chip.slow`, `.chip.manual` | How the last shot ended, as the Web UI's verdict pill. |
 | `.views`, `.view`, `.view[aria-pressed="true"]` | The chart buttons. |
 | `.shot-line`, `.shot-line.drip`, `.stop-point`, `.final-point`, `.held` | The last shot over its preset. |
 | `.series.bbw`, `.series.fast`, `.series.slow`, `.series.atm`, `.series.flow`, `.series-fill` | Weight by phase, flow, and their fills. |
 | `.cursor`, `.cursor-guide`, `.cursor-dot` | The cursor. |
+| `.selectors`, `.zones`, `.plot`, `.slegend` | Stats cards: the dropdowns, the figures, the chart, and the legend. |
+| `.dens-line.fast`, `.dens-line.on_recipe`, `.dens-line.slow` | Shot time: the curve in each zone. |
+| `.bar`, `.cap`, `.rim`, `.over`, `.ring` | Consistency and cut accuracy: each shot's bar, its tip, a guard stop's dashed outline, the mark past the scale, and a bullseye. Size classes `.near`, `.mid`, `.far` and guards `.g1`, `.g2` color them. |
+| `.range`, `.spread`, `.mean`, `.avg` | The band behind the bars, its recent average, and the reference line. |
+| `.edge`, `.tick`, `.guide`, `.handle` | The scale, the axis labels, and the cursor. |
 | `.hero`, `.hero-field`, `.fields`, `.field`, `.label`, `.value` | The details card. Each field carries its name, so `.field[data-field="scale"]` targets one. |
 | `.value.high`, `.value.low`, `.stars` | The error's tone and the rating. |
 
