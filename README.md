@@ -62,6 +62,20 @@ It runs entirely on your local network. No cloud, no account.
   <img src="https://raw.githubusercontent.com/Cheerpipe/ha-open-brew-by-weight/main/docs/images/cards/shot-details.png" alt="Shot details card" width="270">
 </p>
 
+The cards sit well next to Home Assistant's own tiles, gauges and switches.
+Here is one dashboard built from all of them: a bar view for every day, and a
+Stats view for how your shots are trending.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Cheerpipe/ha-open-brew-by-weight/main/docs/images/dashboard/bar-dark.png">
+  <img src="https://raw.githubusercontent.com/Cheerpipe/ha-open-brew-by-weight/main/docs/images/dashboard/bar-light.png" alt="A Home Assistant dashboard with the preset card, the last shot chart and details, gauges for duration, flow and rating, the shot time and consistency cards, and the controller's switches">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Cheerpipe/ha-open-brew-by-weight/main/docs/images/dashboard/stats-dark.png">
+  <img src="https://raw.githubusercontent.com/Cheerpipe/ha-open-brew-by-weight/main/docs/images/dashboard/stats-light.png" alt="A Stats view with the shot time, shot consistency and cut accuracy cards next to the last shot's weight and flow">
+</picture>
+
 Updates arrive the instant they happen, pushed by the controller itself.
 
 ## Before you start
