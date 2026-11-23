@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.9
+
+- **Nothing changes in Home Assistant.** This release keeps the integration's
+  test data in step with the controller's firmware, whose presets gained the
+  La Marzocco steam settings and whose shot records now say what each shot
+  did to the drip correction. The integration uses neither, so update
+  whenever it suits you.
+
 ## 0.8.8
 
 - **Guards and stop reasons look and read as on the controller.** The
